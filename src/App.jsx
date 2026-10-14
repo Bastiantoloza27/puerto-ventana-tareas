@@ -8,6 +8,7 @@ import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import AppLayout from '@/components/apr/AppLayout';
+import Splash from '@/components/apr/Splash';
 import MiTurno from '@/pages/MiTurno';
 import Programacion from '@/pages/Programacion';
 import Cierre from '@/pages/Cierre';
@@ -74,6 +75,7 @@ function App() {
           <AuthenticatedApp />
         </Router>
         <Toaster />
+        <Splash />
       </QueryClientProvider>
     </AuthProvider>
   )

@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 
+export const LOGO = "https://raw.githubusercontent.com/Bastiantoloza27/Puerto-Ventana-Tareas-Diarias-Muestra./main/handoff_programa_apr/assets/pvsa-logo.png";
 export const SH = {
   T1: { name: "1° turno", hours: "08:00–15:30", short: "1er" },
   T2: { name: "2° turno", hours: "15:30–23:00", short: "2do" },

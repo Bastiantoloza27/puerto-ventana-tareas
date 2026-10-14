@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
+import { LOGO } from "@/lib/apr";
 
-const LOGO = "https://raw.githubusercontent.com/Bastiantoloza27/Puerto-Ventana-Tareas-Diarias-Muestra./main/handoff_programa_apr/assets/pvsa-logo.png";
 const Label = ({ children }) => <div className="font-mono text-[10px] font-medium tracking-[.14em] text-[#6f9493] px-2.5 pt-3.5 pb-1">{children}</div>;
 
 function Item({ to, label, badge, amber }) {
