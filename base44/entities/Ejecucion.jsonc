@@ -1,0 +1,57 @@
+{
+  "name": "Ejecucion",
+  "type": "object",
+  "properties": {
+    "programacion_id": {
+      "type": "string"
+    },
+    "actividad_id": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "no",
+        "na"
+      ]
+    },
+    "motivo": {
+      "type": "string"
+    },
+    "observaciones": {
+      "type": "string"
+    },
+    "evidencias": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "is_img": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "hora": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "programacion_id",
+    "actividad_id"
+  ],
+  "rls": {
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

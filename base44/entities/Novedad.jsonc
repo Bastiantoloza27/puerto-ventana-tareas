@@ -1,0 +1,82 @@
+{
+  "name": "Novedad",
+  "type": "object",
+  "properties": {
+    "programacion_id": {
+      "type": "string"
+    },
+    "lugar": {
+      "type": "string"
+    },
+    "tipo": {
+      "type": "string"
+    },
+    "criticidad": {
+      "type": "string",
+      "enum": [
+        "Baja",
+        "Media",
+        "Alta"
+      ]
+    },
+    "descripcion": {
+      "type": "string"
+    },
+    "quien": {
+      "type": "string"
+    },
+    "accion": {
+      "type": "string"
+    },
+    "evidencias": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "is_img": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "hora": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "programacion_id",
+    "descripcion"
+  ],
+  "rls": {
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

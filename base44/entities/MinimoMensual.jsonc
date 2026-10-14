@@ -1,0 +1,43 @@
+{
+  "name": "MinimoMensual",
+  "type": "object",
+  "properties": {
+    "mes": {
+      "type": "string"
+    },
+    "asesor": {
+      "type": "string"
+    },
+    "charlas": {
+      "type": "number",
+      "default": 0
+    },
+    "conducta": {
+      "type": "number",
+      "default": 0
+    },
+    "inspeccion": {
+      "type": "number",
+      "default": 0
+    },
+    "epp": {
+      "type": "number",
+      "default": 0
+    },
+    "cuasi": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "mes",
+    "asesor"
+  ],
+  "rls": {
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

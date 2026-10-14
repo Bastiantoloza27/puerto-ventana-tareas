@@ -1,0 +1,131 @@
+{
+  "name": "Programacion",
+  "type": "object",
+  "properties": {
+    "fecha": {
+      "type": "string",
+      "format": "date"
+    },
+    "turno": {
+      "type": "string",
+      "enum": [
+        "T1",
+        "T2",
+        "T3"
+      ]
+    },
+    "asesor": {
+      "type": "string"
+    },
+    "actividad_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "borrador",
+        "publicada",
+        "cerrada"
+      ],
+      "default": "borrador"
+    },
+    "publicada_hora": {
+      "type": "string"
+    },
+    "cerrada_hora": {
+      "type": "string"
+    },
+    "entrega": {
+      "type": "string"
+    },
+    "correo": {
+      "type": "object",
+      "properties": {
+        "asunto": {
+          "type": "string"
+        },
+        "hora": {
+          "type": "string"
+        },
+        "lineas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "texto": {
+                "type": "string"
+              },
+              "actividad_id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "actualizacion": {
+          "type": "object",
+          "properties": {
+            "hora": {
+              "type": "string"
+            },
+            "texto": {
+              "type": "string"
+            },
+            "actividad_id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "bitacora": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hora": {
+            "type": "string"
+          },
+          "texto": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "r_prog": {
+      "type": "number"
+    },
+    "r_ok": {
+      "type": "number"
+    },
+    "r_no": {
+      "type": "number"
+    },
+    "r_na": {
+      "type": "number"
+    },
+    "r_pct": {
+      "type": "number"
+    },
+    "r_novs": {
+      "type": "number"
+    },
+    "r_motivos": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "fecha",
+    "turno"
+  ],
+  "rls": {
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

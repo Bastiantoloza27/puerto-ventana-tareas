@@ -1,0 +1,57 @@
+{
+  "name": "Actividad",
+  "type": "object",
+  "properties": {
+    "orden": {
+      "type": "number"
+    },
+    "area": {
+      "type": "string"
+    },
+    "sitio": {
+      "type": "string"
+    },
+    "proceso": {
+      "type": "string"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "t",
+        "o",
+        "c"
+      ],
+      "description": "t=transversal, o=seg\u00fan operaci\u00f3n, c=seg\u00fan ocurrencia"
+    },
+    "descripcion": {
+      "type": "string"
+    },
+    "base": {
+      "type": "boolean",
+      "description": "Sugerida en todos los turnos"
+    }
+  },
+  "required": [
+    "area",
+    "sitio",
+    "proceso",
+    "tipo"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
