@@ -1,4 +1,4 @@
-import { SH, shortDate } from "@/lib/apr";
+import { SH, shortDate, TIPO_LABEL } from "@/lib/apr";
 
 const LOGO = "https://raw.githubusercontent.com/Bastiantoloza27/Puerto-Ventana-Tareas-Diarias-Muestra./main/handoff_programa_apr/assets/pvsa-logo.png";
 const stLabel = (st) => (st === "ok" ? "Ejecutado" : st === "no" ? "No ejecutado" : st === "na" ? "No ocurrió" : "—");
@@ -29,6 +29,34 @@ export function downloadCsv(plan, catalog, execs, novs, k) {
   novs.forEach((n) => L.push([n.hora, n.lugar, n.tipo, n.criticidad, n.descripcion, n.quien, n.accion]));
   L.push([], ["ENTREGA AL SIGUIENTE TURNO", plan.entrega || "—"]);
   dl(`${shortDate(plan.fecha)} Programa de Actividades APR ${SH[plan.turno].short} Turno.csv`, "\ufeff" + L.map((r) => r.map(q).join(";")).join("\n"), "text/csv");
+}
+
+const programRows = (plan, catalog) =>
+  (plan.actividad_ids || []).map((id) => catalog.find((a) => a.id === id)).filter(Boolean);
+
+export function downloadProgramaCsv(plan, catalog) {
+  const q = (v) => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+  const rows = programRows(plan, catalog);
+  const L = [["PROGRAMACIÓN DE ACTIVIDADES · PREVENCIÓN DE RIESGOS"],
+    ["PROGRAMADO", plan.fecha, SH[plan.turno].name, "ASESOR DE TURNO", plan.asesor || "—"],
+    ["ACTIVIDADES ASIGNADAS", rows.length], [],
+    ["N°", "ÁREA", "SITIO/SECTOR/FUNCIÓN", "PROCESO", "ACTIVIDAD A DESARROLLAR", "TIPO"]];
+  rows.forEach((a, i) => L.push([i + 1, a.area, a.sitio, a.proceso, a.descripcion, TIPO_LABEL[a.tipo] || ""]));
+  dl(`Tareas Asignadas ${SH[plan.turno].short} Turno ${shortDate(plan.fecha)}.csv`, "\ufeff" + L.map((r) => r.map(q).join(";")).join("\n"), "text/csv");
+}
+
+export function printProgramaPdf(plan, catalog) {
+  const rows = programRows(plan, catalog);
+  const body = `<img src="${LOGO}" style="height:38px"><h1>Tareas asignadas · ${SH[plan.turno].name}</h1><p>${plan.fecha} · ${SH[plan.turno].hours} · Asesor de turno: <b>${plan.asesor || "—"}</b> · ${rows.length} actividades</p>
+<table><tr><th>N°</th><th>Área</th><th>Sitio</th><th>Proceso</th><th>Actividad a desarrollar</th><th>Tipo</th></tr>${rows.map((a, i) => `<tr><td>${i + 1}</td><td>${a.area}</td><td>${a.sitio}</td><td>${a.proceso}</td><td>${a.descripcion || ""}</td><td>${TIPO_LABEL[a.tipo] || ""}</td></tr>`).join("") || '<tr><td colspan="6">Sin actividades asignadas</td></tr>'}</table>
+<div class="sig"><div>${plan.asesor || ""}<br><small>Asesor de turno</small></div><div>Jefatura de Prevención</div></div>`;
+  const css = "body{font:10.5pt/1.45 Arial,sans-serif;color:#1f2a2a;margin:1.5cm}h1{font:400 21pt Georgia,serif;margin:.4em 0 .1em}table{width:100%;border-collapse:collapse;font-size:9pt}td,th{border-bottom:1px solid #ccc;padding:5px 4px;text-align:left;vertical-align:top}th{color:#555}.sig{display:flex;gap:3cm;margin-top:2cm}.sig div{border-top:1px solid #000;padding-top:4px;min-width:6cm}";
+  const w = window.open("", "_blank");
+  if (!w) return dl("Tareas asignadas.html", '<!doctype html><meta charset="utf-8"><style>' + css + "</style>" + body, "text/html");
+  w.document.title = "Tareas asignadas " + SH[plan.turno].name;
+  const st = w.document.createElement("style"); st.textContent = css; w.document.head.appendChild(st);
+  w.document.body.innerHTML = body;
+  setTimeout(() => w.print(), 500);
 }
 
 export function downloadConsolidado(plans) {

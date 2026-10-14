@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { card, chipCls, ASES, SH, now } from "@/lib/apr";
 import { addLog } from "@/lib/aprActions";
+import { downloadProgramaCsv, printProgramaPdf } from "@/lib/exportReport";
 import CatalogPicker from "@/components/apr/CatalogPicker";
 import OpsMailPanel from "@/components/apr/OpsMailPanel";
 
@@ -13,6 +14,7 @@ export default function Programacion() {
   const [asesor, setAsesor] = useState(null);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState("");
   useEffect(() => { setIds(plan?.actividad_ids || []); setAsesor(plan?.asesor || null); setErr(""); }, [plan?.id, shift]);
 
   const locked = plan?.estado === "cerrada";
@@ -25,6 +27,18 @@ export default function Programacion() {
     if (prev) { setIds((s) => [...new Set([...s, ...(prev.actividad_ids || []).filter((id) => day.catalog.some((c) => c.id === id))])]); if (!asesor) setAsesor(prev.asesor); }
     else setErr("No hay una programación anterior de este turno.");
     setBusy(false);
+  };
+
+  const programPlan = () => ({ ...(plan || {}), fecha: day.fecha, turno: shift, asesor, actividad_ids: ids });
+
+  const sendMail = async () => {
+    setBusy(true); setErr(""); setSent("");
+    let p = plan;
+    if (p) await base44.entities.Programacion.update(p.id, { asesor, actividad_ids: ids });
+    else p = await base44.entities.Programacion.create({ fecha: day.fecha, turno: shift, estado: "borrador", bitacora: [], asesor, actividad_ids: ids });
+    const res = await base44.functions.invoke("sendShiftProgram", { programacion_id: p.id });
+    if (res.data?.error) setErr(res.data.error); else setSent(`Enviado a ${res.data.to}`);
+    day.refresh(); setBusy(false);
   };
 
   const save = async (publish) => {
@@ -53,6 +67,18 @@ export default function Programacion() {
         <CatalogPicker catalog={day.catalog} ids={ids} toggle={toggle} locked={locked} />
       </div>
       <div className="flex-[0_1_380px] min-w-[280px] flex flex-col gap-4 lg:sticky lg:top-6">
+        {ids.length > 0 && (
+          <div className={card + " p-4 flex flex-col gap-2.5"}>
+            <span className="font-heading text-lg">Tareas asignadas</span>
+            <span className="text-xs text-[#6b7778]">{ids.length} actividades · {asesor || "sin asesor"}</span>
+            <div className="flex gap-2 flex-wrap">
+              <button onClick={() => printProgramaPdf(programPlan(), day.catalog)} className="flex-1 px-3 py-2 rounded-md text-[13px] border border-[#cdd4d4] hover:border-[#007f80]">Descargar PDF</button>
+              <button onClick={() => downloadProgramaCsv(programPlan(), day.catalog)} className="flex-1 px-3 py-2 rounded-md text-[13px] border border-[#cdd4d4] hover:border-[#007f80]">Descargar Excel</button>
+            </div>
+            <button onClick={sendMail} disabled={busy} className="px-4 py-2.5 rounded-md bg-[#0e2a2b] hover:bg-[#1b3d3e] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-50">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Enviar por correo</button>
+            {sent && <span className="text-xs text-[#005f60] bg-[#e2f4f4] rounded-md px-3 py-2">{sent}</span>}
+          </div>
+        )}
         <OpsMailPanel plan={plan} catalog={day.catalog} ids={ids} locked={locked} onApply={(m) => setIds((s) => [...s, ...m])} />
         {!locked && (
           <div className={card + " p-4 flex flex-col gap-3"}>
