@@ -13,7 +13,7 @@ export default function ActivityCard({ a, e, editable, onSet }) {
   useEffect(() => setObs(e?.observaciones || ""), [e?.observaciones]);
   const c = CHIP[st || "none"];
   const label = st === "ok" ? "Ejecutado · " + (e.hora || "") : st === "no" ? "No ejecutado" + (e.motivo ? "" : " · falta motivo") : st === "na" ? "No ocurrió" : "Por registrar";
-  const btn = (on, onCls, offCls) => "px-3.5 py-2 rounded-md text-[13px] border transition-colors " + (on ? onCls : offCls);
+  const btn = (on, onCls, offCls) => "flex-1 md:flex-none min-h-[44px] md:min-h-0 px-3.5 py-2.5 md:py-2 rounded-md text-sm md:text-[13px] border transition-colors " + (on ? onCls : offCls);
   const saveObs = () => obs !== (e?.observaciones || "") && onSet({ observaciones: obs }, null);
 
   return (
@@ -25,7 +25,7 @@ export default function ActivityCard({ a, e, editable, onSet }) {
             <span className="text-[11px] px-2 py-0.5 rounded-[10px] bg-[#e2f4f4] text-[#005f60]">{a.sitio}</span>
           </div>
           <div className="text-[15px] font-semibold">{a.proceso}</div>
-          <div className="text-[13px] text-[#3c4849] leading-[1.45]">{a.descripcion}</div>
+          <div className="text-sm md:text-[13px] text-[#3c4849] leading-[1.5]">{a.descripcion}</div>
         </div>
         <span className="text-xs px-2.5 py-1 rounded-xl whitespace-nowrap" style={{ background: c[0], color: c[1] }}>{label}</span>
       </div>
@@ -39,7 +39,7 @@ export default function ActivityCard({ a, e, editable, onSet }) {
       {st === "ok" && (
         <div className="flex flex-col gap-2 p-3 rounded-lg bg-[#f4faf9]">
           <EvidenceList items={e.evidencias} editable={editable} onAdd={(f) => onSet({ evidencias: [...(e.evidencias || []), ...f] }, `Evidencia adjunta (${f.length}) · ${a.proceso}`)} />
-          <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} onBlur={saveObs} disabled={!editable} placeholder="Observaciones (opcional)" rows={2} className="w-full text-[13px] px-3 py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#007f80]" />
+          <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} onBlur={saveObs} disabled={!editable} placeholder="Observaciones (opcional)" rows={2} className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#007f80]" />
         </div>
       )}
       {st === "no" && (
@@ -47,10 +47,10 @@ export default function ActivityCard({ a, e, editable, onSet }) {
           <span className="text-xs text-[#9b3b2e] font-medium">Motivo (obligatorio)</span>
           <div className="flex gap-1.5 flex-wrap">
             {MOT.map((m) => (
-              <button key={m} disabled={!editable} onClick={() => onSet({ motivo: m }, null)} className={"text-[13px] px-3 py-1.5 rounded-[14px] border transition-colors " + (e.motivo === m ? "bg-[#b9574a] border-[#b9574a] text-white" : "bg-white border-[#e3c9c3] text-[#1c2526] hover:border-[#b9574a]")}>{m}</button>
+              <button key={m} disabled={!editable} onClick={() => onSet({ motivo: m }, null)} className={"text-sm md:text-[13px] px-3 py-2.5 md:py-1.5 rounded-[14px] border transition-colors " + (e.motivo === m ? "bg-[#b9574a] border-[#b9574a] text-white" : "bg-white border-[#e3c9c3] text-[#1c2526] hover:border-[#b9574a]")}>{m}</button>
             ))}
           </div>
-          <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} onBlur={saveObs} disabled={!editable} placeholder="Detalle (opcional)" rows={2} className="w-full text-[13px] px-3 py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#b9574a]" />
+          <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} onBlur={saveObs} disabled={!editable} placeholder="Detalle (opcional)" rows={2} className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#b9574a]" />
         </div>
       )}
     </div>

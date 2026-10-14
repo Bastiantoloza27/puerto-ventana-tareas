@@ -10,7 +10,7 @@ export default function CierrePanel({ plan, k, nextAsesor, onEntrega, onClose, o
   const close = async () => { setBusy(true); await onClose(entrega); setBusy(false); };
 
   return (
-    <div className="flex-[0_1_380px] min-w-[280px] flex flex-col gap-4 lg:sticky lg:top-6">
+    <div className="w-full md:flex-[0_1_380px] md:min-w-[280px] flex flex-col gap-4 lg:sticky lg:top-6">
       <div className={card + " p-4 flex flex-col gap-3"}>
         <div className="font-heading text-xl">Resumen del turno</div>
         {[["Programadas", k.prog], ["Ejecutadas", k.ok], ["No ejecutadas", k.no], ["No ocurrió", k.na], ["Cumplimiento", k.pct + "%"]].map(([l, v]) => (
@@ -25,7 +25,7 @@ export default function CierrePanel({ plan, k, nextAsesor, onEntrega, onClose, o
       )}
       <div className={card + " p-4 flex flex-col gap-3"}>
         <div className="font-heading text-xl">Entrega al {SH[nextShift(plan.turno)].name}</div>
-        <textarea rows={4} value={entrega} disabled={closed} onChange={(e) => setEntrega(e.target.value)} onBlur={() => entrega !== (plan.entrega || "") && onEntrega(entrega)} placeholder="Pendientes y avisos para el asesor entrante…" className="w-full text-[13px] px-3 py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]" />
+        <textarea rows={4} value={entrega} disabled={closed} onChange={(e) => setEntrega(e.target.value)} onBlur={() => entrega !== (plan.entrega || "") && onEntrega(entrega)} placeholder="Pendientes y avisos para el asesor entrante…" className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]" />
         <div className="text-xs text-[#6b7778]">El reporte se envía a Jefatura de Prevención, Gerencia de Operaciones y {nextAsesor}.</div>
         {closed ? (
           <div className="text-sm text-[#005f60] bg-[#e2f4f4] rounded-md px-3 py-2">✓ Turno cerrado a las {plan.cerrada_hora} · reporte enviado</div>
@@ -35,8 +35,8 @@ export default function CierrePanel({ plan, k, nextAsesor, onEntrega, onClose, o
           </button>
         )}
         <div className="flex gap-2">
-          <button onClick={onCsv} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md border border-[#cdd4d4] text-[13px] hover:border-[#007f80]"><FileSpreadsheet className="w-4 h-4 text-[#007f80]" />Excel</button>
-          <button onClick={onPdf} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md border border-[#cdd4d4] text-[13px] hover:border-[#007f80]"><FileText className="w-4 h-4 text-[#007f80]" />PDF</button>
+          <button onClick={onCsv} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md border border-[#cdd4d4] text-sm md:text-[13px] hover:border-[#007f80]"><FileSpreadsheet className="w-4 h-4 text-[#007f80]" />Excel</button>
+          <button onClick={onPdf} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md border border-[#cdd4d4] text-sm md:text-[13px] hover:border-[#007f80]"><FileText className="w-4 h-4 text-[#007f80]" />PDF</button>
         </div>
       </div>
     </div>

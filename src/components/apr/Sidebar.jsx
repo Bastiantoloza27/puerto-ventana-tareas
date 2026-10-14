@@ -19,7 +19,7 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
   const { user } = useAuth();
   const ini = (user?.full_name || "Jefatura Prevención").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
   return (
-    <aside className="w-full md:w-[232px] md:flex-none bg-[#0e2a2b] text-[#e6efee] px-4 py-6 flex flex-col gap-1 md:sticky md:top-0 md:h-screen overflow-auto">
+    <aside className="hidden md:flex md:w-[232px] md:flex-none bg-[#0e2a2b] text-[#e6efee] px-4 py-6 flex-col gap-1 md:sticky md:top-0 md:h-screen overflow-auto">
       <div className="flex flex-col gap-3 px-2 pb-[22px] mb-2.5 border-b border-[#1f4344]">
         <img src={LOGO} alt="PVSA Puerto Ventanas S.A." className="h-[42px] w-auto self-start" />
         <div className="text-[13px] leading-tight"><div className="font-semibold text-white">Programa APR</div><div className="text-[#8fb0af] text-xs">Actividades prevencionistas por turno</div></div>

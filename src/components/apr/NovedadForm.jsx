@@ -4,7 +4,7 @@ import { card, chipCls, LUG, TIPOS, CRIT, NOMB } from "@/lib/apr";
 import EvidenceList from "@/components/apr/EvidenceList";
 
 const empty = { lugar: "Sitio 5", tipo: null, criticidad: "Media", descripcion: "", quien: [], otro: "", accion: "", evidencias: [] };
-const inputCls = "w-full text-[13px] px-3 py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]";
+const inputCls = "w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]";
 
 export default function NovedadForm({ shift, asesor, onSave }) {
   const [f, setF] = useState(empty);
@@ -39,7 +39,7 @@ export default function NovedadForm({ shift, asesor, onSave }) {
       <input value={f.accion} onChange={(e) => set({ accion: e.target.value })} placeholder="Acción inmediata" className={inputCls} />
       <EvidenceList items={f.evidencias} editable onAdd={(x) => set({ evidencias: [...f.evidencias, ...x] })} />
       {err && <div className="text-xs text-[#9b3b2e] bg-[#f6e4e0] rounded-md px-3 py-2">{err}</div>}
-      <button onClick={submit} disabled={busy} className="self-start px-[18px] py-2.5 rounded-md bg-[#007f80] hover:bg-[#005f60] text-white text-sm flex items-center gap-2">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Registrar novedad</button>
+      <button onClick={submit} disabled={busy} className="self-stretch md:self-start px-[18px] py-3 md:py-2.5 min-h-[44px] md:min-h-0 rounded-md bg-[#007f80] hover:bg-[#005f60] text-white text-sm flex items-center justify-center md:justify-start gap-2">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Registrar novedad</button>
     </div>
   );
 }

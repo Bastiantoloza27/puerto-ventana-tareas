@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Sidebar from "@/components/apr/Sidebar";
 import ShiftPills from "@/components/apr/ShiftPills";
+import MobileNav from "@/components/apr/MobileNav";
 import useDay from "@/hooks/useDay";
 import { kpi, ORDER } from "@/lib/apr";
 
@@ -22,14 +23,16 @@ export default function AppLayout() {
   const unpub = ORDER.filter((x) => !day.plans[x] || day.plans[x].estado === "borrador").length;
   const eyebrow = format(clock, "EEEE dd·MM·yyyy · HH:mm", { locale: es }).toUpperCase();
 
+  const turnoBadge = plan?.estado !== "borrador" && k.prog ? `${k.prog - k.pend}/${k.prog}` : "";
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#edf2f1] text-[#1c2526] font-body">
-      <Sidebar turnoBadge={plan?.estado !== "borrador" && k.prog ? `${k.prog - k.pend}/${k.prog}` : ""} novBadge={novCount || ""} progBadge={unpub} />
-      <main className="flex-1 min-w-0 px-5 md:px-8 pt-7 pb-10 flex flex-col gap-5 bg-[linear-gradient(180deg,#dcecea_0,#edf2f1_260px)]">
-        <div className="flex flex-wrap justify-between items-end gap-3.5">
+      <Sidebar turnoBadge={turnoBadge} novBadge={novCount || ""} progBadge={unpub} />
+      <main className="flex-1 min-w-0 px-4 md:px-8 pt-5 md:pt-7 pb-24 md:pb-10 flex flex-col gap-4 md:gap-5 bg-[linear-gradient(180deg,#dcecea_0,#edf2f1_260px)]">
+        <div className="flex flex-col md:flex-row md:flex-wrap justify-between md:items-end gap-3 md:gap-3.5">
           <div>
-            <div className="font-mono text-xs font-medium text-[#007f80] tracking-[.08em]">{eyebrow}</div>
-            <h1 className="font-heading text-[34px] leading-[1.1] mt-1.5">{TITLES[pathname] || "Programa APR"}</h1>
+            <div className="font-mono text-[11px] md:text-xs font-medium text-[#007f80] tracking-[.08em]">{eyebrow}</div>
+            <h1 className="font-heading text-[26px] md:text-[34px] leading-[1.1] mt-1 md:mt-1.5">{TITLES[pathname] || "Programa APR"}</h1>
           </div>
           {!["/reportes", "/catalogo"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
         </div>
@@ -39,6 +42,7 @@ export default function AppLayout() {
           <Outlet context={{ day, shift, plan, k }} />
         )}
       </main>
+      <MobileNav turnoBadge={turnoBadge} novBadge={novCount || ""} progBadge={unpub} />
     </div>
   );
 }

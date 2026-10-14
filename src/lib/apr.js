@@ -60,5 +60,5 @@ export function kpi(plan, execs, catalog) {
 
 export const card = "bg-white border border-[#dde5e4] rounded-[10px] shadow-[0_1px_2px_rgba(14,42,43,.05),0_6px_18px_rgba(14,42,43,.04)]";
 export const chipCls = (on) =>
-  "text-[13px] px-3 py-1.5 rounded-[14px] border transition-colors " +
+  "text-sm md:text-[13px] px-3 py-2.5 md:py-1.5 rounded-[14px] border transition-colors " +
   (on ? "bg-[#007f80] border-[#007f80] text-white" : "bg-white border-[#cdd4d4] text-[#1c2526] hover:border-[#007f80]");

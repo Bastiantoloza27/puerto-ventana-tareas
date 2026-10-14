@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { card, chipCls, TIPO_LABEL } from "@/lib/apr";
 
-const inputCls = "w-full text-[13px] px-3 py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]";
+const inputCls = "w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]";
 
 export default function ActividadForm({ initial, areas, onSave, onCancel }) {
   const [f, setF] = useState(initial || { area: areas[0] || "", sitio: "", proceso: "", tipo: "t", descripcion: "", base: true });
@@ -22,10 +22,10 @@ export default function ActividadForm({ initial, areas, onSave, onCancel }) {
       </div>
       <input value={f.descripcion || ""} onChange={(e) => set({ descripcion: e.target.value })} placeholder="Descripción (opcional)" className={inputCls} />
       <div className="flex gap-1.5 flex-wrap">{Object.entries(TIPO_LABEL).map(([k, l]) => <button key={k} onClick={() => set({ tipo: k })} className={chipCls(f.tipo === k)}>{l}</button>)}</div>
-      <label className="flex items-center gap-2 text-[13px] cursor-pointer"><input type="checkbox" checked={!!f.base} onChange={(e) => set({ base: e.target.checked })} className="accent-[#007f80]" />Se programa todos los días (sugerida en todos los turnos)</label>
+      <label className="flex items-center gap-2 py-1 text-sm md:text-[13px] cursor-pointer"><input type="checkbox" checked={!!f.base} onChange={(e) => set({ base: e.target.checked })} className="accent-[#007f80]" />Se programa todos los días (sugerida en todos los turnos)</label>
       <div className="flex gap-2">
-        <button disabled={!ok || busy} onClick={submit} className="px-4 py-2 rounded-md bg-[#007f80] hover:bg-[#005f60] text-white text-sm flex items-center gap-2 disabled:opacity-50">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Guardar</button>
-        <button onClick={onCancel} className="px-4 py-2 rounded-md text-sm text-[#3c4849] hover:bg-[#eef1f1]">Cancelar</button>
+        <button disabled={!ok || busy} onClick={submit} className="flex-1 md:flex-none min-h-[44px] md:min-h-0 px-4 py-2.5 md:py-2 rounded-md bg-[#007f80] hover:bg-[#005f60] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-50">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Guardar</button>
+        <button onClick={onCancel} className="flex-1 md:flex-none min-h-[44px] md:min-h-0 px-4 py-2.5 md:py-2 rounded-md text-sm text-[#3c4849] hover:bg-[#eef1f1]">Cancelar</button>
       </div>
     </div>
   );

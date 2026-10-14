@@ -15,7 +15,7 @@ export default function EvidenceList({ items = [], editable, onAdd }) {
   return (
     <div className="flex gap-2 items-center flex-wrap">
       {editable && (
-        <label className="px-3 py-[7px] rounded-md border border-dashed border-[#7fb8b8] bg-white text-[13px] text-[#005f60] cursor-pointer flex items-center gap-1.5 hover:bg-[#e8f5f5] transition-colors">
+        <label className="px-3 py-2.5 md:py-[7px] min-h-[44px] md:min-h-0 rounded-md border border-dashed border-[#7fb8b8] bg-white text-sm md:text-[13px] text-[#005f60] cursor-pointer flex items-center gap-1.5 hover:bg-[#e8f5f5] transition-colors">
           {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Paperclip className="w-3.5 h-3.5" />} Adjuntar evidencia
           <input type="file" multiple accept="image/*,application/pdf" className="hidden" onChange={pick} disabled={busy} />
         </label>
