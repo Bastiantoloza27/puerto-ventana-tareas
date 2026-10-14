@@ -12,6 +12,7 @@ import MiTurno from '@/pages/MiTurno';
 import Programacion from '@/pages/Programacion';
 import Cierre from '@/pages/Cierre';
 import Reportes from '@/pages/Reportes';
+import Catalogo from '@/pages/Catalogo';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -54,6 +55,7 @@ const AuthenticatedApp = () => {
           <Route path="/programacion" element={<Programacion />} />
           <Route path="/cierre" element={<Cierre />} />
           <Route path="/reportes" element={<Reportes />} />
+          <Route path="/catalogo" element={<Catalogo />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

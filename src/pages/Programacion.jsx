@@ -19,6 +19,14 @@ export default function Programacion() {
   const pub = plan?.estado === "publicada";
   const toggle = (id) => setIds((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
 
+  const copyPrev = async () => {
+    setBusy(true); setErr("");
+    const prev = (await base44.entities.Programacion.filter({ turno: shift, fecha: { $lt: day.fecha }, estado: { $ne: "borrador" } }, { sort: "-fecha", limit: 1 })).items[0];
+    if (prev) { setIds((s) => [...new Set([...s, ...(prev.actividad_ids || []).filter((id) => day.catalog.some((c) => c.id === id))])]); if (!asesor) setAsesor(prev.asesor); }
+    else setErr("No hay una programación anterior de este turno.");
+    setBusy(false);
+  };
+
   const save = async (publish) => {
     if (publish && (!asesor || !ids.length)) return setErr(!asesor ? "Asigna un asesor de turno antes de publicar." : "Selecciona al menos una actividad.");
     setBusy(true); setErr("");
@@ -48,6 +56,7 @@ export default function Programacion() {
         <OpsMailPanel plan={plan} catalog={day.catalog} ids={ids} locked={locked} onApply={(m) => setIds((s) => [...s, ...m])} />
         {!locked && (
           <div className={card + " p-4 flex flex-col gap-3"}>
+            <button onClick={copyPrev} disabled={busy} className="px-4 py-2.5 rounded-md text-sm border border-[#cdd4d4] hover:border-[#007f80] text-[#1c2526]">Copiar programación anterior del {SH[shift].name}</button>
             <div className="flex justify-between text-[13px]"><span className="text-[#6b7778]">Actividades seleccionadas</span><span className="font-mono">{ids.length}</span></div>
             {err && <div className="text-xs text-[#9b3b2e] bg-[#f6e4e0] rounded-md px-3 py-2">{err}</div>}
             <button onClick={() => save(true)} disabled={busy} className="px-4 py-2.5 rounded-md bg-[#007f80] hover:bg-[#005f60] text-white text-sm flex items-center justify-center gap-2 transition-colors">

@@ -29,6 +29,7 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
       <Item to="/cierre" label="Novedades y cierre" badge={novBadge} />
       <Label>PLANIFICACIÓN</Label>
       <Item to="/programacion" label="Programación" badge={progBadge || null} amber />
+      <Item to="/catalogo" label="Catálogo de actividades" />
       <Label>TRAZABILIDAD</Label>
       <Item to="/reportes" label="Reportes" />
       <div className="mt-auto pt-3.5 px-2.5 border-t border-[#1f4344] text-xs text-[#8fb0af] leading-snug flex gap-2.5 items-center">

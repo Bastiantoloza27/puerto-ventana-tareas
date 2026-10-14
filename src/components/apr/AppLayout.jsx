@@ -7,7 +7,7 @@ import ShiftPills from "@/components/apr/ShiftPills";
 import useDay from "@/hooks/useDay";
 import { kpi, ORDER } from "@/lib/apr";
 
-const TITLES = { "/": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes" };
+const TITLES = { "/": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades" };
 
 export default function AppLayout() {
   const day = useDay();
@@ -31,7 +31,7 @@ export default function AppLayout() {
             <div className="font-mono text-xs font-medium text-[#007f80] tracking-[.08em]">{eyebrow}</div>
             <h1 className="font-heading text-[34px] leading-[1.1] mt-1.5">{TITLES[pathname] || "Programa APR"}</h1>
           </div>
-          {pathname !== "/reportes" && <ShiftPills day={day} shift={shift} setShift={setShift} />}
+          {!["/reportes", "/catalogo"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
         </div>
         {day.loading ? (
           <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#007f80] rounded-full animate-spin" /></div>
