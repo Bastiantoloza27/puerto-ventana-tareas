@@ -14,6 +14,8 @@ export default async function (req) {
 
     const plan = await base44.entities.Programacion.get(programacion_id);
     if (!plan || plan.estado !== 'cerrada') return Response.json({ error: 'Turno no cerrado' }, { status: 400 });
+    if (!SH[plan.turno]) return Response.json({ error: 'Turno inválido' }, { status: 400 });
+    const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
     const ids = plan.actividad_ids || [];
     const [cat, ex, nv] = await Promise.all([
       base44.entities.Actividad.filter({ id: { $in: ids } }, { limit: 100 }),
@@ -30,7 +32,7 @@ export default async function (req) {
 <div style="background:#fff;border:1px solid #dde5e4;padding:22px">
 <h2 style="font-family:Georgia,serif;font-weight:400;margin:0 0 4px">Reporte de cierre · ${SH[plan.turno]}</h2>
 <p style="color:#6b7778;margin:0 0 16px">${esc(plan.fecha)} · Asesor ${esc(plan.asesor)} · cerrado ${esc(plan.cerrada_hora)}</p>
-<p><b>${plan.r_prog}</b> programadas · <b>${plan.r_ok}</b> ejecutadas · <b>${plan.r_no}</b> no ejecutadas · <b>${plan.r_na}</b> no ocurrió · Cumplimiento <b>${plan.r_pct}%</b></p>
+<p><b>${num(plan.r_prog)}</b> programadas · <b>${num(plan.r_ok)}</b> ejecutadas · <b>${num(plan.r_no)}</b> no ejecutadas · <b>${num(plan.r_na)}</b> no ocurrió · Cumplimiento <b>${num(plan.r_pct)}%</b></p>
 <h3 style="font-size:14px;margin:18px 0 6px">Control de cumplimiento</h3><table style="width:100%;border-collapse:collapse">${rows}</table>
 <h3 style="font-size:14px;margin:18px 0 6px">Novedades</h3><table style="width:100%;border-collapse:collapse">${novs}</table>
 <h3 style="font-size:14px;margin:18px 0 6px">Entrega al siguiente turno</h3><p style="font-size:13px">${esc(plan.entrega || '—')}</p>
@@ -39,7 +41,7 @@ export default async function (req) {
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: user.email,
       from_name: 'Programa APR',
-      subject: `Reporte ${SH[plan.turno]} · ${plan.fecha} · ${plan.r_pct}% cumplimiento`,
+      subject: `Reporte ${SH[plan.turno]} · ${String(plan.fecha ?? '').slice(0, 10)} · ${num(plan.r_pct)}% cumplimiento`,
       body: html,
     });
     return Response.json({ ok: true });

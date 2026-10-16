@@ -14,6 +14,7 @@ export default async function (req) {
 
     const plan = await base44.entities.Programacion.get(programacion_id);
     if (!plan) return Response.json({ error: 'Programación no encontrada' }, { status: 404 });
+    if (!SH[plan.turno]) return Response.json({ error: 'Turno inválido' }, { status: 400 });
     const ids = plan.actividad_ids || [];
     if (!ids.length) return Response.json({ error: 'La programación no tiene actividades asignadas' }, { status: 400 });
 
@@ -27,7 +28,7 @@ export default async function (req) {
     const html = `<div style="font-family:Arial,sans-serif;color:#1c2526;max-width:680px;margin:auto">
 <div style="background:#0e2a2b;color:#fff;padding:18px 22px;border-radius:4px 4px 0 0"><b>Programa APR · Puerto Ventanas S.A.</b></div>
 <div style="background:#fff;border:1px solid #dde5e4;padding:22px">
-<h2 style="font-family:Georgia,serif;font-weight:400;margin:0 0 4px">Tareas asignadas · ${SH[plan.turno] || plan.turno}</h2>
+<h2 style="font-family:Georgia,serif;font-weight:400;margin:0 0 4px">Tareas asignadas · ${esc(SH[plan.turno])}</h2>
 <p style="color:#6b7778;margin:0 0 16px">${esc(plan.fecha)} · Asesor de turno: <b>${esc(plan.asesor || '—')}</b> · ${ids.length} actividades</p>
 <table style="width:100%;border-collapse:collapse"><tr><th style="text-align:left;color:#555;font-size:11px">N°</th><th style="text-align:left;color:#555;font-size:11px">Área / sitio</th><th style="text-align:left;color:#555;font-size:11px">Actividad</th><th style="text-align:left;color:#555;font-size:11px">Tipo</th></tr>${rows}</table>
 </div></div>`;
@@ -35,7 +36,7 @@ export default async function (req) {
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: user.email,
       from_name: 'Programa APR',
-      subject: `Tareas asignadas · ${SH[plan.turno] || plan.turno} · ${plan.fecha}`,
+      subject: `Tareas asignadas · ${SH[plan.turno]} · ${String(plan.fecha ?? '').slice(0, 10)}`,
       body: html,
     });
     return Response.json({ ok: true, to: user.email });
