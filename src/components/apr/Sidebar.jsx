@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { LOGO } from "@/lib/apr";
+import SecurityBadges from "@/components/apr/SecurityBadges";
 
 const Label = ({ children }) => <div className="font-mono text-[10px] font-medium tracking-[.14em] text-[#6f9493] px-2.5 pt-3.5 pb-1">{children}</div>;
 
@@ -32,7 +33,8 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
       <Item to="/catalogo" label="Catálogo de actividades" />
       <Label>TRAZABILIDAD</Label>
       <Item to="/reportes" label="Reportes" />
-      <div className="mt-auto pt-3.5 px-2.5 border-t border-[#1f4344] text-xs text-[#8fb0af] leading-snug flex gap-2.5 items-center">
+      <div className="mt-auto px-2.5 pb-3"><SecurityBadges compact /></div>
+      <div className="pt-3.5 px-2.5 border-t border-[#1f4344] text-xs text-[#8fb0af] leading-snug flex gap-2.5 items-center">
         <span className="w-8 h-8 rounded-full bg-[#1b4a4a] text-[#7fd6d6] grid place-items-center font-mono text-xs font-medium flex-none">{ini}</span>
         <span><span className="text-[#e6efee] block">{user?.full_name || "Jefatura de Prevención"}</span>Ve todos los turnos</span>
       </div>

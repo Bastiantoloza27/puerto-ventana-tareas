@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { LOGO } from "@/lib/apr";
+import SecurityBadges from "@/components/apr/SecurityBadges";
 
 const FULL = 1400;
 
@@ -29,6 +30,7 @@ export default function Splash() {
         <div className="w-[132px] h-[3px] rounded-full bg-[#1f4344] overflow-hidden">
           <div className="h-full bg-[#7fd6d6] rounded-full" style={{ width: step >= 1 ? "100%" : "0%", transition: "width 1300ms cubic-bezier(.2,.7,.3,1)" }} />
         </div>
+        <SecurityBadges />
       </div>
     </div>
   );
