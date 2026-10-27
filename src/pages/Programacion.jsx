@@ -42,6 +42,24 @@ export default function Programacion() {
     day.refresh(); setBusy(false);
   };
 
+  const onParsed = async (r) => {
+    const hora = now();
+    const prev = plan?.correo;
+    const correo = prev
+      ? { ...prev, lineas: [...(prev.lineas || []), ...r.lineas], actualizacion: { hora, texto: r.raw.slice(0, 1000), actividad_id: r.lineas.find((l) => l.actividad_id)?.actividad_id || "" } }
+      : { asunto: r.asunto, hora, lineas: r.lineas };
+    const nuevas = r.lineas.map((l) => l.actividad_id).filter(Boolean);
+    const nextIds = [...new Set([...ids, ...nuevas])];
+    const nextAsesor = asesor || r.asesor || null;
+    let p = plan;
+    if (p) await base44.entities.Programacion.update(p.id, { correo, actividad_ids: nextIds, asesor: nextAsesor });
+    else p = await base44.entities.Programacion.create({ fecha: day.fecha, turno: shift, estado: "borrador", bitacora: [], correo, actividad_ids: nextIds, asesor: nextAsesor });
+    const sinMatch = r.lineas.filter((l) => !l.actividad_id).length;
+    await addLog(p, `${prev ? "Actualización" : "Correo"} de Operaciones cargado · ${nuevas.length} sugeridas${sinMatch ? ` · ${sinMatch} sin asociar` : ""}`);
+    setIds(nextIds); setAsesor(nextAsesor);
+    day.refresh();
+  };
+
   const save = async (publish) => {
     if (publish && (!asesor || !ids.length)) return setErr(!asesor ? "Asigna un asesor de turno antes de publicar." : "Selecciona al menos una actividad.");
     setBusy(true); setErr("");
@@ -80,7 +98,7 @@ export default function Programacion() {
             {sent && <span className="text-xs text-[#005f60] bg-[#e2f4f4] rounded-md px-3 py-2">{sent}</span>}
           </div>
         )}
-        <OpsMailPanel plan={plan} catalog={day.catalog} ids={ids} locked={locked} onApply={(m) => setIds((s) => [...s, ...m])} />
+        <OpsMailPanel plan={plan} catalog={day.catalog} ids={ids} locked={locked} onApply={(m) => setIds((s) => [...s, ...m])} onParsed={onParsed} />
         {!locked && (
           <div className={card + " p-4 flex flex-col gap-3"}>
             <button onClick={copyPrev} disabled={busy} className="px-4 py-2.5 rounded-md text-sm border border-[#cdd4d4] hover:border-[#007f80] text-[#1c2526]">Copiar programación anterior del {SH[shift].name}</button>

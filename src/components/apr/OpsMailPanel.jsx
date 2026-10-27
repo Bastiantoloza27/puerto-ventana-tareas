@@ -1,7 +1,8 @@
 import { Mail } from "lucide-react";
 import { card } from "@/lib/apr";
+import PasteMailBox from "@/components/apr/PasteMailBox";
 
-export default function OpsMailPanel({ plan, catalog, ids, onApply, locked }) {
+export default function OpsMailPanel({ plan, catalog, ids, onApply, locked, onParsed }) {
   const m = plan?.correo;
   const name = (id) => { const a = catalog.find((c) => c.id === id); return a ? `${a.proceso} · ${a.sitio}` : ""; };
   const sug = new Set(catalog.filter((c) => c.base).map((c) => c.id));
@@ -19,7 +20,7 @@ export default function OpsMailPanel({ plan, catalog, ids, onApply, locked }) {
       {(m?.lineas || []).map((l, i) => (
         <div key={i} className="text-[13px] border-b border-[#eef1f1] pb-2 last:border-0">
           <div className="text-[#1c2526]">{l.texto}</div>
-          <div className={"text-xs mt-0.5 " + (l.actividad_id ? "text-[#005f60]" : "text-[#9aa5a6]")}>{l.actividad_id ? "→ " + name(l.actividad_id) + (ids.includes(l.actividad_id) ? " ✓" : "") : "Sin actividad asociada"}</div>
+          <div className={"text-xs mt-0.5 " + (l.actividad_id ? "text-[#005f60]" : "text-[#7a5d0e] bg-[#fbf3dc] rounded px-1.5 py-0.5 inline-block")}>{l.actividad_id ? "→ " + name(l.actividad_id) + (ids.includes(l.actividad_id) ? " ✓" : "") : "⚠ Sin actividad del catálogo · agrégala a mano si corresponde"}</div>
         </div>
       ))}
       {m?.actualizacion && (
@@ -28,6 +29,7 @@ export default function OpsMailPanel({ plan, catalog, ids, onApply, locked }) {
           {m.actualizacion.texto}
         </div>
       )}
+      {!locked && onParsed && <PasteMailBox isUpdate={!!m} onParsed={onParsed} />}
       {!locked && (
         <button disabled={!missing.length} onClick={() => onApply(missing)} className="px-4 py-2.5 rounded-md text-sm border border-[#007f80] text-[#005f60] bg-white hover:bg-[#e8f5f5] disabled:opacity-50 disabled:hover:bg-white transition-colors">
           {missing.length ? `Aplicar sugerencias (+${missing.length})` : "Sugerencias aplicadas"}
