@@ -37,7 +37,7 @@ export default function NovedadForm({ shift, asesor, onSave }) {
         <input value={f.otro} onChange={(e) => set({ otro: e.target.value })} placeholder="Otros (texto libre)" className={inputCls} />
       </div>
       <input value={f.accion} onChange={(e) => set({ accion: e.target.value })} placeholder="Acción inmediata" className={inputCls} />
-      <EvidenceList items={f.evidencias} editable onAdd={(x) => set({ evidencias: [...f.evidencias, ...x] })} />
+      <EvidenceList items={f.evidencias} editable onAdd={(x) => set({ evidencias: [...f.evidencias, ...x] })} onRemove={(i) => set({ evidencias: f.evidencias.filter((_, j) => j !== i) })} />
       {err && <div className="text-xs text-[#9b3b2e] bg-[#f6e4e0] rounded-md px-3 py-2">{err}</div>}
       <button onClick={submit} disabled={busy} className="self-stretch md:self-start px-[18px] py-3 md:py-2.5 min-h-[44px] md:min-h-0 rounded-md bg-[#007f80] hover:bg-[#005f60] text-white text-sm flex items-center justify-center md:justify-start gap-2">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Registrar novedad</button>
     </div>

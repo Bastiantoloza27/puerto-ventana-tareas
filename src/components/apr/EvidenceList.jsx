@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Loader2, Camera, Paperclip, FileText, Image as ImageIcon } from "lucide-react";
+import { Loader2, Camera, Paperclip, FileText, Image as ImageIcon, X } from "lucide-react";
 import { uploadFiles, openFile } from "@/lib/aprActions";
 
-export default function EvidenceList({ items = [], editable, onAdd }) {
+export default function EvidenceList({ items = [], editable, onAdd, onRemove }) {
   const [busy, setBusy] = useState(false);
   const pick = async (e) => {
     if (!e.target.files?.length) return;
@@ -27,10 +27,15 @@ export default function EvidenceList({ items = [], editable, onAdd }) {
         </label>
       )}
       {items.map((f, i) => (
-        <button key={i} onClick={() => openFile(f.uri)} className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md bg-white border border-[#dde5e4] text-[#3c4849] hover:border-[#007f80] max-w-[200px]">
-          {f.is_img ? <ImageIcon className="w-3.5 h-3.5 flex-none text-[#007f80]" /> : <FileText className="w-3.5 h-3.5 flex-none text-[#007f80]" />}
-          <span className="truncate">{f.name}</span>
-        </button>
+        <span key={i} className="flex items-center rounded-md bg-white border border-[#dde5e4] hover:border-[#007f80] max-w-[230px]">
+          <button onClick={() => openFile(f.uri)} className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 text-[#3c4849] min-w-0">
+            {f.is_img ? <ImageIcon className="w-3.5 h-3.5 flex-none text-[#007f80]" /> : <FileText className="w-3.5 h-3.5 flex-none text-[#007f80]" />}
+            <span className="truncate">{f.name}</span>
+          </button>
+          {editable && onRemove && (
+            <button onClick={() => confirm(`¿Quitar "${f.name}"?`) && onRemove(i)} aria-label={"Quitar " + f.name} className="p-2 md:p-1.5 border-l border-[#dde5e4] hover:bg-[#f6e4e0]"><X className="w-3.5 h-3.5 text-[#9b3b2e]" /></button>
+          )}
+        </span>
       ))}
     </div>
   );

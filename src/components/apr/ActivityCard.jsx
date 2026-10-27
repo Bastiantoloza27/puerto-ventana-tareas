@@ -38,7 +38,8 @@ export default function ActivityCard({ a, e, editable, onSet }) {
       )}
       {st === "ok" && (
         <div className="flex flex-col gap-2 p-3 rounded-lg bg-[#f4faf9]">
-          <EvidenceList items={e.evidencias} editable={editable} onAdd={(f) => onSet({ evidencias: [...(e.evidencias || []), ...f] }, `Evidencia adjunta (${f.length}) · ${a.proceso}`)} />
+          <EvidenceList items={e.evidencias} editable={editable} onAdd={(f) => onSet({ evidencias: [...(e.evidencias || []), ...f] }, `Evidencia adjunta (${f.length}) · ${a.proceso}`)}
+            onRemove={(i) => onSet({ evidencias: e.evidencias.filter((_, j) => j !== i) }, `Evidencia eliminada · ${a.proceso}`)} />
           <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} onBlur={saveObs} disabled={!editable} placeholder="Observaciones (opcional)" rows={2} className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#007f80]" />
         </div>
       )}

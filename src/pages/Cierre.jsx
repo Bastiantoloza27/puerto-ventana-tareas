@@ -36,7 +36,9 @@ export default function Cierre() {
     <div className="flex flex-wrap gap-5 items-start">
       <div className="flex-[1_1_560px] min-w-0 flex flex-col gap-5">
         {!closed && !readOnly && <NovedadForm shift={shift} asesor={plan.asesor} onSave={saveNov} />}
-        <NovedadList novs={novs} />
+        <NovedadList novs={novs} editable={!closed && !readOnly}
+          onUpdate={async (n, d) => { await base44.entities.Novedad.update(n.id, d); await addLog(plan, `Novedad editada en ${d.lugar}`); day.refresh(); }}
+          onDelete={async (n) => { await base44.entities.Novedad.delete(n.id); await addLog(plan, `Novedad eliminada en ${n.lugar}`); day.refresh(); }} />
       </div>
       <CierrePanel plan={plan} k={k} readOnly={readOnly} nextAsesor={nextAsesor} onEntrega={saveEntrega} onClose={close}
         onCsv={() => downloadCsv(plan, day.catalog, execs, novs, k)} onPdf={() => printPdf(plan, day.catalog, execs, novs, k)} />
