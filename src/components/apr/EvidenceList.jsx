@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, Paperclip, FileText, Image as ImageIcon } from "lucide-react";
+import { Loader2, Camera, Paperclip, FileText, Image as ImageIcon } from "lucide-react";
 import { uploadFiles, openFile } from "@/lib/aprActions";
 
 export default function EvidenceList({ items = [], editable, onAdd }) {
@@ -14,6 +14,12 @@ export default function EvidenceList({ items = [], editable, onAdd }) {
   };
   return (
     <div className="flex gap-2 items-center flex-wrap">
+      {editable && (
+        <label className="px-3 py-2.5 md:py-[7px] min-h-[44px] md:min-h-0 rounded-md bg-[#007f80] text-white text-sm md:text-[13px] cursor-pointer flex items-center gap-1.5 hover:bg-[#005f60] transition-colors">
+          {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Camera className="w-3.5 h-3.5" />} Sacar foto
+          <input type="file" accept="image/*" capture="environment" className="hidden" onChange={pick} disabled={busy} />
+        </label>
+      )}
       {editable && (
         <label className="px-3 py-2.5 md:py-[7px] min-h-[44px] md:min-h-0 rounded-md border border-dashed border-[#7fb8b8] bg-white text-sm md:text-[13px] text-[#005f60] cursor-pointer flex items-center gap-1.5 hover:bg-[#e8f5f5] transition-colors">
           {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Paperclip className="w-3.5 h-3.5" />} Adjuntar evidencia
