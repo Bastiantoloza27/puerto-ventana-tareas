@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, Navigate } from "react-router-dom";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Sidebar from "@/components/apr/Sidebar";
@@ -14,7 +14,7 @@ const TITLES = { "/": "Mi turno", "/cierre": "Novedades y cierre", "/programacio
 
 export default function AppLayout() {
   const day = useDay();
-  const { readOnly, canPlan } = usePerfil();
+  const { readOnly, canPlan, perfil } = usePerfil();
   const [shift, setShift] = useState("T1");
   const [clock, setClock] = useState(new Date());
   const { pathname } = useLocation();
@@ -41,7 +41,9 @@ export default function AppLayout() {
         </div>
         <ViewAsSwitch />
         {readOnly && <div className="rounded-md bg-[#fbf3dc] text-[#7a5d0e] text-sm px-4 py-2.5">Modo solo lectura · Gerencia puede consultar todo, pero no modificar.</div>}
-        {day.loading ? (
+        {perfil === "asesor" && ["/programacion", "/catalogo"].includes(pathname) ? (
+          <Navigate to="/" replace />
+        ) : day.loading ? (
           <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#007f80] rounded-full animate-spin" /></div>
         ) : (
           <Outlet context={{ day, shift, plan, k, readOnly, canPlan }} />

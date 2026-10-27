@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import usePerfil from "@/hooks/usePerfil";
 import { ClipboardCheck, AlertTriangle, CalendarDays, ListChecks, BarChart3 } from "lucide-react";
 
 const ITEMS = [
@@ -11,10 +12,12 @@ const ITEMS = [
 
 export default function MobileNav({ turnoBadge, novBadge, progBadge }) {
   const badges = { turno: turnoBadge, nov: novBadge, prog: progBadge };
+  const { perfil } = usePerfil();
+  const items = perfil === "asesor" ? ITEMS.filter((i) => !["/programacion", "/catalogo"].includes(i.to)) : ITEMS;
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-[#0e2a2b] border-t border-[#1f4344] pb-[env(safe-area-inset-bottom)]">
-      <div className="grid grid-cols-5">
-        {ITEMS.map(({ to, label, Icon, badge }) => (
+      <div className={"grid " + (items.length === 3 ? "grid-cols-3" : "grid-cols-5")}>
+        {items.map(({ to, label, Icon, badge }) => (
           <NavLink key={to} to={to} end className="relative">
             {({ isActive }) => (
               <span className={"flex flex-col items-center justify-center gap-1 min-h-[58px] pt-2 pb-1.5 text-[10px] font-medium transition-colors " + (isActive ? "text-white" : "text-[#8fb0af]")}>

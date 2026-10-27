@@ -30,9 +30,11 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
       <Label>TURNO</Label>
       <Item to="/" label="Mi turno" badge={turnoBadge} />
       <Item to="/cierre" label="Novedades y cierre" badge={novBadge} />
-      <Label>PLANIFICACIÓN</Label>
-      <Item to="/programacion" label="Programación" badge={progBadge || null} amber />
-      <Item to="/catalogo" label="Catálogo de actividades" />
+      {perfil !== "asesor" && <>
+        <Label>PLANIFICACIÓN</Label>
+        <Item to="/programacion" label="Programación" badge={progBadge || null} amber />
+        <Item to="/catalogo" label="Catálogo de actividades" />
+      </>}
       <Label>TRAZABILIDAD</Label>
       <Item to="/reportes" label="Reportes" />
       {isAdmin && <><Label>ADMINISTRACIÓN</Label><Item to="/usuarios" label="Usuarios y perfiles" /></>}
