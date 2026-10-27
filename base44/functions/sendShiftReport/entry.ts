@@ -38,13 +38,12 @@ export default async function (req) {
 <h3 style="font-size:14px;margin:18px 0 6px">Entrega al siguiente turno</h3><p style="font-size:13px">${esc(plan.entrega || '—')}</p>
 </div></div>`;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: user.email,
-      from_name: 'Programa APR',
-      subject: `Reporte ${SH[plan.turno]} · ${String(plan.fecha ?? '').slice(0, 10)} · ${num(plan.r_pct)}% cumplimiento`,
-      body: html,
-    });
-    return Response.json({ ok: true });
+    const all = await base44.asServiceRole.entities.User.list();
+    const to = [...new Set([user.email, ...all.filter((u) => u.role === 'admin' || u.perfil === 'jefatura' || u.perfil === 'gerencia').map((u) => u.email)].filter(Boolean))];
+    const subject = `Reporte ${SH[plan.turno]} · ${String(plan.fecha ?? '').slice(0, 10)} · ${num(plan.r_pct)}% cumplimiento`;
+    const results = await Promise.allSettled(to.map((email) => base44.asServiceRole.integrations.Core.SendEmail({ to: email, from_name: 'Programa APR', subject, body: html, category: 'transactional' })));
+    const sent = to.filter((_, i) => results[i].status === 'fulfilled' && results[i].value?.success !== false);
+    return Response.json({ ok: true, sent: sent.length });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

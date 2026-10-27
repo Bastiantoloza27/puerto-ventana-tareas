@@ -27,8 +27,8 @@ export default function Cierre() {
     const hora = now();
     await base44.entities.Programacion.update(plan.id, { entrega, estado: "cerrada", cerrada_hora: hora, r_prog: k.prog, r_ok: k.ok, r_no: k.no, r_na: k.na, r_pct: k.pct, r_novs: novs.length, r_motivos: k.motivos });
     await addLog(plan, "Turno cerrado · reporte enviado");
-    await base44.functions.invoke("sendShiftReport", { programacion_id: plan.id });
-    toast({ title: `${SH[shift].name} cerrado`, description: "Reporte enviado a tu correo" });
+    const res = await base44.functions.invoke("sendShiftReport", { programacion_id: plan.id });
+    toast({ title: `${SH[shift].name} cerrado`, description: `Reporte enviado a ${res.data?.sent || 0} destinatario(s): Jefatura, Gerencia y asesor` });
     day.refresh();
   };
 

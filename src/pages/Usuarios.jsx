@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { card } from "@/lib/apr";
 import usePerfil from "@/hooks/usePerfil";
+import { useAuth } from "@/lib/AuthContext";
 
 const PERFILES = [["jefatura", "Jefatura"], ["asesor", "Asesor"], ["gerencia", "Gerencia (solo lectura)"]];
 
@@ -9,7 +10,12 @@ export default function Usuarios() {
   const { isAdmin } = usePerfil();
   const qc = useQueryClient();
   const { data: users = [], isLoading } = useQuery({ queryKey: ["users"], enabled: isAdmin, queryFn: () => base44.entities.User.list() });
-  const setPerfil = async (u, perfil) => { await base44.entities.User.update(u.id, { perfil }); qc.invalidateQueries({ queryKey: ["users"] }); };
+  const { user: me } = useAuth();
+  const setPerfil = async (u, perfil) => {
+    const role = perfil === "jefatura" ? "admin" : u.id === me?.id ? u.role : "user";
+    await base44.entities.User.update(u.id, { perfil, role });
+    qc.invalidateQueries({ queryKey: ["users"] });
+  };
 
   if (!isAdmin) return <div className={card + " p-6 text-sm text-[#6b7778]"}>Solo Jefatura puede administrar usuarios.</div>;
   return (
