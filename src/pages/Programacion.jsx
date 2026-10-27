@@ -9,7 +9,8 @@ import CatalogPicker from "@/components/apr/CatalogPicker";
 import OpsMailPanel from "@/components/apr/OpsMailPanel";
 
 export default function Programacion() {
-  const { day, shift, plan, readOnly } = useOutletContext();
+  const { day, shift, plan, canPlan } = useOutletContext();
+  const readOnly = !canPlan;
   const [ids, setIds] = useState([]);
   const [asesor, setAsesor] = useState(null);
   const [err, setErr] = useState("");

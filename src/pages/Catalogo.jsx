@@ -7,7 +7,8 @@ import { card, TIPO_LABEL } from "@/lib/apr";
 import ActividadForm from "@/components/apr/ActividadForm";
 
 export default function Catalogo() {
-  const { day, readOnly } = useOutletContext();
+  const { day, canPlan } = useOutletContext();
+  const readOnly = !canPlan;
   const qc = useQueryClient();
   const [edit, setEdit] = useState(null); // null | "new" | actividad
   const areas = [...new Set(day.catalog.map((c) => c.area))];

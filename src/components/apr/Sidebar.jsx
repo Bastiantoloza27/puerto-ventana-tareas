@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { LOGO } from "@/lib/apr";
 import SecurityBadges from "@/components/apr/SecurityBadges";
+import usePerfil from "@/hooks/usePerfil";
 
 const Label = ({ children }) => <div className="font-mono text-[10px] font-medium tracking-[.14em] text-[#6f9493] px-2.5 pt-3.5 pb-1">{children}</div>;
 
@@ -18,6 +19,7 @@ function Item({ to, label, badge, amber }) {
 
 export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
   const { user } = useAuth();
+  const { isAdmin, perfil } = usePerfil();
   const ini = (user?.full_name || "Jefatura Prevención").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
   return (
     <aside className="hidden md:flex md:w-[232px] md:flex-none bg-[#0e2a2b] text-[#e6efee] px-4 py-6 flex-col gap-1 md:sticky md:top-0 md:h-screen overflow-auto">
@@ -33,11 +35,11 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
       <Item to="/catalogo" label="Catálogo de actividades" />
       <Label>TRAZABILIDAD</Label>
       <Item to="/reportes" label="Reportes" />
-      {user?.role === "admin" && <><Label>ADMINISTRACIÓN</Label><Item to="/usuarios" label="Usuarios y perfiles" /></>}
+      {isAdmin && <><Label>ADMINISTRACIÓN</Label><Item to="/usuarios" label="Usuarios y perfiles" /></>}
       <div className="mt-auto px-2.5 pb-3"><SecurityBadges compact /></div>
       <div className="pt-3.5 px-2.5 border-t border-[#1f4344] text-xs text-[#8fb0af] leading-snug flex gap-2.5 items-center">
         <span className="w-8 h-8 rounded-full bg-[#1b4a4a] text-[#7fd6d6] grid place-items-center font-mono text-xs font-medium flex-none">{ini}</span>
-        <span><span className="text-[#e6efee] block">{user?.full_name || "Jefatura de Prevención"}</span>{user?.role === "admin" ? "Jefatura" : user?.perfil === "gerencia" ? "Gerencia · solo lectura" : "Asesor"}</span>
+        <span><span className="text-[#e6efee] block">{user?.full_name || "Jefatura de Prevención"}</span>{perfil === "jefatura" ? "Jefatura" : perfil === "gerencia" ? "Gerencia · solo lectura" : "Asesor"}</span>
       </div>
     </aside>
   );
