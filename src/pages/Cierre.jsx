@@ -10,7 +10,7 @@ import NovedadList from "@/components/apr/NovedadList";
 import CierrePanel from "@/components/apr/CierrePanel";
 
 export default function Cierre() {
-  const { day, shift, plan, k } = useOutletContext();
+  const { day, shift, plan, k, readOnly } = useOutletContext();
   if (!plan || plan.estado === "borrador") return <NotPublished shift={shift} />;
   const novs = day.novs.filter((n) => n.programacion_id === plan.id);
   const execs = day.execs.filter((e) => e.programacion_id === plan.id);
@@ -35,10 +35,10 @@ export default function Cierre() {
   return (
     <div className="flex flex-wrap gap-5 items-start">
       <div className="flex-[1_1_560px] min-w-0 flex flex-col gap-5">
-        {!closed && <NovedadForm shift={shift} asesor={plan.asesor} onSave={saveNov} />}
+        {!closed && !readOnly && <NovedadForm shift={shift} asesor={plan.asesor} onSave={saveNov} />}
         <NovedadList novs={novs} />
       </div>
-      <CierrePanel plan={plan} k={k} nextAsesor={nextAsesor} onEntrega={saveEntrega} onClose={close}
+      <CierrePanel plan={plan} k={k} readOnly={readOnly} nextAsesor={nextAsesor} onEntrega={saveEntrega} onClose={close}
         onCsv={() => downloadCsv(plan, day.catalog, execs, novs, k)} onPdf={() => printPdf(plan, day.catalog, execs, novs, k)} />
     </div>
   );

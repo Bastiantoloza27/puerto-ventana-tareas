@@ -6,12 +6,14 @@ import Sidebar from "@/components/apr/Sidebar";
 import ShiftPills from "@/components/apr/ShiftPills";
 import MobileNav from "@/components/apr/MobileNav";
 import useDay from "@/hooks/useDay";
+import usePerfil from "@/hooks/usePerfil";
 import { kpi, ORDER } from "@/lib/apr";
 
-const TITLES = { "/": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades" };
+const TITLES = { "/": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles" };
 
 export default function AppLayout() {
   const day = useDay();
+  const { readOnly } = usePerfil();
   const [shift, setShift] = useState("T1");
   const [clock, setClock] = useState(new Date());
   const { pathname } = useLocation();
@@ -34,12 +36,13 @@ export default function AppLayout() {
             <div className="font-mono text-[11px] md:text-xs font-medium text-[#007f80] tracking-[.08em]">{eyebrow}</div>
             <h1 className="font-heading text-[26px] md:text-[34px] leading-[1.1] mt-1 md:mt-1.5">{TITLES[pathname] || "Programa APR"}</h1>
           </div>
-          {!["/reportes", "/catalogo"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
+          {!["/reportes", "/catalogo", "/usuarios"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
         </div>
+        {readOnly && <div className="rounded-md bg-[#fbf3dc] text-[#7a5d0e] text-sm px-4 py-2.5">Modo solo lectura · Gerencia puede consultar todo, pero no modificar.</div>}
         {day.loading ? (
           <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#007f80] rounded-full animate-spin" /></div>
         ) : (
-          <Outlet context={{ day, shift, plan, k }} />
+          <Outlet context={{ day, shift, plan, k, readOnly }} />
         )}
       </main>
       <MobileNav turnoBadge={turnoBadge} novBadge={novCount || ""} progBadge={unpub} />

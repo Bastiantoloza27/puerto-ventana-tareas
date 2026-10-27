@@ -9,7 +9,7 @@ import CatalogPicker from "@/components/apr/CatalogPicker";
 import OpsMailPanel from "@/components/apr/OpsMailPanel";
 
 export default function Programacion() {
-  const { day, shift, plan } = useOutletContext();
+  const { day, shift, plan, readOnly } = useOutletContext();
   const [ids, setIds] = useState([]);
   const [asesor, setAsesor] = useState(null);
   const [err, setErr] = useState("");
@@ -17,7 +17,7 @@ export default function Programacion() {
   const [sent, setSent] = useState("");
   useEffect(() => { setIds(plan?.actividad_ids || []); setAsesor(plan?.asesor || null); setErr(""); }, [plan?.id, shift]);
 
-  const locked = plan?.estado === "cerrada";
+  const locked = plan?.estado === "cerrada" || readOnly;
   const pub = plan?.estado === "publicada";
   const toggle = (id) => setIds((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
 
@@ -59,7 +59,7 @@ export default function Programacion() {
           <div className="flex justify-between items-baseline flex-wrap gap-2">
             <span className="font-heading text-xl">Asesor del {SH[shift].name}</span>
             <span className={"text-xs px-2.5 py-1 rounded-xl " + (locked ? "bg-[#eef1f1] text-[#5b6667]" : pub ? "bg-[#e2f4f4] text-[#005f60]" : "bg-[#fbf3dc] text-[#7a5d0e]")}>
-              {locked ? "Turno cerrado" : pub ? `Publicada ${plan.publicada_hora}` : "Borrador"}
+              {plan?.estado === "cerrada" ? "Turno cerrado" : pub ? `Publicada ${plan.publicada_hora}` : "Borrador"}
             </span>
           </div>
           <div className="flex gap-1.5 flex-wrap">{ASES.map((a) => <button key={a} disabled={locked} onClick={() => setAsesor(a)} className={chipCls(asesor === a)}>{a}</button>)}</div>
@@ -75,7 +75,7 @@ export default function Programacion() {
               <button onClick={() => printProgramaPdf(programPlan(), day.catalog)} className="flex-1 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md text-sm md:text-[13px] border border-[#cdd4d4] hover:border-[#007f80]">Descargar PDF</button>
               <button onClick={() => downloadProgramaCsv(programPlan(), day.catalog)} className="flex-1 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md text-sm md:text-[13px] border border-[#cdd4d4] hover:border-[#007f80]">Descargar Excel</button>
             </div>
-            <button onClick={sendMail} disabled={busy} className="px-4 py-2.5 rounded-md bg-[#0e2a2b] hover:bg-[#1b3d3e] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-50">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Enviar por correo</button>
+            {!readOnly && <button onClick={sendMail} disabled={busy} className="px-4 py-2.5 rounded-md bg-[#0e2a2b] hover:bg-[#1b3d3e] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-50">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Enviar por correo</button>}
             {sent && <span className="text-xs text-[#005f60] bg-[#e2f4f4] rounded-md px-3 py-2">{sent}</span>}
           </div>
         )}

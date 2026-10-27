@@ -9,7 +9,7 @@ import { saveExec, addLog } from "@/lib/aprActions";
 const GROUPS = [["t", "Transversales", "Se esperan en todos los turnos"], ["o", "Según la operación del día", "Programadas desde el correo de Operaciones"], ["c", "Según ocurrencia", "«No ocurrió» no afecta el cumplimiento"]];
 
 export default function MiTurno() {
-  const { day, shift, plan, k } = useOutletContext();
+  const { day, shift, plan, k, readOnly } = useOutletContext();
   if (!plan || plan.estado === "borrador") return <NotPublished shift={shift} />;
   const closed = plan.estado === "cerrada";
   const E = Object.fromEntries(day.execs.filter((e) => e.programacion_id === plan.id).map((e) => [e.actividad_id, e]));
@@ -45,12 +45,12 @@ export default function MiTurno() {
                   <span className="flex items-baseline gap-2"><span className="text-base font-semibold">{title}</span><span className="font-mono text-[13px] text-[#6b7778]">{it.length}</span></span>
                   <span className="text-[13px] text-[#6b7778]">{sub}</span>
                 </div>
-                {it.map((a) => <ActivityCard key={a.id} a={a} e={E[a.id]} editable={!closed} onSet={onSet(a)} />)}
+                {it.map((a) => <ActivityCard key={a.id} a={a} e={E[a.id]} editable={!closed && !readOnly} onSet={onSet(a)} />)}
               </div>
             );
           })}
         </div>
-        <TurnoSide plan={plan} k={k} fecha={day.fecha} />
+        <TurnoSide plan={plan} k={k} fecha={day.fecha} readOnly={readOnly} />
       </div>
     </>
   );

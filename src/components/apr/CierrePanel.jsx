@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Loader2, FileSpreadsheet, FileText } from "lucide-react";
 import { card, SH, nextShift } from "@/lib/apr";
 
-export default function CierrePanel({ plan, k, nextAsesor, onEntrega, onClose, onCsv, onPdf }) {
+export default function CierrePanel({ plan, k, readOnly, nextAsesor, onEntrega, onClose, onCsv, onPdf }) {
   const [entrega, setEntrega] = useState(plan.entrega || "");
   const [busy, setBusy] = useState(false);
   useEffect(() => setEntrega(plan.entrega || ""), [plan.id]);
@@ -25,11 +25,11 @@ export default function CierrePanel({ plan, k, nextAsesor, onEntrega, onClose, o
       )}
       <div className={card + " p-4 flex flex-col gap-3"}>
         <div className="font-heading text-xl">Entrega al {SH[nextShift(plan.turno)].name}</div>
-        <textarea rows={4} value={entrega} disabled={closed} onChange={(e) => setEntrega(e.target.value)} onBlur={() => entrega !== (plan.entrega || "") && onEntrega(entrega)} placeholder="Pendientes y avisos para el asesor entrante…" className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]" />
+        <textarea rows={4} value={entrega} disabled={closed || readOnly} onChange={(e) => setEntrega(e.target.value)} onBlur={() => entrega !== (plan.entrega || "") && onEntrega(entrega)} placeholder="Pendientes y avisos para el asesor entrante…" className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]" />
         <div className="text-xs text-[#6b7778]">El reporte se envía a Jefatura de Prevención, Gerencia de Operaciones y {nextAsesor}.</div>
         {closed ? (
           <div className="text-sm text-[#005f60] bg-[#e2f4f4] rounded-md px-3 py-2">✓ Turno cerrado a las {plan.cerrada_hora} · reporte enviado</div>
-        ) : (
+        ) : readOnly ? null : (
           <button onClick={close} disabled={!k.ready || busy} className="px-4 py-2.5 rounded-md bg-[#0e2a2b] hover:bg-[#1b4a4a] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:hover:bg-[#0e2a2b] transition-colors">
             {busy && <Loader2 className="w-4 h-4 animate-spin" />}Cerrar turno y enviar reporte
           </button>
