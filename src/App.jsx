@@ -19,6 +19,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import Usuarios from '@/pages/Usuarios';
+import Configuracion from '@/pages/Configuracion';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -59,6 +60,7 @@ const AuthenticatedApp = () => {
           <Route path="/reportes" element={<Reportes />} />
           <Route path="/catalogo" element={<Catalogo />} />
           <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/configuracion" element={<Configuracion />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
