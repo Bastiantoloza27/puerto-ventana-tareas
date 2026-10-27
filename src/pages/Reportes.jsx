@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -9,11 +10,26 @@ import ClosedTable from "@/components/apr/ClosedTable";
 export default function Reportes() {
   const { day } = useOutletContext();
   const mes = day.fecha.slice(0, 7);
-  const { data: plans = [], isLoading } = useQuery({
-    queryKey: ["day", day.fecha, "closed", mes],
-    queryFn: async () => (await base44.entities.Programacion.filter({ estado: "cerrada", fecha: { $gte: mes + "-01", $lte: mes + "-31" } }, { sort: "-fecha", limit: 100 })).items,
+  const [asesor, setAsesor] = useState("");
+  const base = { estado: "cerrada", fecha: { $gte: mes + "-01", $lte: mes + "-31" } };
+  const { data: asesores = [] } = useQuery({
+    queryKey: ["day", day.fecha, "closed", mes, "asesores"],
+    queryFn: async () => (await base44.entities.Programacion.list({ distinct: "asesor", query: base })).items.filter(Boolean).sort(),
   });
-  if (isLoading) return <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#007f80] rounded-full animate-spin" /></div>;
+  const { data: plans = [], isLoading } = useQuery({
+    queryKey: ["day", day.fecha, "closed", mes, asesor],
+    queryFn: async () => (await base44.entities.Programacion.filter(asesor ? { ...base, asesor } : base, { sort: "-fecha", limit: 100 })).items,
+  });
+  const filtro = (
+    <div className="flex items-center gap-2 text-sm">
+      <span className="text-[#6b7778]">Asesor</span>
+      <select value={asesor} onChange={(e) => setAsesor(e.target.value)} className="min-h-[44px] md:min-h-0 px-3 py-2 rounded-md border border-[#cdd4d4] bg-white">
+        <option value="">Todos los asesores</option>
+        {asesores.map((a) => <option key={a} value={a}>{a}</option>)}
+      </select>
+    </div>
+  );
+  if (isLoading) return <>{filtro}<div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#007f80] rounded-full animate-spin" /></div></>;
 
   const sum = (f) => plans.reduce((s, p) => s + (p[f] || 0), 0);
   const pct = sum("r_prog") - sum("r_na") > 0 ? Math.round((sum("r_ok") / (sum("r_prog") - sum("r_na"))) * 100) : 0;
@@ -28,6 +44,7 @@ export default function Reportes() {
 
   return (
     <>
+      {filtro}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {kpis.map(([l, v, n]) => (
           <div key={l} className={card + " border-t-[3px] !border-t-[#00abac] px-4 py-3.5 flex flex-col gap-1"}>
