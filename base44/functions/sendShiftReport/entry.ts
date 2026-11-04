@@ -39,7 +39,7 @@ export default async function (req) {
 </div></div>`;
 
     const all = await base44.asServiceRole.entities.User.list();
-    const to = [...new Set([user.email, ...all.filter((u) => u.role === 'admin' || u.perfil === 'jefatura' || u.perfil === 'gerencia').map((u) => u.email)].filter(Boolean))];
+    const to = [...new Set([user.email, ...all.filter((u) => u.role === 'admin' || u.perfil === 'jefatura').map((u) => u.email)].filter(Boolean))];
     const subject = `Reporte ${SH[plan.turno]} · ${String(plan.fecha ?? '').slice(0, 10)} · ${num(plan.r_pct)}% cumplimiento`;
     const results = await Promise.allSettled(to.map((email) => base44.asServiceRole.integrations.Core.SendEmail({ to: email, from_name: 'Programa APR', subject, body: html, category: 'transactional' })));
     const sent = to.filter((_, i) => results[i].status === 'fulfilled' && results[i].value?.success !== false);

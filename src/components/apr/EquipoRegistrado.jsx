@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { card } from "@/lib/apr";
 
-const LBL = { jefatura: "Jefatura", asesor: "Asesor", gerencia: "Gerencia" };
+const LBL = { jefatura: "Jefatura", asesor: "Asesor" };
 
 // Lista del equipo oficial. Cuando una persona ya ingresó, se le aplica su perfil automáticamente.
 export default function EquipoRegistrado({ users, onSynced }) {

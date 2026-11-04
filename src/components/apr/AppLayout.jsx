@@ -43,7 +43,6 @@ export default function AppLayout() {
         </div>
         <ViewAsSwitch />
         {pathname === "/programacion" && canPlan && <ProgDatePicker value={progDate} onChange={setProgDate} />}
-        {readOnly && <div className="rounded-md bg-[#fbf3dc] text-[#7a5d0e] text-sm px-4 py-2.5">Modo solo lectura · Gerencia puede consultar todo, pero no modificar.</div>}
         {(perfil === "asesor" && ["/programacion", "/catalogo"].includes(pathname)) || (perfil !== "jefatura" && pathname === "/configuracion") ? (
           <Navigate to="/" replace />
         ) : day.loading ? (

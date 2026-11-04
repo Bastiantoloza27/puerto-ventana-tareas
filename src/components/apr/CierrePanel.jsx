@@ -26,7 +26,7 @@ export default function CierrePanel({ plan, k, readOnly, nextAsesor, onEntrega, 
       <div className={card + " p-4 flex flex-col gap-3"}>
         <div className="font-heading text-xl">Entrega al {SH[nextShift(plan.turno)].name}</div>
         <textarea rows={4} value={entrega} disabled={closed || readOnly} onChange={(e) => setEntrega(e.target.value)} onBlur={() => entrega !== (plan.entrega || "") && onEntrega(entrega)} placeholder="Pendientes y avisos para el asesor entrante…" className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]" />
-        <div className="text-xs text-[#6b7778]">El reporte se envía a Jefatura de Prevención, Gerencia de Operaciones y {nextAsesor}.</div>
+        <div className="text-xs text-[#6b7778]">El reporte se envía a Jefatura de Prevención y {nextAsesor}.</div>
         {closed ? (
           <div className="text-sm text-[#005f60] bg-[#e2f4f4] rounded-md px-3 py-2">✓ Turno cerrado a las {plan.cerrada_hora} · reporte enviado</div>
         ) : readOnly ? null : (

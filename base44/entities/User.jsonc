@@ -6,8 +6,7 @@
       "type": "string",
       "enum": [
         "jefatura",
-        "asesor",
-        "gerencia"
+        "asesor"
       ],
       "description": "Perfil de uso en la app"
     }

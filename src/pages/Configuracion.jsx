@@ -27,10 +27,10 @@ export default function Configuracion() {
     qc.invalidateQueries({ queryKey: ["config-inicial"] });
   };
   const steps = [
-    { title: "Equipo", desc: "Invita a asesores y gerencia con su correo y asigna el perfil de cada uno.", detail: `${data.users} usuarios registrados`, done: data.users > 1, to: "/usuarios", cta: "Ir a usuarios" },
+    { title: "Equipo", desc: "Invita a Jefatura y asesores con su correo y asigna el perfil de cada uno.", detail: `${data.users} usuarios registrados`, done: data.users > 1, to: "/usuarios", cta: "Ir a usuarios" },
     { title: "Catálogo de actividades", desc: "Revisa y ajusta las actividades prevencionistas que se programan por turno.", detail: `${data.acts} actividades en el catálogo`, done: data.acts > 0, to: "/catalogo", cta: "Ir al catálogo" },
     { title: "Mínimos mensuales", desc: "Confirma las metas mensuales por asesor.", detail: MINS.map(([, l, m]) => `${l}: ${m ?? "cada vez"}`).join(" · "), done: pasos.includes("minimos"), onConfirm: () => toggle("minimos") },
-    { title: "Correos de reportes", desc: "Confirma que Jefatura y Gerencia tienen correo registrado para recibir los cierres de turno.", done: pasos.includes("correos"), to: "/usuarios", cta: "Revisar correos", onConfirm: () => toggle("correos") },
+    { title: "Correos de reportes", desc: "Confirma que Jefatura tiene correo registrado para recibir los cierres de turno.", done: pasos.includes("correos"), to: "/usuarios", cta: "Revisar correos", onConfirm: () => toggle("correos") },
     { title: "Primer turno de prueba", desc: "Programa, publica y cierra un turno de ejemplo para verificar el flujo completo.", detail: `${data.cerrados} turnos cerrados`, done: data.cerrados > 0, to: "/programacion", cta: "Programar turno" },
   ];
   const ok = steps.filter((s) => s.done).length;

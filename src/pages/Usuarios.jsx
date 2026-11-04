@@ -5,7 +5,7 @@ import usePerfil from "@/hooks/usePerfil";
 import { useAuth } from "@/lib/AuthContext";
 import EquipoRegistrado from "@/components/apr/EquipoRegistrado";
 
-const PERFILES = [["jefatura", "Jefatura"], ["asesor", "Asesor"], ["gerencia", "Gerencia (solo lectura)"]];
+const PERFILES = [["jefatura", "Jefatura"], ["asesor", "Asesor"]];
 
 export default function Usuarios() {
   const { isAdmin } = usePerfil();
@@ -23,7 +23,7 @@ export default function Usuarios() {
     <div className="flex flex-col gap-4">
     <EquipoRegistrado users={users} onSynced={() => qc.invalidateQueries({ queryKey: ["users"] })} />
     <div className={card + " overflow-hidden"}>
-      <div className="px-4 py-3 border-b border-[#eef1f1] text-sm text-[#3c4849]">Asigna el perfil de cada persona. Gerencia ve todo, pero no puede modificar nada.</div>
+      <div className="px-4 py-3 border-b border-[#eef1f1] text-sm text-[#3c4849]">Asigna el perfil de cada persona. Jefatura programa, administra y ve toda la trazabilidad y reportes.</div>
       {isLoading && <div className="p-4 text-sm text-[#6b7778]">Cargando…</div>}
       {users.map((u) => (
         <div key={u.id} className="flex items-center gap-3 px-4 py-3 border-b border-[#eef1f1] last:border-0 flex-wrap">

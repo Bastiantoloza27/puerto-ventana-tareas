@@ -1,6 +1,6 @@
 import usePerfil, { VIEW_KEY } from "@/hooks/usePerfil";
 
-const OPTS = [["jefatura", "Jefatura"], ["asesor", "Asesor"], ["gerencia", "Gerencia"]];
+const OPTS = [["jefatura", "Jefatura"], ["asesor", "Asesor"]];
 
 export default function ViewAsSwitch() {
   const { realAdmin, perfil } = usePerfil();
