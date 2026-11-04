@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { card } from "@/lib/apr";
 import usePerfil from "@/hooks/usePerfil";
 import { useAuth } from "@/lib/AuthContext";
+import EquipoRegistrado from "@/components/apr/EquipoRegistrado";
 
 const PERFILES = [["jefatura", "Jefatura"], ["asesor", "Asesor"], ["gerencia", "Gerencia (solo lectura)"]];
 
@@ -19,6 +20,8 @@ export default function Usuarios() {
 
   if (!isAdmin) return <div className={card + " p-6 text-sm text-[#6b7778]"}>Solo Jefatura puede administrar usuarios.</div>;
   return (
+    <div className="flex flex-col gap-4">
+    <EquipoRegistrado users={users} onSynced={() => qc.invalidateQueries({ queryKey: ["users"] })} />
     <div className={card + " overflow-hidden"}>
       <div className="px-4 py-3 border-b border-[#eef1f1] text-sm text-[#3c4849]">Asigna el perfil de cada persona. Gerencia ve todo, pero no puede modificar nada.</div>
       {isLoading && <div className="p-4 text-sm text-[#6b7778]">Cargando…</div>}
@@ -31,6 +34,7 @@ export default function Usuarios() {
           </select>
         </div>
       ))}
+    </div>
     </div>
   );
 }

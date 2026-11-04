@@ -1,0 +1,55 @@
+{
+  "name": "Integrante",
+  "type": "object",
+  "properties": {
+    "nombre": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "cargo": {
+      "type": "string"
+    },
+    "perfil": {
+      "type": "string",
+      "enum": [
+        "jefatura",
+        "asesor",
+        "gerencia"
+      ],
+      "enumColors": [
+        "purple",
+        "blue",
+        "gray"
+      ]
+    }
+  },
+  "required": [
+    "nombre",
+    "email",
+    "perfil"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
