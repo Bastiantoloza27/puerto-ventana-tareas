@@ -38,8 +38,20 @@ export default async function (req) {
 <h3 style="font-size:14px;margin:18px 0 6px">Entrega al siguiente turno</h3><p style="font-size:13px">${esc(plan.entrega || '—')}</p>
 </div></div>`;
 
-    const all = await base44.asServiceRole.entities.User.list();
-    const to = [...new Set([user.email, ...all.filter((u) => u.role === 'admin' || u.perfil === 'jefatura').map((u) => u.email)].filter(Boolean))];
+    // Asesor del turno siguiente (T3 pasa al T1 del día siguiente)
+    const ORD = ['T1', 'T2', 'T3'];
+    const nextT = ORD[(ORD.indexOf(plan.turno) + 1) % 3];
+    let nextF = String(plan.fecha).slice(0, 10);
+    if (plan.turno === 'T3') { const d = new Date(nextF + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + 1); nextF = d.toISOString().slice(0, 10); }
+    const nextPlan = (await base44.asServiceRole.entities.Programacion.filter({ fecha: nextF, turno: nextT }))[0];
+    const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().split(/\s+/).filter(Boolean);
+    let nextEmail = null;
+    if (nextPlan?.asesor) {
+      const tk = norm(nextPlan.asesor);
+      const team = await base44.asServiceRole.entities.Integrante.list();
+      nextEmail = team.find((i) => norm(i.nombre).filter((t) => tk.includes(t)).length >= 2)?.email || null;
+    }
+    const to = [...new Set(['prevencion.riesgos@pvsa.cl', nextEmail].filter(Boolean))];
     const subject = `Reporte ${SH[plan.turno]} · ${String(plan.fecha ?? '').slice(0, 10)} · ${num(plan.r_pct)}% cumplimiento`;
     const results = await Promise.allSettled(to.map((email) => base44.asServiceRole.integrations.Core.SendEmail({ to: email, from_name: 'Programa APR', subject, body: html, category: 'transactional' })));
     const sent = to.filter((_, i) => results[i].status === 'fulfilled' && results[i].value?.success !== false);
