@@ -8,16 +8,18 @@ import MobileNav from "@/components/apr/MobileNav";
 import useDay from "@/hooks/useDay";
 import usePerfil from "@/hooks/usePerfil";
 import ViewAsSwitch from "@/components/apr/ViewAsSwitch";
-import { kpi, ORDER } from "@/lib/apr";
+import { kpi, ORDER, today } from "@/lib/apr";
+import ProgDatePicker from "@/components/apr/ProgDatePicker";
 
 const TITLES = { "/": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles", "/configuracion": "Configuración inicial" };
 
 export default function AppLayout() {
-  const day = useDay();
+  const { pathname } = useLocation();
+  const [progDate, setProgDate] = useState(today());
+  const day = useDay(pathname === "/programacion" ? progDate : undefined);
   const { readOnly, canPlan, perfil } = usePerfil();
   const [shift, setShift] = useState("T1");
   const [clock, setClock] = useState(new Date());
-  const { pathname } = useLocation();
   useEffect(() => { const t = setInterval(() => setClock(new Date()), 30000); return () => clearInterval(t); }, []);
 
   const plan = day.plans[shift];
@@ -40,6 +42,7 @@ export default function AppLayout() {
           {!["/reportes", "/catalogo", "/usuarios", "/configuracion"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
         </div>
         <ViewAsSwitch />
+        {pathname === "/programacion" && canPlan && <ProgDatePicker value={progDate} onChange={setProgDate} />}
         {readOnly && <div className="rounded-md bg-[#fbf3dc] text-[#7a5d0e] text-sm px-4 py-2.5">Modo solo lectura · Gerencia puede consultar todo, pero no modificar.</div>}
         {(perfil === "asesor" && ["/programacion", "/catalogo"].includes(pathname)) || (perfil !== "jefatura" && pathname === "/configuracion") ? (
           <Navigate to="/" replace />
