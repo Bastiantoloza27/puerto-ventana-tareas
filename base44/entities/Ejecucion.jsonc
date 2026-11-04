@@ -22,6 +22,13 @@
     "observaciones": {
       "type": "string"
     },
+    "controles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "M\u00ednimos del mes realizados en esta actividad"
+    },
     "evidencias": {
       "type": "array",
       "items": {

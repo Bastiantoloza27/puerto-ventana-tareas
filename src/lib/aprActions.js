@@ -12,6 +12,15 @@ export async function saveExec(plan, actividad_id, existing, patch) {
   return base44.entities.Ejecucion.create({ programacion_id: plan.id, actividad_id, evidencias: [], observaciones: "", ...patch });
 }
 
+export async function bumpMin(plan, fields, d) {
+  if (!fields.length || !plan.asesor) return;
+  const mes = plan.fecha.slice(0, 7);
+  const rec = (await base44.entities.MinimoMensual.filter({ mes, asesor: plan.asesor }, { limit: 1 })).items[0];
+  const vals = Object.fromEntries(fields.map((f) => [f, Math.max(0, (rec?.[f] || 0) + d)]));
+  if (rec) await base44.entities.MinimoMensual.update(rec.id, vals);
+  else if (d > 0) await base44.entities.MinimoMensual.create({ mes, asesor: plan.asesor, ...vals });
+}
+
 export async function uploadFiles(fileList) {
   const files = [...(fileList || [])];
   return Promise.all(

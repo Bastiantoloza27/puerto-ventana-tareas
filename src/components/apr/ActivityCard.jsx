@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { card, MOT } from "@/lib/apr";
 import EvidenceList from "@/components/apr/EvidenceList";
+import ControlChips from "@/components/apr/ControlChips";
 
 const CHIP = {
   ok: ["#e2f4f4", "#005f60", "#00abac"], no: ["#f6e4e0", "#9b3b2e", "#b9574a"],
@@ -38,6 +39,7 @@ export default function ActivityCard({ a, e, editable, onSet }) {
       )}
       {st === "ok" && (
         <div className="flex flex-col gap-2 p-3 rounded-lg bg-[#f4faf9]">
+          <ControlChips value={e.controles} editable={editable} onChange={(controles) => onSet({ controles }, null)} />
           <EvidenceList items={e.evidencias} editable={editable} onAdd={(f) => onSet({ evidencias: [...(e.evidencias || []), ...f] }, `Evidencia adjunta (${f.length}) · ${a.proceso}`)}
             onRemove={(i) => onSet({ evidencias: e.evidencias.filter((_, j) => j !== i) }, `Evidencia eliminada · ${a.proceso}`)} />
           <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} onBlur={saveObs} disabled={!editable} placeholder="Observaciones (opcional)" rows={2} className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#007f80]" />

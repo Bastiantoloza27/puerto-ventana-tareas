@@ -1,22 +1,31 @@
 import { Link, useOutletContext } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import KpiRow from "@/components/apr/KpiRow";
 import ActivityCard from "@/components/apr/ActivityCard";
 import TurnoSide from "@/components/apr/TurnoSide";
 import NotPublished from "@/components/apr/NotPublished";
 import { now } from "@/lib/apr";
-import { saveExec, addLog } from "@/lib/aprActions";
+import { saveExec, addLog, bumpMin } from "@/lib/aprActions";
 
 const GROUPS = [["t", "Transversales", "Se esperan en todos los turnos"], ["o", "Según la operación del día", "Programadas desde el correo de Operaciones"], ["c", "Según ocurrencia", "«No ocurrió» no afecta el cumplimiento"]];
 
 export default function MiTurno() {
   const { day, shift, plan, k, readOnly } = useOutletContext();
+  const qc = useQueryClient();
   if (!plan || plan.estado === "borrador") return <NotPublished shift={shift} />;
   const closed = plan.estado === "cerrada";
   const E = Object.fromEntries(day.execs.filter((e) => e.programacion_id === plan.id).map((e) => [e.actividad_id, e]));
   const items = (plan.actividad_ids || []).map((id) => day.catalog.find((c) => c.id === id)).filter(Boolean);
 
   const onSet = (a) => async (patch, log) => {
+    const prev = E[a.id]?.controles || [];
+    if (patch.estado && patch.estado !== "ok" && prev.length) { patch = { ...patch, controles: [] }; await bumpMin(plan, prev, -1); }
+    if (patch.controles && !patch.estado) {
+      await bumpMin(plan, patch.controles.filter((f) => !prev.includes(f)), 1);
+      await bumpMin(plan, prev.filter((f) => !patch.controles.includes(f)), -1);
+    }
     await saveExec(plan, a.id, E[a.id], patch.estado ? { ...patch, hora: now() } : patch);
+    if (patch.controles) qc.invalidateQueries({ queryKey: ["mins"] });
     if (log) await addLog(plan, log);
     day.refresh();
   };
