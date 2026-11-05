@@ -8,7 +8,7 @@ export default function ClosedTable({ plans, onCsv, onPdf, onConsolidado }) {
     <div className={card + " overflow-hidden"}>
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 px-4 py-3 border-b border-[#eef1f1]">
         <span className="font-heading text-xl">Turnos cerrados</span>
-        <button onClick={onConsolidado} className="flex items-center justify-center gap-1.5 min-h-[44px] md:min-h-0 px-3 py-2.5 md:py-1.5 rounded-md border border-[#cdd4d4] text-sm md:text-[13px] hover:border-[#007f80]"><FileSpreadsheet className="w-4 h-4 text-[#007f80]" />Consolidado mensual</button>
+        <button onClick={onConsolidado} className="flex items-center justify-center gap-1.5 min-h-[44px] md:min-h-0 px-3 py-2.5 md:py-1.5 rounded-md border border-[#cdd4d4] text-sm md:text-[13px] hover:border-[#2a64b8]"><FileSpreadsheet className="w-4 h-4 text-[#2a64b8]" />Consolidado mensual</button>
       </div>
 
       {/* Teléfono: una tarjeta por turno */}
@@ -33,8 +33,8 @@ export default function ClosedTable({ plans, onCsv, onPdf, onConsolidado }) {
               ))}
             </div>
             <div className="flex gap-2">
-              <button onClick={() => onCsv(p)} className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-md border border-[#cdd4d4] text-sm hover:border-[#007f80]"><FileSpreadsheet className="w-4 h-4 text-[#007f80]" />Excel</button>
-              <button onClick={() => onPdf(p)} className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-md border border-[#cdd4d4] text-sm hover:border-[#007f80]"><FileText className="w-4 h-4 text-[#007f80]" />PDF</button>
+              <button onClick={() => onCsv(p)} className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-md border border-[#cdd4d4] text-sm hover:border-[#2a64b8]"><FileSpreadsheet className="w-4 h-4 text-[#2a64b8]" />Excel</button>
+              <button onClick={() => onPdf(p)} className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-md border border-[#cdd4d4] text-sm hover:border-[#2a64b8]"><FileText className="w-4 h-4 text-[#2a64b8]" />PDF</button>
             </div>
           </div>
         ))}
@@ -57,8 +57,8 @@ export default function ClosedTable({ plans, onCsv, onPdf, onConsolidado }) {
                 <td className="px-4 py-2 font-mono">{p.r_novs}</td>
                 <td className="px-4 py-2 font-mono">{p.cerrada_hora}</td>
                 <td className="px-4 py-2 whitespace-nowrap">
-                  <button onClick={() => onCsv(p)} title="Excel" className="p-1.5 rounded hover:bg-[#e2f4f4]"><FileSpreadsheet className="w-4 h-4 text-[#007f80]" /></button>
-                  <button onClick={() => onPdf(p)} title="PDF" className="p-1.5 rounded hover:bg-[#e2f4f4]"><FileText className="w-4 h-4 text-[#007f80]" /></button>
+                  <button onClick={() => onCsv(p)} title="Excel" className="p-1.5 rounded hover:bg-[#e2f4f4]"><FileSpreadsheet className="w-4 h-4 text-[#2a64b8]" /></button>
+                  <button onClick={() => onPdf(p)} title="PDF" className="p-1.5 rounded hover:bg-[#e2f4f4]"><FileText className="w-4 h-4 text-[#2a64b8]" /></button>
                 </td>
               </tr>
             ))}

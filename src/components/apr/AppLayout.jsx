@@ -11,7 +11,7 @@ import ViewAsSwitch from "@/components/apr/ViewAsSwitch";
 import { kpi, ORDER, today } from "@/lib/apr";
 import ProgDatePicker from "@/components/apr/ProgDatePicker";
 
-const TITLES = { "/": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles", "/configuracion": "Configuración inicial" };
+const TITLES = { "/": "Inicio", "/turno": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles", "/configuracion": "Configuración inicial" };
 
 export default function AppLayout() {
   const { pathname } = useLocation();
@@ -31,22 +31,22 @@ export default function AppLayout() {
   const turnoBadge = plan?.estado !== "borrador" && k.prog ? `${k.prog - k.pend}/${k.prog}` : "";
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#edf2f1] text-[#1c2526] font-body">
+    <div className="min-h-screen flex flex-col md:flex-row bg-[#eef2f6] text-[#1c2526] font-body">
       <Sidebar turnoBadge={turnoBadge} novBadge={novCount || ""} progBadge={unpub} />
-      <main className="flex-1 min-w-0 px-4 md:px-8 pt-5 md:pt-7 pb-24 md:pb-10 flex flex-col gap-4 md:gap-5 bg-[linear-gradient(180deg,#dcecea_0,#edf2f1_260px)]">
+      <main className="flex-1 min-w-0 px-4 md:px-8 pt-5 md:pt-7 pb-24 md:pb-10 flex flex-col gap-4 md:gap-5 bg-[linear-gradient(180deg,#dde6f1_0,#eef2f6_260px)]">
         <div className="flex flex-col md:flex-row md:flex-wrap justify-between md:items-end gap-3 md:gap-3.5">
           <div>
-            <div className="font-mono text-[11px] md:text-xs font-medium text-[#007f80] tracking-[.08em]">{eyebrow}</div>
+            <div className="font-mono text-[11px] md:text-xs font-medium text-[#2a64b8] tracking-[.08em]">{eyebrow}</div>
             <h1 className="font-heading text-[26px] md:text-[34px] leading-[1.1] mt-1 md:mt-1.5">{TITLES[pathname] || "Programa APR"}</h1>
           </div>
-          {!["/reportes", "/catalogo", "/usuarios", "/configuracion"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
+          {!["/", "/reportes", "/catalogo", "/usuarios", "/configuracion"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
         </div>
         <ViewAsSwitch />
         {pathname === "/programacion" && canPlan && <ProgDatePicker value={progDate} onChange={setProgDate} />}
         {(perfil === "asesor" && ["/programacion", "/catalogo"].includes(pathname)) || (perfil !== "jefatura" && pathname === "/configuracion") ? (
           <Navigate to="/" replace />
         ) : day.loading ? (
-          <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#007f80] rounded-full animate-spin" /></div>
+          <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#2a64b8] rounded-full animate-spin" /></div>
         ) : (
           <Outlet context={{ day, shift, plan, k, readOnly, canPlan }} />
         )}

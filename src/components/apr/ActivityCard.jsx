@@ -4,7 +4,7 @@ import EvidenceList from "@/components/apr/EvidenceList";
 import ControlChips from "@/components/apr/ControlChips";
 
 const CHIP = {
-  ok: ["#e2f4f4", "#005f60", "#00abac"], no: ["#f6e4e0", "#9b3b2e", "#b9574a"],
+  ok: ["#e4ecf8", "#1d4a8c", "#3b82d0"], no: ["#f6e4e0", "#9b3b2e", "#b9574a"],
   na: ["#eef1f1", "#5b6667", "#b8c1c2"], none: ["#fbf3dc", "#7a5d0e", "#e3c77a"],
 };
 
@@ -23,7 +23,7 @@ export default function ActivityCard({ a, e, editable, onSet }) {
         <div className="flex flex-col gap-[5px] min-w-0 flex-[1_1_320px]">
           <div className="flex gap-1.5 flex-wrap">
             <span className="text-[11px] px-2 py-0.5 rounded-[10px] bg-[#eef3f3] text-[#3c4849]">{a.area}</span>
-            <span className="text-[11px] px-2 py-0.5 rounded-[10px] bg-[#e2f4f4] text-[#005f60]">{a.sitio}</span>
+            <span className="text-[11px] px-2 py-0.5 rounded-[10px] bg-[#e4ecf8] text-[#1d4a8c]">{a.sitio}</span>
           </div>
           <div className="text-[15px] font-semibold">{a.proceso}</div>
           <div className="text-sm md:text-[13px] text-[#3c4849] leading-[1.5]">{a.descripcion}</div>
@@ -32,17 +32,17 @@ export default function ActivityCard({ a, e, editable, onSet }) {
       </div>
       {editable && (
         <div className="flex gap-2 flex-wrap">
-          <button onClick={() => onSet({ estado: "ok", motivo: "" }, `Ejecutado: ${a.proceso} · ${a.sitio}`)} className={btn(st === "ok", "bg-[#007f80] text-white border-[#007f80]", "bg-white text-[#005f60] border-[#007f80] hover:bg-[#e8f5f5]")}>✓ Ejecutado</button>
+          <button onClick={() => onSet({ estado: "ok", motivo: "" }, `Ejecutado: ${a.proceso} · ${a.sitio}`)} className={btn(st === "ok", "bg-[#2a64b8] text-white border-[#2a64b8]", "bg-white text-[#1d4a8c] border-[#2a64b8] hover:bg-[#eaf1fb]")}>✓ Ejecutado</button>
           <button onClick={() => onSet({ estado: "no" }, `No ejecutado: ${a.proceso} · ${a.sitio}`)} className={btn(st === "no", "bg-[#b9574a] text-white border-[#b9574a]", "bg-white text-[#9b3b2e] border-[#b9574a] hover:bg-[#f6e4e0]")}>✕ No ejecutado</button>
           {a.tipo === "c" && <button onClick={() => onSet({ estado: "na", motivo: "" }, `No ocurrió: ${a.proceso}`)} className={btn(st === "na", "bg-[#5b6667] text-white border-[#5b6667]", "bg-white text-[#5b6667] border-[#9aa5a6] hover:bg-[#eef1f1]")}>No ocurrió</button>}
         </div>
       )}
       {st === "ok" && (
-        <div className="flex flex-col gap-2 p-3 rounded-lg bg-[#f4faf9]">
+        <div className="flex flex-col gap-2 p-3 rounded-lg bg-[#f4f7fc]">
           <ControlChips value={e.controles} editable={editable} onChange={(controles) => onSet({ controles }, null)} />
           <EvidenceList items={e.evidencias} editable={editable} onAdd={(f) => onSet({ evidencias: [...(e.evidencias || []), ...f] }, `Evidencia adjunta (${f.length}) · ${a.proceso}`)}
             onRemove={(i) => onSet({ evidencias: e.evidencias.filter((_, j) => j !== i) }, `Evidencia eliminada · ${a.proceso}`)} />
-          <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} onBlur={saveObs} disabled={!editable} placeholder="Observaciones (opcional)" rows={2} className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#007f80]" />
+          <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} onBlur={saveObs} disabled={!editable} placeholder="Observaciones (opcional)" rows={2} className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#2a64b8]" />
         </div>
       )}
       {st === "no" && (

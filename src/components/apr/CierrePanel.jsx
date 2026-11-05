@@ -25,18 +25,18 @@ export default function CierrePanel({ plan, k, readOnly, nextAsesor, onEntrega, 
       )}
       <div className={card + " p-4 flex flex-col gap-3"}>
         <div className="font-heading text-xl">Entrega al {SH[nextShift(plan.turno)].name}</div>
-        <textarea rows={4} value={entrega} disabled={closed || readOnly} onChange={(e) => setEntrega(e.target.value)} onBlur={() => entrega !== (plan.entrega || "") && onEntrega(entrega)} placeholder="Pendientes y avisos para el asesor entrante…" className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]" />
+        <textarea rows={4} value={entrega} disabled={closed || readOnly} onChange={(e) => setEntrega(e.target.value)} onBlur={() => entrega !== (plan.entrega || "") && onEntrega(entrega)} placeholder="Pendientes y avisos para el asesor entrante…" className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#2a64b8]" />
         <div className="text-xs text-[#6b7778]">El reporte se envía a prevencion.riesgos@pvsa.cl y {nextAsesor}.</div>
         {closed ? (
           <div className="text-sm text-[#005f60] bg-[#e2f4f4] rounded-md px-3 py-2">✓ Turno cerrado a las {plan.cerrada_hora} · reporte enviado</div>
         ) : readOnly ? null : (
-          <button onClick={close} disabled={!k.ready || busy} className="px-4 py-2.5 rounded-md bg-[#0e2a2b] hover:bg-[#1b4a4a] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:hover:bg-[#0e2a2b] transition-colors">
+          <button onClick={close} disabled={!k.ready || busy} className="px-4 py-2.5 rounded-md bg-[#0f2340] hover:bg-[#1b4a4a] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:hover:bg-[#0f2340] transition-colors">
             {busy && <Loader2 className="w-4 h-4 animate-spin" />}Cerrar turno y enviar reporte
           </button>
         )}
         <div className="flex gap-2">
-          <button onClick={onCsv} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md border border-[#cdd4d4] text-sm md:text-[13px] hover:border-[#007f80]"><FileSpreadsheet className="w-4 h-4 text-[#007f80]" />Excel</button>
-          <button onClick={onPdf} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md border border-[#cdd4d4] text-sm md:text-[13px] hover:border-[#007f80]"><FileText className="w-4 h-4 text-[#007f80]" />PDF</button>
+          <button onClick={onCsv} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md border border-[#cdd4d4] text-sm md:text-[13px] hover:border-[#2a64b8]"><FileSpreadsheet className="w-4 h-4 text-[#2a64b8]" />Excel</button>
+          <button onClick={onPdf} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md border border-[#cdd4d4] text-sm md:text-[13px] hover:border-[#2a64b8]"><FileText className="w-4 h-4 text-[#2a64b8]" />PDF</button>
         </div>
       </div>
     </div>

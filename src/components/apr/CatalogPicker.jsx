@@ -18,7 +18,7 @@ export default function CatalogPicker({ catalog, ids, toggle, locked }) {
             </div>
             {list.map((c) => (
               <label key={c.id} className={"flex items-start gap-3 px-4 py-2.5 border-b border-[#eef1f1] last:border-0 transition-colors " + (locked ? "" : "cursor-pointer hover:bg-[#f4faf9]")}>
-                <Checkbox checked={ids.includes(c.id)} disabled={locked} onCheckedChange={() => toggle(c.id)} className="mt-0.5 data-[state=checked]:bg-[#007f80] data-[state=checked]:border-[#007f80]" />
+                <Checkbox checked={ids.includes(c.id)} disabled={locked} onCheckedChange={() => toggle(c.id)} className="mt-0.5 data-[state=checked]:bg-[#2a64b8] data-[state=checked]:border-[#2a64b8]" />
                 <span className="flex-1 min-w-0">
                   <span className="text-sm font-medium">{c.proceso}</span>
                   <span className="text-xs text-[#6b7778]"> · {c.sitio}</span>

@@ -4,8 +4,8 @@ const ICON = "https://media.base44.com/images/public/6acfba2bbe6123d4e500ba2b/93
 
 export default function AuthLayout({ title, subtitle, footer, children }) {
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-4 py-10 overflow-hidden bg-[#0e2a2b]">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#1b4a4a_0%,#0e2a2b_55%,#081a1b_100%)]" />
+    <div className="relative min-h-screen flex items-center justify-center px-4 py-10 overflow-hidden bg-[#0f2340]">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#1b4a4a_0%,#0f2340_55%,#081a1b_100%)]" />
       <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#e0a82e]/10 blur-3xl" />
       <div className="absolute -bottom-40 -left-32 w-[28rem] h-[28rem] rounded-full bg-[#00abac]/10 blur-3xl" />
       <div className="relative w-full max-w-md">

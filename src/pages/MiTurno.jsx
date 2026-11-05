@@ -38,9 +38,9 @@ export default function MiTurno() {
       </div>
       <KpiRow k={k} />
       {closed && (
-        <div className="bg-[#0e2a2b] text-[#e6efee] rounded-[10px] px-[18px] py-3.5 text-sm flex justify-between gap-2.5 flex-wrap">
+        <div className="bg-[#0f2340] text-[#e6efee] rounded-[10px] px-[18px] py-3.5 text-sm flex justify-between gap-2.5 flex-wrap">
           <span>✓ Turno cerrado a las {plan.cerrada_hora} · reporte enviado por correo</span>
-          <Link to="/cierre" className="text-[#7fd6d6]">Ver reporte →</Link>
+          <Link to="/cierre" className="text-[#9cc0f0]">Ver reporte →</Link>
         </div>
       )}
       <div className="flex flex-wrap gap-5 items-start">

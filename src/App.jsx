@@ -20,6 +20,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import Usuarios from '@/pages/Usuarios';
 import Configuracion from '@/pages/Configuracion';
+import Inicio from '@/pages/Inicio';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -54,7 +55,8 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route element={<AppLayout />}>
-          <Route path="/" element={<MiTurno />} />
+          <Route path="/" element={<Inicio />} />
+          <Route path="/turno" element={<MiTurno />} />
           <Route path="/programacion" element={<Programacion />} />
           <Route path="/cierre" element={<Cierre />} />
           <Route path="/reportes" element={<Reportes />} />

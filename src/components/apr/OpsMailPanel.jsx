@@ -13,7 +13,7 @@ export default function OpsMailPanel({ plan, catalog, ids, onApply, locked, onPa
   return (
     <div className={card + " p-4 flex flex-col gap-3"}>
       <div className="flex items-start gap-2.5">
-        <span className="w-8 h-8 rounded-lg bg-[#e2f4f4] text-[#007f80] grid place-items-center flex-none"><Mail className="w-4 h-4" /></span>
+        <span className="w-8 h-8 rounded-lg bg-[#e2f4f4] text-[#2a64b8] grid place-items-center flex-none"><Mail className="w-4 h-4" /></span>
         <div className="min-w-0"><div className="font-heading text-xl leading-tight">Correo de Operaciones</div>
           <div className="text-xs text-[#6b7778]">{m ? <>Recibido a las <span className="font-mono">{m.hora}</span> · {m.asunto}</> : "Aún no llega el correo de este turno"}</div></div>
       </div>
@@ -31,7 +31,7 @@ export default function OpsMailPanel({ plan, catalog, ids, onApply, locked, onPa
       )}
       {!locked && onParsed && <PasteMailBox isUpdate={!!m} onParsed={onParsed} />}
       {!locked && (
-        <button disabled={!missing.length} onClick={() => onApply(missing)} className="px-4 py-2.5 rounded-md text-sm border border-[#007f80] text-[#005f60] bg-white hover:bg-[#e8f5f5] disabled:opacity-50 disabled:hover:bg-white transition-colors">
+        <button disabled={!missing.length} onClick={() => onApply(missing)} className="px-4 py-2.5 rounded-md text-sm border border-[#2a64b8] text-[#005f60] bg-white hover:bg-[#e8f5f5] disabled:opacity-50 disabled:hover:bg-white transition-colors">
           {missing.length ? `Aplicar sugerencias (+${missing.length})` : "Sugerencias aplicadas"}
         </button>
       )}

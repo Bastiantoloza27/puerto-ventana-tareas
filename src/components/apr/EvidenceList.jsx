@@ -15,7 +15,7 @@ export default function EvidenceList({ items = [], editable, onAdd, onRemove }) 
   return (
     <div className="flex gap-2 items-center flex-wrap">
       {editable && (
-        <label className="px-3 py-2.5 md:py-[7px] min-h-[44px] md:min-h-0 rounded-md bg-[#007f80] text-white text-sm md:text-[13px] cursor-pointer flex items-center gap-1.5 hover:bg-[#005f60] transition-colors">
+        <label className="px-3 py-2.5 md:py-[7px] min-h-[44px] md:min-h-0 rounded-md bg-[#2a64b8] text-white text-sm md:text-[13px] cursor-pointer flex items-center gap-1.5 hover:bg-[#005f60] transition-colors">
           {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Camera className="w-3.5 h-3.5" />} Sacar foto
           <input type="file" accept="image/*" capture="environment" className="hidden" onChange={pick} disabled={busy} />
         </label>
@@ -27,9 +27,9 @@ export default function EvidenceList({ items = [], editable, onAdd, onRemove }) 
         </label>
       )}
       {items.map((f, i) => (
-        <span key={i} className="flex items-center rounded-md bg-white border border-[#dde5e4] hover:border-[#007f80] max-w-[230px]">
+        <span key={i} className="flex items-center rounded-md bg-white border border-[#dde5e4] hover:border-[#2a64b8] max-w-[230px]">
           <button onClick={() => openFile(f.uri)} className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 text-[#3c4849] min-w-0">
-            {f.is_img ? <ImageIcon className="w-3.5 h-3.5 flex-none text-[#007f80]" /> : <FileText className="w-3.5 h-3.5 flex-none text-[#007f80]" />}
+            {f.is_img ? <ImageIcon className="w-3.5 h-3.5 flex-none text-[#2a64b8]" /> : <FileText className="w-3.5 h-3.5 flex-none text-[#2a64b8]" />}
             <span className="truncate">{f.name}</span>
           </button>
           {editable && onRemove && (

@@ -9,7 +9,7 @@ export default function BarList({ title, rows, suffix = "", max }) {
       {rows.map(([l, v]) => (
         <div key={l} className="flex flex-col gap-1">
           <div className="flex justify-between text-[13px]"><span>{l}</span><span className="font-mono text-[#3c4849]">{v}{suffix}</span></div>
-          <div className="h-1.5 rounded bg-[#eef1f1] overflow-hidden"><div className="h-full rounded bg-[#007f80] transition-all duration-700" style={{ width: (v / top) * 100 + "%" }} /></div>
+          <div className="h-1.5 rounded bg-[#eef1f1] overflow-hidden"><div className="h-full rounded bg-[#2a64b8] transition-all duration-700" style={{ width: (v / top) * 100 + "%" }} /></div>
         </div>
       ))}
     </div>

@@ -24,9 +24,9 @@ export default function MinimosPanel({ asesor, fecha, readOnly }) {
               <span className="text-[13px] font-medium">{l}</span>
               <span className="flex items-center gap-2"><span className="font-mono text-xs text-[#3c4849]">{m ? `${v}/${m}` : `${v} este mes`}</span>
                 {!readOnly && <button onClick={() => add(f, -1)} disabled={!v} aria-label={"Restar " + l} className="font-mono text-xs md:text-[11px] w-9 h-9 md:w-6 md:h-6 rounded-md border border-[#cdd4d4] hover:border-[#b9574a] hover:text-[#b9574a] disabled:opacity-40">−1</button>}
-                {!readOnly && <button onClick={() => add(f)} className="font-mono text-xs md:text-[11px] w-9 h-9 md:w-6 md:h-6 rounded-md border border-[#cdd4d4] hover:border-[#007f80] hover:text-[#007f80]">+1</button>}</span>
+                {!readOnly && <button onClick={() => add(f)} className="font-mono text-xs md:text-[11px] w-9 h-9 md:w-6 md:h-6 rounded-md border border-[#cdd4d4] hover:border-[#2a64b8] hover:text-[#2a64b8]">+1</button>}</span>
             </div>
-            <div className="h-1.5 rounded bg-[#eef1f1] overflow-hidden"><div className="h-full rounded transition-all duration-500" style={{ width: m ? Math.min(100, (v / m) * 100) + "%" : "100%", background: m ? (v >= m ? "#00abac" : "#007f80") : "#cdd4d4" }} /></div>
+            <div className="h-1.5 rounded bg-[#eef1f1] overflow-hidden"><div className="h-full rounded transition-all duration-500" style={{ width: m ? Math.min(100, (v / m) * 100) + "%" : "100%", background: m ? (v >= m ? "#3b82d0" : "#2a64b8") : "#cdd4d4" }} /></div>
             <span className="text-[11px] text-[#6b7778]">{ver}</span>
           </div>
         );

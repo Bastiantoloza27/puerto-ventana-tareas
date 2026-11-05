@@ -91,20 +91,20 @@ export default function Programacion() {
             <span className="font-heading text-lg">Tareas asignadas</span>
             <span className="text-xs text-[#6b7778]">{ids.length} actividades · {asesor || "sin asesor"}</span>
             <div className="flex gap-2 flex-wrap">
-              <button onClick={() => printProgramaPdf(programPlan(), day.catalog)} className="flex-1 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md text-sm md:text-[13px] border border-[#cdd4d4] hover:border-[#007f80]">Descargar PDF</button>
-              <button onClick={() => downloadProgramaCsv(programPlan(), day.catalog)} className="flex-1 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md text-sm md:text-[13px] border border-[#cdd4d4] hover:border-[#007f80]">Descargar Excel</button>
+              <button onClick={() => printProgramaPdf(programPlan(), day.catalog)} className="flex-1 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md text-sm md:text-[13px] border border-[#cdd4d4] hover:border-[#2a64b8]">Descargar PDF</button>
+              <button onClick={() => downloadProgramaCsv(programPlan(), day.catalog)} className="flex-1 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md text-sm md:text-[13px] border border-[#cdd4d4] hover:border-[#2a64b8]">Descargar Excel</button>
             </div>
-            {!readOnly && <button onClick={sendMail} disabled={busy} className="px-4 py-2.5 rounded-md bg-[#0e2a2b] hover:bg-[#1b3d3e] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-50">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Enviar por correo</button>}
+            {!readOnly && <button onClick={sendMail} disabled={busy} className="px-4 py-2.5 rounded-md bg-[#0f2340] hover:bg-[#1b3d3e] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-50">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Enviar por correo</button>}
             {sent && <span className="text-xs text-[#005f60] bg-[#e2f4f4] rounded-md px-3 py-2">{sent}</span>}
           </div>
         )}
         <OpsMailPanel plan={plan} catalog={day.catalog} ids={ids} locked={locked} onApply={(m) => setIds((s) => [...s, ...m])} onParsed={onParsed} />
         {!locked && (
           <div className={card + " p-4 flex flex-col gap-3"}>
-            <button onClick={copyPrev} disabled={busy} className="px-4 py-2.5 rounded-md text-sm border border-[#cdd4d4] hover:border-[#007f80] text-[#1c2526]">Copiar programación anterior del {SH[shift].name}</button>
+            <button onClick={copyPrev} disabled={busy} className="px-4 py-2.5 rounded-md text-sm border border-[#cdd4d4] hover:border-[#2a64b8] text-[#1c2526]">Copiar programación anterior del {SH[shift].name}</button>
             <div className="flex justify-between text-[13px]"><span className="text-[#6b7778]">Actividades seleccionadas</span><span className="font-mono">{ids.length}</span></div>
             {err && <div className="text-xs text-[#9b3b2e] bg-[#f6e4e0] rounded-md px-3 py-2">{err}</div>}
-            <button onClick={() => save(true)} disabled={busy} className="px-4 py-2.5 rounded-md bg-[#007f80] hover:bg-[#005f60] text-white text-sm flex items-center justify-center gap-2 transition-colors">
+            <button onClick={() => save(true)} disabled={busy} className="px-4 py-2.5 rounded-md bg-[#2a64b8] hover:bg-[#005f60] text-white text-sm flex items-center justify-center gap-2 transition-colors">
               {busy && <Loader2 className="w-4 h-4 animate-spin" />}{pub ? "Republicar" : "Publicar"} y notificar al asesor
             </button>
             <button onClick={() => save(false)} disabled={busy} className="px-4 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md text-sm text-[#3c4849] hover:bg-[#eef1f1]">Guardar borrador</button>

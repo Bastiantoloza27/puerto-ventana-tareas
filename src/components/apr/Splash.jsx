@@ -19,7 +19,7 @@ export default function Splash() {
   return (
     <div
       aria-hidden="true"
-      className={"fixed inset-0 z-[100] bg-[#0e2a2b] grid place-items-center transition-opacity duration-500 " + (out ? "opacity-0 pointer-events-none" : "opacity-100")}
+      className={"fixed inset-0 z-[100] bg-[#0f2340] grid place-items-center transition-opacity duration-500 " + (out ? "opacity-0 pointer-events-none" : "opacity-100")}
     >
       <div className={"flex flex-col items-center gap-5 px-6 transition-all duration-700 ease-out " + (step >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3")}>
         <img src={LOGO} alt="PVSA Puerto Ventanas S.A." className="h-16 w-auto" />

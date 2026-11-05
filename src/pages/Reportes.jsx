@@ -29,7 +29,7 @@ export default function Reportes() {
       </select>
     </div>
   );
-  if (isLoading) return <>{filtro}<div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#007f80] rounded-full animate-spin" /></div></>;
+  if (isLoading) return <>{filtro}<div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#2a64b8] rounded-full animate-spin" /></div></>;
 
   const sum = (f) => plans.reduce((s, p) => s + (p[f] || 0), 0);
   const pct = sum("r_prog") - sum("r_na") > 0 ? Math.round((sum("r_ok") / (sum("r_prog") - sum("r_na"))) * 100) : 0;
