@@ -13,7 +13,7 @@ export default function HeroSaludo({ resumen, cta, cta2 }) {
   return (
     <div className="relative overflow-hidden rounded-xl bg-[linear-gradient(115deg,#0f2340_0%,#16386a_55%,#2a64b8_100%)] text-white min-h-[190px] px-6 md:px-8 py-6 md:py-7 shadow-[0_10px_30px_rgba(15,35,64,.25)]">
       <PortScene night={h >= 20 || h < 6} onShip={onShip} />
-      <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="relative pointer-events-none [&_a]:pointer-events-auto flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <div className="font-mono text-[11px] tracking-[.14em] text-[#9cc0f0]">RESUMEN DEL DÍA</div>
           <h2 className="font-heading text-[28px] md:text-[34px] leading-tight mt-1">{saludo}, equipo de Prevención</h2>

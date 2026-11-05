@@ -17,14 +17,17 @@ export default function PortScene({ night, onShip }) {
       </g>
       <motion.g style={{ cursor: "pointer" }} onClick={onShip} animate={{ x: [-160, 640] }} transition={{ duration: 38, repeat: Infinity, ease: "linear" }}>
         <motion.g animate={{ y: [0, 2.5, 0], rotate: [0, 1, 0] }} transition={{ duration: 2.4, repeat: Infinity }}>
+          <rect x="-10" y="85" width="130" height="70" fill="transparent" />
           <path d="M0 128 L110 128 L98 146 L10 146 Z" fill="#ffffff" fillOpacity="0.9" />
           {[14, 34, 54].map((x, i) => <rect key={x} x={x} y="114" width="18" height="14" fill={["#e3c77a", "#9cc0f0", "#b9574a"][i]} />)}
           <rect x="78" y="104" width="20" height="24" fill="#ffffff" fillOpacity="0.95" />
           <rect x="84" y="96" width="6" height="8" fill="#ffffff" fillOpacity="0.95" />
         </motion.g>
       </motion.g>
+      <g pointerEvents="none">
       {wave("M0 150 Q75 138 150 150 T300 150 T450 150 T600 150 T750 150 V180 H0Z", 0.12, 7)}
       {wave("M0 160 Q75 150 150 160 T300 160 T450 160 T600 160 T750 160 V180 H0Z", 0.2, 5)}
+      </g>
     </svg>
   );
 }
