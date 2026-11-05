@@ -6,6 +6,7 @@ import TurnoSide from "@/components/apr/TurnoSide";
 import NotPublished from "@/components/apr/NotPublished";
 import { now } from "@/lib/apr";
 import { saveExec, addLog, bumpMin } from "@/lib/aprActions";
+import { attempt } from "@/lib/safe";
 
 const GROUPS = [["t", "Transversales", "Se esperan en todos los turnos"], ["o", "Según la operación del día", "Programadas desde el correo de Operaciones"], ["c", "Según ocurrencia", "«No ocurrió» no afecta el cumplimiento"]];
 
@@ -17,7 +18,7 @@ export default function MiTurno() {
   const E = Object.fromEntries(day.execs.filter((e) => e.programacion_id === plan.id).map((e) => [e.actividad_id, e]));
   const items = (plan.actividad_ids || []).map((id) => day.catalog.find((c) => c.id === id)).filter(Boolean);
 
-  const onSet = (a) => async (patch, log) => {
+  const onSet = (a) => (patch, log) => attempt(async () => {
     const prev = E[a.id]?.controles || [];
     if (patch.estado && patch.estado !== "ok" && prev.length) { patch = { ...patch, controles: [] }; await bumpMin(plan, prev, -1); }
     if (patch.controles && !patch.estado) {
@@ -28,7 +29,7 @@ export default function MiTurno() {
     if (patch.controles) qc.invalidateQueries({ queryKey: ["mins"] });
     if (log) await addLog(plan, log);
     day.refresh();
-  };
+  });
 
   return (
     <>

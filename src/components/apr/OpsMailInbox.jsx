@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Inbox, Loader2, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { card } from "@/lib/apr";
+import { attempt } from "@/lib/safe";
 
 const hhmm = (iso) => (iso ? new Date(iso).toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" }) : "");
 
@@ -18,14 +19,15 @@ export default function OpsMailInbox({ onApply, locked }) {
 
   const aplicar = async (c) => {
     setBusy(c.id);
-    await onApply(c);
-    await base44.entities.CorreoOperacion.update(c.id, { estado: "aplicado" });
+    if ((await onApply(c)) !== false) await attempt(() => base44.entities.CorreoOperacion.update(c.id, { estado: "aplicado" }));
     refresh();
     setBusy("");
   };
   const descartar = async (c) => {
-    await base44.entities.CorreoOperacion.update(c.id, { estado: "descartado" });
+    setBusy(c.id);
+    await attempt(() => base44.entities.CorreoOperacion.update(c.id, { estado: "descartado" }));
     refresh();
+    setBusy("");
   };
 
   return (
@@ -44,7 +46,7 @@ export default function OpsMailInbox({ onApply, locked }) {
               {busy === c.id && <Loader2 className="w-3.5 h-3.5 animate-spin" />}Cargar en este turno
             </button>
           )}
-          <button onClick={() => descartar(c)} aria-label="Descartar correo" className="p-1.5 rounded hover:bg-[#f6e4e0]"><X className="w-4 h-4 text-[#9b3b2e]" /></button>
+          <button onClick={() => descartar(c)} disabled={!!busy} aria-label="Descartar correo" className="p-1.5 rounded hover:bg-[#f6e4e0]"><X className="w-4 h-4 text-[#9b3b2e]" /></button>
         </div>
       ))}
     </div>

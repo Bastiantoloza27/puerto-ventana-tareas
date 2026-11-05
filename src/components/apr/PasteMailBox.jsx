@@ -14,7 +14,7 @@ export default function PasteMailBox({ isUpdate, onParsed }) {
     const res = await base44.functions.invoke("parseOpsMail", { texto, asesores: ASES }).catch((e) => ({ data: { error: e.response?.data?.error || e.message } }));
     setBusy(false);
     if (res.data?.error) return setErr(res.data.error);
-    await onParsed({ ...res.data, raw: texto });
+    if ((await onParsed({ ...res.data, raw: texto })) === false) return;
     setTexto(""); setOpen(false);
   };
 

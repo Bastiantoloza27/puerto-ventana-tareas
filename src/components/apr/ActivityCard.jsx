@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { card, MOT } from "@/lib/apr";
 import EvidenceList from "@/components/apr/EvidenceList";
 import ControlChips from "@/components/apr/ControlChips";
@@ -11,7 +11,19 @@ const CHIP = {
 export default function ActivityCard({ a, e, editable, onSet }) {
   const st = e?.estado;
   const [obs, setObs] = useState(e?.observaciones || "");
-  useEffect(() => setObs(e?.observaciones || ""), [e?.observaciones]);
+  const [busy, setBusy] = useState(false);
+  const focused = useRef(false);
+  // No pisa lo que la persona está escribiendo con datos del servidor.
+  useEffect(() => { if (!focused.current) setObs(e?.observaciones || ""); }, [e?.observaciones]);
+  // Autoguardado de observaciones mientras se escribe.
+  useEffect(() => {
+    if (!editable || obs === (e?.observaciones || "")) return;
+    const t = setTimeout(() => onSet({ observaciones: obs }, null), 1200);
+    return () => clearTimeout(t);
+  }, [obs]);
+  // Evita doble registro por toques repetidos.
+  const act = async (patch, log) => { if (busy) return; setBusy(true); await onSet(patch, log); setBusy(false); };
+  const obsProps = { onFocus: () => { focused.current = true; }, onBlur: () => { focused.current = false; saveObs(); } };
   const c = CHIP[st || "none"];
   const label = st === "ok" ? "Ejecutado · " + (e.hora || "") : st === "no" ? "No ejecutado" + (e.motivo ? "" : " · falta motivo") : st === "na" ? "No ocurrió" : "Por registrar";
   const btn = (on, onCls, offCls) => "flex-1 md:flex-none min-h-[44px] md:min-h-0 px-3.5 py-2.5 md:py-2 rounded-md text-sm md:text-[13px] border transition-colors " + (on ? onCls : offCls);
@@ -32,17 +44,17 @@ export default function ActivityCard({ a, e, editable, onSet }) {
       </div>
       {editable && (
         <div className="flex gap-2 flex-wrap">
-          <button onClick={() => onSet({ estado: "ok", motivo: "" }, `Ejecutado: ${a.proceso} · ${a.sitio}`)} className={btn(st === "ok", "bg-[#2a64b8] text-white border-[#2a64b8]", "bg-white text-[#1d4a8c] border-[#2a64b8] hover:bg-[#eaf1fb]")}>✓ Ejecutado</button>
-          <button onClick={() => onSet({ estado: "no" }, `No ejecutado: ${a.proceso} · ${a.sitio}`)} className={btn(st === "no", "bg-[#b9574a] text-white border-[#b9574a]", "bg-white text-[#9b3b2e] border-[#b9574a] hover:bg-[#f6e4e0]")}>✕ No ejecutado</button>
-          {a.tipo === "c" && <button onClick={() => onSet({ estado: "na", motivo: "" }, `No ocurrió: ${a.proceso}`)} className={btn(st === "na", "bg-[#5b6667] text-white border-[#5b6667]", "bg-white text-[#5b6667] border-[#9aa5a6] hover:bg-[#eef1f1]")}>No ocurrió</button>}
+          <button disabled={busy} onClick={() => act({ estado: "ok", motivo: "" }, `Ejecutado: ${a.proceso} · ${a.sitio}`)} className={btn(st === "ok", "bg-[#2a64b8] text-white border-[#2a64b8]", "bg-white text-[#1d4a8c] border-[#2a64b8] hover:bg-[#eaf1fb]")}>✓ Ejecutado</button>
+          <button disabled={busy} onClick={() => act({ estado: "no" }, `No ejecutado: ${a.proceso} · ${a.sitio}`)} className={btn(st === "no", "bg-[#b9574a] text-white border-[#b9574a]", "bg-white text-[#9b3b2e] border-[#b9574a] hover:bg-[#f6e4e0]")}>✕ No ejecutado</button>
+          {a.tipo === "c" && <button disabled={busy} onClick={() => act({ estado: "na", motivo: "" }, `No ocurrió: ${a.proceso}`)} className={btn(st === "na", "bg-[#5b6667] text-white border-[#5b6667]", "bg-white text-[#5b6667] border-[#9aa5a6] hover:bg-[#eef1f1]")}>No ocurrió</button>}
         </div>
       )}
       {st === "ok" && (
         <div className="flex flex-col gap-2 p-3 rounded-lg bg-[#f4f7fc]">
-          <ControlChips value={e.controles} editable={editable} onChange={(controles) => onSet({ controles }, null)} />
+          <ControlChips value={e.controles} editable={editable && !busy} onChange={(controles) => act({ controles }, null)} />
           <EvidenceList items={e.evidencias} editable={editable} onAdd={(f) => onSet({ evidencias: [...(e.evidencias || []), ...f] }, `Evidencia adjunta (${f.length}) · ${a.proceso}`)}
-            onRemove={(i) => onSet({ evidencias: e.evidencias.filter((_, j) => j !== i) }, `Evidencia eliminada · ${a.proceso}`)} />
-          <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} onBlur={saveObs} disabled={!editable} placeholder="Observaciones (opcional)" rows={2} className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#2a64b8]" />
+            onRemove={(i) => act({ evidencias: e.evidencias.filter((_, j) => j !== i) }, `Evidencia eliminada · ${a.proceso}`)} />
+          <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} {...obsProps} disabled={!editable} placeholder="Observaciones (opcional)" rows={2} className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#2a64b8]" />
         </div>
       )}
       {st === "no" && (
@@ -50,10 +62,10 @@ export default function ActivityCard({ a, e, editable, onSet }) {
           <span className="text-xs text-[#9b3b2e] font-medium">Motivo (obligatorio)</span>
           <div className="flex gap-1.5 flex-wrap">
             {MOT.map((m) => (
-              <button key={m} disabled={!editable} onClick={() => onSet({ motivo: m }, null)} className={"text-sm md:text-[13px] px-3 py-2.5 md:py-1.5 rounded-[14px] border transition-colors " + (e.motivo === m ? "bg-[#b9574a] border-[#b9574a] text-white" : "bg-white border-[#e3c9c3] text-[#1c2526] hover:border-[#b9574a]")}>{m}</button>
+              <button key={m} disabled={!editable || busy} onClick={() => act({ motivo: m }, null)} className={"text-sm md:text-[13px] px-3 py-2.5 md:py-1.5 rounded-[14px] border transition-colors " + (e.motivo === m ? "bg-[#b9574a] border-[#b9574a] text-white" : "bg-white border-[#e3c9c3] text-[#1c2526] hover:border-[#b9574a]")}>{m}</button>
             ))}
           </div>
-          <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} onBlur={saveObs} disabled={!editable} placeholder="Detalle (opcional)" rows={2} className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#b9574a]" />
+          <textarea value={obs} onChange={(ev) => setObs(ev.target.value)} {...obsProps} disabled={!editable} placeholder="Detalle (opcional)" rows={2} className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white resize-y focus:outline-none focus:border-[#b9574a]" />
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
+import { emailDeAsesor } from '../../shared/team.ts';
 
 const SH = { T1: '1° turno', T2: '2° turno', T3: '3° turno' };
 const ST = { ok: 'Ejecutado', no: 'No ejecutado', na: 'No ocurrió' };
@@ -44,13 +45,7 @@ export default async function (req) {
     let nextF = String(plan.fecha).slice(0, 10);
     if (plan.turno === 'T3') { const d = new Date(nextF + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + 1); nextF = d.toISOString().slice(0, 10); }
     const nextPlan = (await base44.asServiceRole.entities.Programacion.filter({ fecha: nextF, turno: nextT }))[0];
-    const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().split(/\s+/).filter(Boolean);
-    let nextEmail = null;
-    if (nextPlan?.asesor) {
-      const tk = norm(nextPlan.asesor);
-      const team = await base44.asServiceRole.entities.Integrante.list();
-      nextEmail = team.find((i) => norm(i.nombre).filter((t) => tk.includes(t)).length >= 2)?.email || null;
-    }
+    const nextEmail = await emailDeAsesor(base44, nextPlan?.asesor);
     const to = [...new Set(['prevencion.riesgos@pvsa.cl', nextEmail].filter(Boolean))];
     const subject = `Reporte ${SH[plan.turno]} · ${String(plan.fecha ?? '').slice(0, 10)} · ${num(plan.r_pct)}% cumplimiento`;
     const results = await Promise.allSettled(to.map((email) => base44.asServiceRole.integrations.Core.SendEmail({ to: email, from_name: 'Programa APR', subject, body: html, category: 'transactional' })));

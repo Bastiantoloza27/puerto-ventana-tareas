@@ -4,6 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { card } from "@/lib/apr";
 import EquipoForm from "@/components/apr/EquipoForm";
+import { attempt } from "@/lib/safe";
 
 const LBL = { jefatura: "Jefatura", asesor: "Asesor" };
 
@@ -21,16 +22,12 @@ export default function EquipoRegistrado({ users, onSynced }) {
     Promise.all(pend.map((i) => { const u = byEmail(i.email); return base44.functions.invoke("asignarPerfil", { user_id: u.id, perfil: i.perfil }); })).then(onSynced);
   }, [equipo, users]);
 
-  const add = async (f) => {
+  const add = (f) => attempt(async () => {
     await base44.entities.Integrante.create({ nombre: f.nombre.trim(), email: f.email.trim().toLowerCase(), cargo: f.cargo.trim(), perfil: f.perfil });
     setAdding(false);
     reload();
-  };
-  const remove = async (i) => {
-    if (!confirm(`¿Quitar a ${i.nombre} del equipo?`)) return;
-    await base44.entities.Integrante.delete(i.id);
-    reload();
-  };
+  }, "Integrante agregado");
+  const remove = (i) => confirm(`¿Quitar a ${i.nombre} del equipo?`) && attempt(async () => { await base44.entities.Integrante.delete(i.id); reload(); }, null, "No se pudo quitar");
 
   return (
     <div className="flex flex-col gap-3">

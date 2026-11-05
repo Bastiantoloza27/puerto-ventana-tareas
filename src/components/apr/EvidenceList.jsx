@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Loader2, Camera, Paperclip, FileText, Image as ImageIcon, X } from "lucide-react";
 import { uploadFiles, openFile } from "@/lib/aprActions";
+import { attempt } from "@/lib/safe";
 
 export default function EvidenceList({ items = [], editable, onAdd, onRemove }) {
   const [busy, setBusy] = useState(false);
   const pick = async (e) => {
     if (!e.target.files?.length) return;
     setBusy(true);
-    const f = await uploadFiles(e.target.files);
+    const files = e.target.files;
+    await attempt(async () => onAdd(await uploadFiles(files)), null, "No se pudo subir la evidencia");
     e.target.value = "";
-    await onAdd(f);
     setBusy(false);
   };
   return (
@@ -28,7 +29,7 @@ export default function EvidenceList({ items = [], editable, onAdd, onRemove }) 
       )}
       {items.map((f, i) => (
         <span key={i} className="flex items-center rounded-md bg-white border border-[#dde5e4] hover:border-[#2a64b8] max-w-[230px]">
-          <button onClick={() => openFile(f.uri)} className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 text-[#3c4849] min-w-0">
+          <button onClick={() => attempt(() => openFile(f.uri), null, "No se pudo abrir el archivo")} className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 text-[#3c4849] min-w-0">
             {f.is_img ? <ImageIcon className="w-3.5 h-3.5 flex-none text-[#2a64b8]" /> : <FileText className="w-3.5 h-3.5 flex-none text-[#2a64b8]" />}
             <span className="truncate">{f.name}</span>
           </button>

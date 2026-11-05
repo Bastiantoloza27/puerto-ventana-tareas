@@ -3,7 +3,8 @@ import { useOutletContext } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { card, chipCls, ASES, SH, now } from "@/lib/apr";
-import { addLog } from "@/lib/aprActions";
+import { addLog, upsertPlan, sendProgram } from "@/lib/aprActions";
+import { attempt } from "@/lib/safe";
 import { downloadProgramaCsv, printProgramaPdf } from "@/lib/exportReport";
 import CatalogPicker from "@/components/apr/CatalogPicker";
 import OpsMailPanel from "@/components/apr/OpsMailPanel";
@@ -25,9 +26,11 @@ export default function Programacion() {
 
   const copyPrev = async () => {
     setBusy(true); setErr("");
-    const prev = (await base44.entities.Programacion.filter({ turno: shift, fecha: { $lt: day.fecha }, estado: { $ne: "borrador" } }, { sort: "-fecha", limit: 1 })).items[0];
-    if (prev) { setIds((s) => [...new Set([...s, ...(prev.actividad_ids || []).filter((id) => day.catalog.some((c) => c.id === id))])]); if (!asesor) setAsesor(prev.asesor); }
-    else setErr("No hay una programación anterior de este turno.");
+    await attempt(async () => {
+      const prev = (await base44.entities.Programacion.filter({ turno: shift, fecha: { $lt: day.fecha }, estado: { $ne: "borrador" } }, { sort: "-fecha", limit: 1 })).items[0];
+      if (prev) { setIds((s) => [...new Set([...s, ...(prev.actividad_ids || []).filter((id) => day.catalog.some((c) => c.id === id))])]); if (!asesor) setAsesor(prev.asesor); }
+      else setErr("No hay una programación anterior de este turno.");
+    }, null, "No se pudo copiar la programación anterior");
     setBusy(false);
   };
 
@@ -35,15 +38,14 @@ export default function Programacion() {
 
   const sendMail = async () => {
     setBusy(true); setErr(""); setSent("");
-    let p = plan;
-    if (p) await base44.entities.Programacion.update(p.id, { asesor, actividad_ids: ids });
-    else p = await base44.entities.Programacion.create({ fecha: day.fecha, turno: shift, estado: "borrador", bitacora: [], asesor, actividad_ids: ids });
-    const res = await base44.functions.invoke("sendShiftProgram", { programacion_id: p.id });
-    if (res.data?.error) setErr(res.data.error); else setSent(`Enviado a ${res.data.to}`);
+    await attempt(async () => {
+      const p = await upsertPlan(plan, day.fecha, shift, { asesor, actividad_ids: ids });
+      setSent(await sendProgram(p.id));
+    }, null, "No se pudo enviar el correo");
     day.refresh(); setBusy(false);
   };
 
-  const onParsed = async (r) => {
+  const onParsed = (r) => attempt(async () => {
     const hora = now();
     const prev = plan?.correo;
     const correo = prev
@@ -52,24 +54,24 @@ export default function Programacion() {
     const nuevas = r.lineas.map((l) => l.actividad_id).filter(Boolean);
     const nextIds = [...new Set([...ids, ...nuevas])];
     const nextAsesor = asesor || r.asesor || null;
-    let p = plan;
-    if (p) await base44.entities.Programacion.update(p.id, { correo, actividad_ids: nextIds, asesor: nextAsesor });
-    else p = await base44.entities.Programacion.create({ fecha: day.fecha, turno: shift, estado: "borrador", bitacora: [], correo, actividad_ids: nextIds, asesor: nextAsesor });
+    const p = await upsertPlan(plan, day.fecha, shift, { correo, actividad_ids: nextIds, asesor: nextAsesor });
     const sinMatch = r.lineas.filter((l) => !l.actividad_id).length;
     await addLog(p, `${prev ? "Actualización" : "Correo"} de Operaciones cargado · ${nuevas.length} sugeridas${sinMatch ? ` · ${sinMatch} sin asociar` : ""}`);
     setIds(nextIds); setAsesor(nextAsesor);
     day.refresh();
     return p.id;
-  };
+  }, null, "No se pudo cargar el correo de Operaciones");
 
   const save = async (publish) => {
     if (publish && (!asesor || !ids.length)) return setErr(!asesor ? "Asigna un asesor de turno antes de publicar." : "Selecciona al menos una actividad.");
-    setBusy(true); setErr("");
+    setBusy(true); setErr(""); setSent("");
     const data = { asesor, actividad_ids: ids, ...(publish ? { estado: "publicada", publicada_hora: now() } : {}) };
-    let p = plan;
-    if (p) await base44.entities.Programacion.update(p.id, data);
-    else p = await base44.entities.Programacion.create({ fecha: day.fecha, turno: shift, estado: "borrador", bitacora: [], ...data });
-    await addLog(p, publish ? `${pub ? "Programación republicada" : "Programación publicada"} · ${ids.length} actividades · ${asesor}` : "Borrador guardado");
+    const p = await attempt(async () => {
+      const saved = await upsertPlan(plan, day.fecha, shift, data);
+      await addLog(saved, publish ? `${pub ? "Programación republicada" : "Programación publicada"} · ${ids.length} actividades · ${asesor}` : "Borrador guardado");
+      return saved;
+    }, publish ? (pub ? "Programación republicada" : "Programación publicada") : "Borrador guardado");
+    if (p && publish) await attempt(async () => setSent(await sendProgram(p.id)), null, "Quedó publicada, pero no se pudo enviar el correo al asesor");
     day.refresh(); setBusy(false);
   };
 

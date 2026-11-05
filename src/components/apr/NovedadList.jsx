@@ -13,7 +13,7 @@ export default function NovedadList({ novs, editable, onUpdate, onDelete }) {
       {novs.map((n) => (
         <div key={n.id} className={card + " px-4 py-3.5 flex flex-col gap-1.5"}>
           {editId === n.id ? (
-            <NovedadEdit nov={n} onCancel={() => setEditId(null)} onSave={async (d) => { await onUpdate(n, d); setEditId(null); }} />
+            <NovedadEdit nov={n} onCancel={() => setEditId(null)} onSave={async (d) => { if ((await onUpdate(n, d)) !== false) setEditId(null); }} />
           ) : <>
             <div className="flex gap-1.5 flex-wrap items-center">
               <span className="font-mono text-xs text-[#6b7778]">{n.hora}</span>

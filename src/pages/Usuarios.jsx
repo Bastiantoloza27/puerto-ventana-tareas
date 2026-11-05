@@ -4,6 +4,7 @@ import { card } from "@/lib/apr";
 import usePerfil from "@/hooks/usePerfil";
 import { useAuth } from "@/lib/AuthContext";
 import EquipoRegistrado from "@/components/apr/EquipoRegistrado";
+import { attempt } from "@/lib/safe";
 
 const PERFILES = [["jefatura", "Jefatura"], ["asesor", "Asesor"]];
 
@@ -13,7 +14,7 @@ export default function Usuarios() {
   const { data: users = [], isLoading } = useQuery({ queryKey: ["users"], enabled: isAdmin, queryFn: () => base44.entities.User.list() });
   const { user: me } = useAuth();
   const setPerfil = async (u, perfil) => {
-    await base44.functions.invoke("asignarPerfil", { user_id: u.id, perfil });
+    await attempt(() => base44.functions.invoke("asignarPerfil", { user_id: u.id, perfil }), "Perfil actualizado", "No se pudo cambiar el perfil");
     qc.invalidateQueries({ queryKey: ["users"] });
   };
 

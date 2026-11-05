@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { card, chipCls, LUG, TIPOS, CRIT, NOMB } from "@/lib/apr";
 import EvidenceList from "@/components/apr/EvidenceList";
@@ -6,8 +6,13 @@ import EvidenceList from "@/components/apr/EvidenceList";
 const empty = { lugar: "Sitio 5", tipo: null, criticidad: "Media", descripcion: "", quien: [], otro: "", accion: "", evidencias: [] };
 const inputCls = "w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#2a64b8]";
 
+const DRAFT = "apr-novedad-borrador";
+const loadDraft = () => { try { return { ...empty, ...JSON.parse(localStorage.getItem(DRAFT) || "{}") }; } catch { return empty; } };
+
 export default function NovedadForm({ shift, asesor, onSave }) {
-  const [f, setF] = useState(empty);
+  const [f, setF] = useState(loadDraft);
+  // Guarda el borrador en el equipo para que no se pierda si se cierra la app.
+  useEffect(() => { localStorage.setItem(DRAFT, JSON.stringify(f)); }, [f]);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const set = (p) => setF((s) => ({ ...s, ...p }));
@@ -19,8 +24,9 @@ export default function NovedadForm({ shift, asesor, onSave }) {
     if (!f.tipo || !f.descripcion.trim()) return setErr("Indica el tipo y describe la novedad.");
     setBusy(true); setErr("");
     const quien = [f.quien.join(", "), f.otro.trim(), asesor ? "Asesor " + asesor : ""].filter(Boolean).join(" · ");
-    await onSave({ lugar: f.lugar, tipo: f.tipo, criticidad: f.criticidad, descripcion: f.descripcion.trim(), quien, accion: f.accion.trim(), evidencias: f.evidencias });
-    setF(empty); setBusy(false);
+    const ok = await onSave({ lugar: f.lugar, tipo: f.tipo, criticidad: f.criticidad, descripcion: f.descripcion.trim(), quien, accion: f.accion.trim(), evidencias: f.evidencias });
+    if (ok !== false) setF(empty);
+    setBusy(false);
   };
 
   return (

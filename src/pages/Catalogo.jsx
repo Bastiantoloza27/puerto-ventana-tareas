@@ -5,6 +5,7 @@ import { Pencil, Trash2, Plus } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { card, TIPO_LABEL } from "@/lib/apr";
 import ActividadForm from "@/components/apr/ActividadForm";
+import { attempt } from "@/lib/safe";
 
 export default function Catalogo() {
   const { day, canPlan } = useOutletContext();
@@ -14,15 +15,15 @@ export default function Catalogo() {
   const areas = [...new Set(day.catalog.map((c) => c.area))];
   const reload = () => qc.invalidateQueries({ queryKey: ["catalog"] });
 
-  const save = async (f) => {
+  const save = (f) => attempt(async () => {
     const data = { area: f.area.trim(), sitio: f.sitio.trim(), proceso: f.proceso.trim(), tipo: f.tipo, descripcion: f.descripcion || "", base: !!f.base };
     const orden = f.orden === "" || f.orden == null ? null : Number(f.orden);
     if (edit === "new") await base44.entities.Actividad.create({ ...data, orden: orden ?? Math.max(0, ...day.catalog.map((c) => c.orden || 0)) + 1 });
     else await base44.entities.Actividad.update(edit.id, { ...data, ...(orden == null ? {} : { orden }) });
     setEdit(null); reload();
-  };
-  const toggleBase = async (a) => { await base44.entities.Actividad.update(a.id, { base: !a.base }); reload(); };
-  const remove = async (a) => { if (!confirm(`¿Eliminar "${a.proceso}" del catálogo?`)) return; await base44.entities.Actividad.delete(a.id); reload(); };
+  }, "Actividad guardada");
+  const toggleBase = (a) => attempt(async () => { await base44.entities.Actividad.update(a.id, { base: !a.base }); reload(); });
+  const remove = (a) => confirm(`¿Eliminar "${a.proceso}" del catálogo?`) && attempt(async () => { await base44.entities.Actividad.delete(a.id); reload(); }, null, "No se pudo eliminar");
 
   return (
     <div className="flex flex-col gap-4">

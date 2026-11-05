@@ -6,6 +6,12 @@ export default function CierrePanel({ plan, k, readOnly, nextAsesor, onEntrega, 
   const [entrega, setEntrega] = useState(plan.entrega || "");
   const [busy, setBusy] = useState(false);
   useEffect(() => setEntrega(plan.entrega || ""), [plan.id]);
+  // Autoguardado de la entrega mientras se escribe.
+  useEffect(() => {
+    if (plan.estado === "cerrada" || readOnly || entrega === (plan.entrega || "")) return;
+    const t = setTimeout(() => onEntrega(entrega), 1200);
+    return () => clearTimeout(t);
+  }, [entrega]);
   const closed = plan.estado === "cerrada";
   const close = async () => { setBusy(true); await onClose(entrega); setBusy(false); };
 
