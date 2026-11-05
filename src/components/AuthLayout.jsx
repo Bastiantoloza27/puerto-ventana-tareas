@@ -1,6 +1,6 @@
 import React from "react";
 
-const LOGO = "https://media.base44.com/images/public/6acfba2bbe6123d4e500ba2b/3d9e87cb2_logo.png";
+const LOGO = "https://base44.app/api/apps/6acfba2bbe6123d4e500ba2b/files/mp/public/6acfba2bbe6123d4e500ba2b/61a4ae7bc_pvsa_logo.png";
 const PVSA = "https://base44.app/api/apps/6acfba2bbe6123d4e500ba2b/files/mp/public/6acfba2bbe6123d4e500ba2b/66fd6fb27_pvsa-logo.png";
 
 export default function AuthLayout({ title, subtitle, footer, children }) {
@@ -15,9 +15,7 @@ export default function AuthLayout({ title, subtitle, footer, children }) {
       </svg>
       <div className="relative w-full max-w-md">
         <div className="text-center mb-7">
-          <div className="w-20 h-20 rounded-2xl bg-white mx-auto mb-4 grid place-items-center shadow-xl ring-4 ring-white/15">
-            <img src={LOGO} alt="Puerto Ventana Tareas" className="w-14 h-14 object-contain" />
-          </div>
+          <img src={LOGO} alt="PVSA Puerto Ventanas S.A." className="w-48 aspect-[2/1] object-cover rounded-2xl mx-auto mb-4 shadow-xl ring-4 ring-white/15" />
           <div className="font-mono text-[11px] tracking-[.16em] text-[#9cc0f0]">PUERTO VENTANA TAREAS</div>
           <h1 className="font-heading text-3xl text-white mt-1">{title}</h1>
           {subtitle && <p className="text-[#d6e2f5] mt-2">{subtitle}</p>}
