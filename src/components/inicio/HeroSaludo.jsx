@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import PortScene from "@/components/inicio/PortScene";
+import ShipBadge from "@/components/inicio/ShipBadge";
 
 const FRASES = ["¡Buen turno, equipo!", "La seguridad la hacemos todos.", "Cero accidentes, todos los días.", "Prevenir es cuidarnos."];
 
@@ -25,6 +26,7 @@ export default function HeroSaludo({ resumen, cta, cta2 }) {
           {cta2 && <Link to={cta2.to} className="px-4 py-2.5 rounded-md border border-white/50 text-white text-sm font-medium hover:bg-white/10">{cta2.label}</Link>}
         </div>
       </div>
+      <ShipBadge onClick={onShip} />
       <AnimatePresence>
         {frase && <motion.div initial={{ opacity: 0, scale: 0.8, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white text-[#0f2340] text-sm font-medium shadow-lg">{frase}</motion.div>}
       </AnimatePresence>
