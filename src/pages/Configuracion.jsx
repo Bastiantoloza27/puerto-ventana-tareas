@@ -18,6 +18,7 @@ export default function Configuracion() {
     },
   });
   if (isLoading) return <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#2a64b8] rounded-full animate-spin" /></div>;
+  if (!data) return <div className={card + " p-6 text-sm text-[#9b3b2e]"}>No pudimos cargar la configuración inicial. Vuelve a intentarlo; si persiste, revisa que tu usuario tenga rol de administrador.</div>;
 
   const pasos = data.cfg?.pasos || [];
   const toggle = async (p) => {
