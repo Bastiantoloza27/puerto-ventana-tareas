@@ -13,7 +13,7 @@ export default function EquipoRegistrado({ users, onSynced }) {
   useEffect(() => {
     const pend = equipo.filter((i) => { const u = byEmail(i.email); return u && !u.perfil; });
     if (!pend.length) return;
-    Promise.all(pend.map((i) => { const u = byEmail(i.email); return base44.entities.User.update(u.id, { perfil: i.perfil, role: i.perfil === "jefatura" ? "admin" : "user" }); })).then(onSynced);
+    Promise.all(pend.map((i) => { const u = byEmail(i.email); return base44.functions.invoke("asignarPerfil", { user_id: u.id, perfil: i.perfil }); })).then(onSynced);
   }, [equipo, users]);
 
   return (

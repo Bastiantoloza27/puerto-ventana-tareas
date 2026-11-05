@@ -13,8 +13,7 @@ export default function Usuarios() {
   const { data: users = [], isLoading } = useQuery({ queryKey: ["users"], enabled: isAdmin, queryFn: () => base44.entities.User.list() });
   const { user: me } = useAuth();
   const setPerfil = async (u, perfil) => {
-    const role = perfil === "jefatura" ? "admin" : u.id === me?.id ? u.role : "user";
-    await base44.entities.User.update(u.id, { perfil, role });
+    await base44.functions.invoke("asignarPerfil", { user_id: u.id, perfil });
     qc.invalidateQueries({ queryKey: ["users"] });
   };
 

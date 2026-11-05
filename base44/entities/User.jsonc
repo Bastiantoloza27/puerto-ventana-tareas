@@ -8,7 +8,14 @@
         "jefatura",
         "asesor"
       ],
-      "description": "Perfil de uso en la app"
+      "description": "Perfil de uso en la app",
+      "rls": {
+        "update": {
+          "user_condition": {
+            "collaborator_role": "editor"
+          }
+        }
+      }
     }
   }
 }

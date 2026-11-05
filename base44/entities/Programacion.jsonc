@@ -136,7 +136,7 @@
         },
         {
           "user_condition": {
-            "role": "user"
+            "data.perfil": "asesor"
           }
         }
       ]
@@ -150,7 +150,7 @@
         },
         {
           "user_condition": {
-            "role": "user"
+            "data.perfil": "asesor"
           }
         }
       ]

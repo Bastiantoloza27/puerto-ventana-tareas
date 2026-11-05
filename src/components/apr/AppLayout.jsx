@@ -10,10 +10,15 @@ import usePerfil from "@/hooks/usePerfil";
 import ViewAsSwitch from "@/components/apr/ViewAsSwitch";
 import { kpi, ORDER, today } from "@/lib/apr";
 import ProgDatePicker from "@/components/apr/ProgDatePicker";
+import PerfilGate from "@/components/apr/PerfilGate";
 
 const TITLES = { "/": "Inicio", "/turno": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles", "/configuracion": "Configuración inicial" };
 
 export default function AppLayout() {
+  return <PerfilGate><AppShell /></PerfilGate>;
+}
+
+function AppShell() {
   const { pathname } = useLocation();
   const [progDate, setProgDate] = useState(today());
   const day = useDay(pathname === "/programacion" ? progDate : undefined);
