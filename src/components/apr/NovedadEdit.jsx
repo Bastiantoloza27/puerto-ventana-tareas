@@ -3,7 +3,7 @@ import { Loader2 } from "lucide-react";
 import { chipCls, LUG, TIPOS, CRIT } from "@/lib/apr";
 import EvidenceList from "@/components/apr/EvidenceList";
 
-const inputCls = "w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#007f80]";
+const inputCls = "w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#2a64b8]";
 
 export default function NovedadEdit({ nov, onSave, onCancel }) {
   const [f, setF] = useState({ lugar: nov.lugar, tipo: nov.tipo, criticidad: nov.criticidad, descripcion: nov.descripcion || "", quien: nov.quien || "", accion: nov.accion || "", evidencias: nov.evidencias || [] });
@@ -26,7 +26,7 @@ export default function NovedadEdit({ nov, onSave, onCancel }) {
       <input value={f.accion} onChange={(e) => set({ accion: e.target.value })} placeholder="Acción inmediata" className={inputCls} />
       <EvidenceList items={f.evidencias} editable onAdd={(x) => set({ evidencias: [...f.evidencias, ...x] })} onRemove={(i) => set({ evidencias: f.evidencias.filter((_, j) => j !== i) })} />
       <div className="flex gap-2">
-        <button onClick={save} disabled={busy} className="flex-1 md:flex-none min-h-[44px] md:min-h-0 px-4 py-2 rounded-md bg-[#007f80] hover:bg-[#005f60] text-white text-sm flex items-center justify-center gap-2">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Guardar cambios</button>
+        <button onClick={save} disabled={busy} className="flex-1 md:flex-none min-h-[44px] md:min-h-0 px-4 py-2 rounded-md bg-[#2a64b8] hover:bg-[#16386a] text-white text-sm flex items-center justify-center gap-2">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Guardar cambios</button>
         <button onClick={onCancel} className="flex-1 md:flex-none min-h-[44px] md:min-h-0 px-4 py-2 rounded-md border border-[#cdd4d4] text-sm">Cancelar</button>
       </div>
     </div>

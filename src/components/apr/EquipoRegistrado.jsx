@@ -22,7 +22,7 @@ export default function EquipoRegistrado({ users, onSynced }) {
       {equipo.map((i) => (
         <div key={i.id} className="flex items-center gap-3 px-4 py-2.5 border-b border-[#eef1f1] last:border-0 flex-wrap">
           <span className="flex-1 min-w-[200px]"><span className="text-sm font-medium block">{i.nombre}</span><span className="text-xs text-[#6b7778]">{i.email} · {i.cargo}</span></span>
-          <span className="text-xs px-2 py-0.5 rounded-xl bg-[#e2f4f4] text-[#005f60]">{LBL[i.perfil]}</span>
+          <span className="text-xs px-2 py-0.5 rounded-xl bg-[#e2f4f4] text-[#16386a]">{LBL[i.perfil]}</span>
           <span className="text-xs text-[#6b7778] w-[110px] text-right">{byEmail(i.email) ? "Con acceso" : "Sin invitar aún"}</span>
         </div>
       ))}

@@ -1,7 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { card, TIPO_LABEL } from "@/lib/apr";
 
-const TAG = { t: "bg-[#e2f4f4] text-[#005f60]", o: "bg-[#fbf3dc] text-[#7a5d0e]", c: "bg-[#eef1f1] text-[#5b6667]" };
+const TAG = { t: "bg-[#e2f4f4] text-[#16386a]", o: "bg-[#fbf3dc] text-[#7a5d0e]", c: "bg-[#eef1f1] text-[#5b6667]" };
 
 export default function CatalogPicker({ catalog, ids, toggle, locked }) {
   const areas = [...new Set(catalog.map((c) => c.area))];

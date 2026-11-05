@@ -19,17 +19,17 @@ export default function PasteMailBox({ isUpdate, onParsed }) {
   };
 
   if (!open) return (
-    <button onClick={() => setOpen(true)} className="px-4 py-2.5 rounded-md text-sm bg-[#007f80] hover:bg-[#005f60] text-white flex items-center justify-center gap-2">
+    <button onClick={() => setOpen(true)} className="px-4 py-2.5 rounded-md text-sm bg-[#2a64b8] hover:bg-[#16386a] text-white flex items-center justify-center gap-2">
       <ClipboardPaste className="w-4 h-4" />{isUpdate ? "Pegar actualización de Operaciones" : "Pegar correo de Operaciones"}
     </button>
   );
   return (
     <div className="flex flex-col gap-2">
-      <textarea value={texto} onChange={(e) => setTexto(e.target.value)} rows={7} placeholder="Copia aquí el texto completo del correo…" className="w-full rounded-md border border-[#cdd4d4] p-2.5 text-[13px] focus:outline-none focus:border-[#007f80]" />
+      <textarea value={texto} onChange={(e) => setTexto(e.target.value)} rows={7} placeholder="Copia aquí el texto completo del correo…" className="w-full rounded-md border border-[#cdd4d4] p-2.5 text-[13px] focus:outline-none focus:border-[#2a64b8]" />
       {err && <div className="text-xs text-[#9b3b2e] bg-[#f6e4e0] rounded-md px-3 py-2">{err}</div>}
       <div className="flex gap-2">
         <button onClick={() => setOpen(false)} disabled={busy} className="flex-1 px-3 py-2.5 rounded-md text-sm text-[#3c4849] hover:bg-[#eef1f1]">Cancelar</button>
-        <button onClick={run} disabled={busy || !texto.trim()} className="flex-1 px-3 py-2.5 rounded-md text-sm bg-[#007f80] hover:bg-[#005f60] text-white flex items-center justify-center gap-2 disabled:opacity-50">
+        <button onClick={run} disabled={busy || !texto.trim()} className="flex-1 px-3 py-2.5 rounded-md text-sm bg-[#2a64b8] hover:bg-[#16386a] text-white flex items-center justify-center gap-2 disabled:opacity-50">
           {busy && <Loader2 className="w-4 h-4 animate-spin" />}{busy ? "Leyendo correo…" : "Leer y sugerir"}
         </button>
       </div>

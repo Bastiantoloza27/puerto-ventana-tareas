@@ -11,9 +11,9 @@ export default function ProgDatePicker({ value, onChange }) {
       <span className="text-sm text-[#3c4849]">Programar para el día</span>
       <input type="date" min={today()} value={value} onChange={(e) => onChange(e.target.value || today())}
         className="min-h-[44px] md:min-h-0 text-sm px-2.5 py-1.5 rounded-md border border-[#cdd4d4] bg-white" />
-      {value !== today() && <button onClick={() => onChange(today())} className="text-xs text-[#005f60] underline">Volver a hoy</button>}
+      {value !== today() && <button onClick={() => onChange(today())} className="text-xs text-[#16386a] underline">Volver a hoy</button>}
       {future && (
-        <span className="text-xs px-2.5 py-1 rounded-xl bg-[#e2f4f4] text-[#005f60]">
+        <span className="text-xs px-2.5 py-1 rounded-xl bg-[#e2f4f4] text-[#16386a]">
           Se habilita al asesor el {format(parseISO(value), "EEEE dd-MM", { locale: es })}
         </span>
       )}

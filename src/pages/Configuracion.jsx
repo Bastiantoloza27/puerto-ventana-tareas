@@ -17,7 +17,7 @@ export default function Configuracion() {
       return { users: users.length, acts, cerrados, cfg: cfg[0] || null };
     },
   });
-  if (isLoading) return <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#007f80] rounded-full animate-spin" /></div>;
+  if (isLoading) return <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#2a64b8] rounded-full animate-spin" /></div>;
 
   const pasos = data.cfg?.pasos || [];
   const toggle = async (p) => {

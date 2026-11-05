@@ -20,7 +20,7 @@ export default function OpsMailPanel({ plan, catalog, ids, onApply, locked, onPa
       {(m?.lineas || []).map((l, i) => (
         <div key={i} className="text-[13px] border-b border-[#eef1f1] pb-2 last:border-0">
           <div className="text-[#1c2526]">{l.texto}</div>
-          <div className={"text-xs mt-0.5 " + (l.actividad_id ? "text-[#005f60]" : "text-[#7a5d0e] bg-[#fbf3dc] rounded px-1.5 py-0.5 inline-block")}>{l.actividad_id ? "→ " + name(l.actividad_id) + (ids.includes(l.actividad_id) ? " ✓" : "") : "⚠ Sin actividad del catálogo · agrégala a mano si corresponde"}</div>
+          <div className={"text-xs mt-0.5 " + (l.actividad_id ? "text-[#16386a]" : "text-[#7a5d0e] bg-[#fbf3dc] rounded px-1.5 py-0.5 inline-block")}>{l.actividad_id ? "→ " + name(l.actividad_id) + (ids.includes(l.actividad_id) ? " ✓" : "") : "⚠ Sin actividad del catálogo · agrégala a mano si corresponde"}</div>
         </div>
       ))}
       {m?.actualizacion && (
@@ -31,7 +31,7 @@ export default function OpsMailPanel({ plan, catalog, ids, onApply, locked, onPa
       )}
       {!locked && onParsed && <PasteMailBox isUpdate={!!m} onParsed={onParsed} />}
       {!locked && (
-        <button disabled={!missing.length} onClick={() => onApply(missing)} className="px-4 py-2.5 rounded-md text-sm border border-[#2a64b8] text-[#005f60] bg-white hover:bg-[#e8f5f5] disabled:opacity-50 disabled:hover:bg-white transition-colors">
+        <button disabled={!missing.length} onClick={() => onApply(missing)} className="px-4 py-2.5 rounded-md text-sm border border-[#2a64b8] text-[#16386a] bg-white hover:bg-[#e8f5f5] disabled:opacity-50 disabled:hover:bg-white transition-colors">
           {missing.length ? `Aplicar sugerencias (+${missing.length})` : "Sugerencias aplicadas"}
         </button>
       )}

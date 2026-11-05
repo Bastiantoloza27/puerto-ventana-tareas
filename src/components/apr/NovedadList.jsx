@@ -17,11 +17,11 @@ export default function NovedadList({ novs, editable, onUpdate, onDelete }) {
           ) : <>
             <div className="flex gap-1.5 flex-wrap items-center">
               <span className="font-mono text-xs text-[#6b7778]">{n.hora}</span>
-              <span className="text-[11px] px-2 py-0.5 rounded-[10px] bg-[#e2f4f4] text-[#005f60]">{n.lugar}</span>
+              <span className="text-[11px] px-2 py-0.5 rounded-[10px] bg-[#e2f4f4] text-[#16386a]">{n.lugar}</span>
               <span className="text-[11px] px-2 py-0.5 rounded-[10px] bg-[#eef3f3] text-[#3c4849]">{n.tipo}</span>
               <span className="text-[11px] px-2 py-0.5 rounded-[10px]" style={{ background: CRIT[n.criticidad]?.[0], color: CRIT[n.criticidad]?.[1] }}>{n.criticidad}</span>
               {editable && <span className="ml-auto flex gap-1">
-                <button onClick={() => setEditId(n.id)} aria-label="Editar novedad" className="p-2.5 md:p-1.5 rounded hover:bg-[#e2f4f4]"><Pencil className="w-4 h-4 text-[#007f80]" /></button>
+                <button onClick={() => setEditId(n.id)} aria-label="Editar novedad" className="p-2.5 md:p-1.5 rounded hover:bg-[#e2f4f4]"><Pencil className="w-4 h-4 text-[#2a64b8]" /></button>
                 <button onClick={() => confirm("¿Eliminar esta novedad?") && onDelete(n)} aria-label="Eliminar novedad" className="p-2.5 md:p-1.5 rounded hover:bg-[#f6e4e0]"><Trash2 className="w-4 h-4 text-[#9b3b2e]" /></button>
               </span>}
             </div>

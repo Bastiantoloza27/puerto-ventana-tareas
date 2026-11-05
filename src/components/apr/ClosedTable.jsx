@@ -1,7 +1,7 @@
 import { FileSpreadsheet, FileText } from "lucide-react";
 import { card, SH, shortDate } from "@/lib/apr";
 
-const pctColor = (p) => (p >= 85 ? "#005f60" : "#7a5d0e");
+const pctColor = (p) => (p >= 85 ? "#16386a" : "#7a5d0e");
 
 export default function ClosedTable({ plans, onCsv, onPdf, onConsolidado }) {
   return (
