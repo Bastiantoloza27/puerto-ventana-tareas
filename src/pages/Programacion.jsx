@@ -7,6 +7,7 @@ import { addLog } from "@/lib/aprActions";
 import { downloadProgramaCsv, printProgramaPdf } from "@/lib/exportReport";
 import CatalogPicker from "@/components/apr/CatalogPicker";
 import OpsMailPanel from "@/components/apr/OpsMailPanel";
+import OpsMailInbox from "@/components/apr/OpsMailInbox";
 
 export default function Programacion() {
   const { day, shift, plan, canPlan } = useOutletContext();
@@ -46,7 +47,7 @@ export default function Programacion() {
     const hora = now();
     const prev = plan?.correo;
     const correo = prev
-      ? { ...prev, lineas: [...(prev.lineas || []), ...r.lineas], actualizacion: { hora, texto: r.raw.slice(0, 1000), actividad_id: r.lineas.find((l) => l.actividad_id)?.actividad_id || "" } }
+      ? { ...prev, lineas: [...(prev.lineas || []), ...r.lineas], actualizacion: { hora, texto: (r.raw || r.texto || "").slice(0, 1000), actividad_id: r.lineas.find((l) => l.actividad_id)?.actividad_id || "" } }
       : { asunto: r.asunto, hora, lineas: r.lineas };
     const nuevas = r.lineas.map((l) => l.actividad_id).filter(Boolean);
     const nextIds = [...new Set([...ids, ...nuevas])];
@@ -58,6 +59,7 @@ export default function Programacion() {
     await addLog(p, `${prev ? "Actualización" : "Correo"} de Operaciones cargado · ${nuevas.length} sugeridas${sinMatch ? ` · ${sinMatch} sin asociar` : ""}`);
     setIds(nextIds); setAsesor(nextAsesor);
     day.refresh();
+    return p.id;
   };
 
   const save = async (publish) => {
@@ -98,6 +100,7 @@ export default function Programacion() {
             {sent && <span className="text-xs text-[#16386a] bg-[#e2f4f4] rounded-md px-3 py-2">{sent}</span>}
           </div>
         )}
+        <OpsMailInbox locked={locked} onApply={(c) => onParsed({ asunto: c.asunto, asesor: c.asesor, lineas: c.lineas, texto: c.texto })} />
         <OpsMailPanel plan={plan} catalog={day.catalog} ids={ids} locked={locked} onApply={(m) => setIds((s) => [...s, ...m])} onParsed={onParsed} />
         {!locked && (
           <div className={card + " p-4 flex flex-col gap-3"}>

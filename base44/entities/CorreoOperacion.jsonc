@@ -1,0 +1,86 @@
+{
+  "name": "CorreoOperacion",
+  "type": "object",
+  "properties": {
+    "message_id": {
+      "type": "string"
+    },
+    "asunto": {
+      "type": "string"
+    },
+    "remitente": {
+      "type": "string"
+    },
+    "recibido": {
+      "type": "string"
+    },
+    "fecha": {
+      "type": "string",
+      "format": "date"
+    },
+    "asesor": {
+      "type": "string"
+    },
+    "lineas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "texto": {
+            "type": "string"
+          },
+          "actividad_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "texto": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "pendiente",
+        "aplicado",
+        "descartado"
+      ],
+      "enumColors": [
+        "yellow",
+        "green",
+        "gray"
+      ],
+      "default": "pendiente"
+    },
+    "programacion_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "asunto",
+    "fecha",
+    "estado"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

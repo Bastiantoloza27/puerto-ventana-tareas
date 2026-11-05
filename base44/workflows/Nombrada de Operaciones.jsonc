@@ -1,0 +1,41 @@
+{
+  "name": "Nombrada de Operaciones",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "connector",
+      "events": [
+        "created"
+      ],
+      "integration_type": "outlook",
+      "resource_id": null
+    }
+  },
+  "description": "Toma el correo de la nombrada que llega al buz\u00f3n de Outlook, lo interpreta y lo carga en la programaci\u00f3n del turno.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "nombrada_operaciones",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "procesar_nombrada": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "ingestOpsMail",
+            "args": {
+              "data": "${ .trigger.data }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Leer nombrada",
+            "description": "Interpreta el correo y lo carga al turno"
+          }
+        }
+      }
+    ]
+  }
+}
