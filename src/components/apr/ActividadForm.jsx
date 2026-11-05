@@ -20,9 +20,15 @@ export default function ActividadForm({ initial, areas, onSave, onCancel }) {
         <input value={f.sitio} onChange={(e) => set({ sitio: e.target.value })} placeholder="Sitio" className={inputCls} />
         <input value={f.proceso} onChange={(e) => set({ proceso: e.target.value })} placeholder="Actividad / proceso" className={inputCls} />
       </div>
-      <div className="flex gap-2">
-        <input type="number" value={f.orden ?? ""} onChange={(e) => set({ orden: e.target.value === "" ? null : Number(e.target.value) })} placeholder="Orden" title="Posición en el listado y en el turno" className={inputCls + " w-24 flex-none"} />
-        <input value={f.descripcion || ""} onChange={(e) => set({ descripcion: e.target.value })} placeholder="Descripción (opcional)" className={inputCls + " flex-1 min-w-0"} />
+      <div className="flex gap-2 items-end">
+        <label className="flex flex-col gap-1 flex-none">
+          <span className="text-[11px] font-medium text-[#3c4849]">Orden</span>
+          <input aria-label="Orden" type="number" min="0" value={f.orden ?? ""} onChange={(e) => set({ orden: e.target.value === "" ? null : Number(e.target.value) })} placeholder="1" className={inputCls + " w-24"} />
+        </label>
+        <label className="flex flex-col gap-1 flex-1 min-w-0">
+          <span className="text-[11px] font-medium text-[#3c4849]">Descripción</span>
+          <input aria-label="Descripción" value={f.descripcion || ""} onChange={(e) => set({ descripcion: e.target.value })} placeholder="Opcional" className={inputCls} />
+        </label>
       </div>
       <div className="flex gap-1.5 flex-wrap">{Object.entries(TIPO_LABEL).map(([k, l]) => <button key={k} onClick={() => set({ tipo: k })} className={chipCls(f.tipo === k)}>{l}</button>)}</div>
       <label className="flex items-center gap-2 py-1 text-sm md:text-[13px] cursor-pointer"><input type="checkbox" checked={!!f.base} onChange={(e) => set({ base: e.target.checked })} className="accent-[#2a64b8]" />Se programa todos los días (sugerida en todos los turnos)</label>

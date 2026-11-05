@@ -36,7 +36,7 @@ export default function Catalogo() {
           <div className="px-4 py-3 border-b border-[#eef1f1] text-[15px] font-semibold">{area}</div>
           {day.catalog.filter((c) => c.area === area).map((a) => (
             <div key={a.id} className="flex items-center gap-2 md:gap-3 px-4 py-3 md:py-2.5 border-b border-[#eef1f1] last:border-0 flex-wrap">
-              <span className="flex-1 min-w-[180px]"><span className="text-sm font-medium">{a.proceso}</span><span className="text-xs text-[#6b7778]"> · {a.sitio} · {TIPO_LABEL[a.tipo]}</span></span>
+              <span className="flex-1 min-w-[180px]"><span className="text-sm font-medium">{a.proceso}</span><span className="text-xs text-[#6b7778]"> · {a.sitio} · {TIPO_LABEL[a.tipo]}{a.orden ? ` · orden ${a.orden}` : ""}</span></span>
               {readOnly ? <span className="text-xs text-[#6b7778] ml-auto">{a.base ? "Todos los días" : "Según necesidad"}</span> : <span className="flex items-center gap-1 md:gap-1.5 ml-auto">
                 <button onClick={() => toggleBase(a)} className={"flex items-center min-h-[44px] md:min-h-0 text-xs px-2.5 py-2 md:py-1 rounded-xl border transition-colors " + (a.base ? "bg-[#e2f4f4] border-[#2a64b8] text-[#16386a]" : "bg-white border-[#cdd4d4] text-[#6b7778]")}>{a.base ? "Todos los días" : "Según necesidad"}</button>
                 <button onClick={() => setEdit(a)} aria-label={"Editar " + a.proceso} className="p-2.5 md:p-1.5 rounded hover:bg-[#e2f4f4]"><Pencil className="w-4 h-4 text-[#2a64b8]" /></button>
