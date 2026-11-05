@@ -43,7 +43,7 @@
         },
         {
           "user_condition": {
-            "role": "user"
+            "data.perfil": "asesor"
           }
         }
       ]
