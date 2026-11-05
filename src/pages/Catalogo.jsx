@@ -16,8 +16,9 @@ export default function Catalogo() {
 
   const save = async (f) => {
     const data = { area: f.area.trim(), sitio: f.sitio.trim(), proceso: f.proceso.trim(), tipo: f.tipo, descripcion: f.descripcion || "", base: !!f.base };
-    if (edit === "new") await base44.entities.Actividad.create({ ...data, orden: Math.max(0, ...day.catalog.map((c) => c.orden || 0)) + 1 });
-    else await base44.entities.Actividad.update(edit.id, data);
+    const orden = f.orden === "" || f.orden == null ? null : Number(f.orden);
+    if (edit === "new") await base44.entities.Actividad.create({ ...data, orden: orden ?? Math.max(0, ...day.catalog.map((c) => c.orden || 0)) + 1 });
+    else await base44.entities.Actividad.update(edit.id, { ...data, ...(orden == null ? {} : { orden }) });
     setEdit(null); reload();
   };
   const toggleBase = async (a) => { await base44.entities.Actividad.update(a.id, { base: !a.base }); reload(); };
