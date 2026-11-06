@@ -146,7 +146,7 @@ export async function aplicarNombrada(sr, { fecha, turnos, asunto, remitente, or
       actividad_ids: [...new Set([...(plan.actividad_ids || []), ...sugeridas])],
       bitacora: [...(plan.bitacora || []), { hora: h, texto: `${etiqueta} (PDF, ${origen}) · ${faenas.length} faenas · ${dotacion} personas · ${nuevas.length} actividades sugeridas` }],
     });
-    resumen.push({ turno: t.turno, estado: 'aplicado', faenas: faenas.length, dotacion, sugeridas: nuevas.length, sinRegla: faenas.filter((f) => !f.actividad_ids.length).map((f) => f.faena) });
+    resumen.push({ turno: t.turno, estado: 'aplicado', faenas: faenas.length, dotacion, sugeridas: sugeridas.length, nuevas: nuevas.length, sinRegla: faenas.filter((f) => !f.actividad_ids.length).map((f) => f.faena) });
   }
   return resumen;
 }
