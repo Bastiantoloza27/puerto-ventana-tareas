@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 import { parseNombrada, detectarTurno, agregarEnvio, DOMINIO_OPERACIONES } from '../../shared/opsMail.ts';
+import { leerNombradaPdf, aplicarNombrada } from '../../shared/nombrada.ts';
 
 async function graphRequest(accessToken, path) {
   const res = await fetch(`https://graph.microsoft.com/v1.0${path}`, {
@@ -59,13 +60,38 @@ export default async function (req) {
       const previos = await sr.entities.CorreoOperacion.filter({ message_id: messageId }, { limit: 1 });
       if ((previos.items || []).length) { resultados.push({ messageId, estado: 'duplicado' }); continue; }
 
-      const msg = await graphRequest(accessToken, `/me/messages/${encodeURIComponent(messageId)}?$select=subject,from,receivedDateTime,body`);
+      const msg = await graphRequest(accessToken, `/me/messages/${encodeURIComponent(messageId)}?$select=subject,from,receivedDateTime,body,hasAttachments`);
+      const remitente = String(msg?.from?.emailAddress?.address || '').toLowerCase();
+      if (!remitente.endsWith('@' + DOMINIO_OPERACIONES)) { resultados.push({ messageId, estado: 'ignorado_remitente', remitente }); continue; }
+
+      // Nombrada en PDF adjunto: trae los 3 turnos del día.
+      if (msg?.hasAttachments) {
+        const adj = await graphRequest(accessToken, `/me/messages/${encodeURIComponent(messageId)}/attachments`);
+        const pdf = (adj?.value || []).find((a) => a.contentBytes && (/pdf/i.test(a.contentType || '') || /\.pdf$/i.test(a.name || '')));
+        if (pdf) {
+          const bytes = Uint8Array.from(atob(pdf.contentBytes), (c) => c.charCodeAt(0));
+          const { file_uri } = await sr.integrations.Core.UploadPrivateFile({ file: new File([bytes], pdf.name || 'nombrada.pdf', { type: 'application/pdf' }) });
+          const { signed_url } = await sr.integrations.Core.CreateFileSignedUrl({ file_uri, expires_in: 600 });
+          const nom = await leerNombradaPdf(sr, signed_url);
+          const recibidoPdf = msg?.receivedDateTime || new Date().toISOString();
+          const fechaNom = nom.fecha || fecha;
+          const aplicados = nom.turnos.some((t) => t.faenas.length)
+            ? await aplicarNombrada(sr, { fecha: fechaNom, turnos: nom.turnos, asunto: msg?.subject, remitente, origen: 'correo' })
+            : [];
+          await sr.entities.CorreoOperacion.create({
+            message_id: messageId, asunto: msg?.subject || 'Nombrada', remitente, recibido: recibidoPdf, fecha: fechaNom, turno: '',
+            lineas: nom.turnos.flatMap((t) => t.faenas.map((f) => ({ texto: `${t.turno} · ${f.faena} · Sitio ${f.sitio} · ${f.dotacion} pers.`, actividad_id: '' }))).slice(0, 60),
+            texto: `Nombrada PDF: ${pdf.name || ''}`,
+            estado: aplicados.some((a) => a.estado === 'aplicado') ? 'aplicado' : 'pendiente',
+          });
+          resultados.push({ messageId, estado: 'nombrada_pdf', fecha: fechaNom, turnos: aplicados });
+          continue;
+        }
+      }
+
       const cuerpo = msg?.body?.contentType === 'html' ? stripHtml(msg.body.content || '') : String(msg?.body?.content || '');
       const texto = cuerpo.slice(0, 8000);
       if (texto.length < 20) { resultados.push({ messageId, estado: 'ignorado' }); continue; }
-
-      const remitente = String(msg?.from?.emailAddress?.address || '').toLowerCase();
-      if (!remitente.endsWith('@' + DOMINIO_OPERACIONES)) { resultados.push({ messageId, estado: 'ignorado_remitente', remitente }); continue; }
 
       const parsed = await parseNombrada(base44, { texto, nombres });
       const asunto = msg?.subject || parsed.asunto;

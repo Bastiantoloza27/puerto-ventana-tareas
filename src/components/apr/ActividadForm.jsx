@@ -9,7 +9,8 @@ export default function ActividadForm({ initial, areas, onSave, onCancel }) {
   const [busy, setBusy] = useState(false);
   const set = (p) => setF((s) => ({ ...s, ...p }));
   const ok = f.area.trim() && f.sitio.trim() && f.proceso.trim();
-  const submit = async () => { setBusy(true); await onSave(f); setBusy(false); };
+  const [faenasTxt, setFaenasTxt] = useState((initial?.faenas || []).join(", "));
+  const submit = async () => { setBusy(true); await onSave({ ...f, faenas: faenasTxt.split(",").map((s) => s.trim().toUpperCase()).filter(Boolean) }); setBusy(false); };
 
   return (
     <div className={card + " p-4 flex flex-col gap-3"}>
@@ -30,6 +31,11 @@ export default function ActividadForm({ initial, areas, onSave, onCancel }) {
           <input aria-label="Descripción" value={f.descripcion || ""} onChange={(e) => set({ descripcion: e.target.value })} placeholder="Opcional" className={inputCls} />
         </label>
       </div>
+      <label className="flex flex-col gap-1">
+        <span className="text-[11px] font-medium text-[#3c4849]">Faenas de la nombrada que activan esta actividad (separadas por coma)</span>
+        <input aria-label="Faenas" value={faenasTxt} onChange={(e) => setFaenasTxt(e.target.value)} placeholder="Ej. PETCOKE, CENIZA" className={inputCls} />
+        <span className="text-[11px] text-[#6b7778]">Si el sitio es «Sitio N», además debe coincidir el sitio de la faena.</span>
+      </label>
       <div className="flex gap-1.5 flex-wrap">{Object.entries(TIPO_LABEL).map(([k, l]) => <button key={k} onClick={() => set({ tipo: k })} className={chipCls(f.tipo === k)}>{l}</button>)}</div>
       <label className="flex items-center gap-2 py-1 text-sm md:text-[13px] cursor-pointer"><input type="checkbox" checked={!!f.base} onChange={(e) => set({ base: e.target.checked })} className="accent-[#2a64b8]" />Se programa todos los días (sugerida en todos los turnos)</label>
       <div className="flex gap-2">

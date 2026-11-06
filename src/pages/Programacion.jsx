@@ -10,16 +10,20 @@ import { downloadProgramaCsv, printProgramaPdf } from "@/lib/exportReport";
 import CatalogPicker from "@/components/apr/CatalogPicker";
 import OpsMailPanel from "@/components/apr/OpsMailPanel";
 import OpsMailInbox from "@/components/apr/OpsMailInbox";
+import FaenasPanel from "@/components/apr/FaenasPanel";
+import SubirNombrada from "@/components/apr/SubirNombrada";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Programacion() {
   const { day, shift, plan, canPlan } = useOutletContext();
   const readOnly = !canPlan;
+  const qc = useQueryClient();
   const [ids, setIds] = useState([]);
   const [asesor, setAsesor] = useState(null);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState("");
-  useEffect(() => { setIds(plan?.actividad_ids || []); setAsesor(plan?.asesor || null); setErr(""); }, [plan?.id, shift]);
+  useEffect(() => { setIds(plan?.actividad_ids || []); setAsesor(plan?.asesor || null); setErr(""); }, [plan?.id, shift, plan?.dotacion, plan?.correo?.envios?.length]);
 
   const locked = plan?.estado === "cerrada" || readOnly;
   const pub = plan?.estado === "publicada";
@@ -87,6 +91,7 @@ export default function Programacion() {
           </div>
           <div className="flex gap-1.5 flex-wrap">{ASES.map((a) => <button key={a} disabled={locked} onClick={() => setAsesor(a)} className={chipCls(asesor === a)}>{a}</button>)}</div>
         </div>
+        <FaenasPanel plan={plan} catalog={day.catalog} />
         <CatalogPicker catalog={day.catalog} ids={ids} toggle={toggle} locked={locked} />
       </div>
       <div className="w-full md:flex-[0_1_380px] md:min-w-[280px] flex flex-col gap-4 lg:sticky lg:top-6">
@@ -102,6 +107,7 @@ export default function Programacion() {
             {sent && <span className="text-xs text-[#16386a] bg-[#e2f4f4] rounded-md px-3 py-2">{sent}</span>}
           </div>
         )}
+        {!readOnly && <SubirNombrada onDone={() => qc.invalidateQueries({ queryKey: ["day"] })} />}
         <OpsMailInbox locked={locked} onApply={(c) => onParsed({ asunto: c.asunto, asesor: c.asesor, lineas: c.lineas, texto: c.texto, remitente: c.remitente, hora: c.recibido ? new Date(c.recibido).toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" }) : null })} />
         <OpsMailPanel plan={plan} catalog={day.catalog} ids={ids} locked={locked} onApply={(m) => setIds((s) => [...s, ...m])} onParsed={onParsed} />
         {!locked && (

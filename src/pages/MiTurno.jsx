@@ -4,6 +4,7 @@ import KpiRow from "@/components/apr/KpiRow";
 import ActivityCard from "@/components/apr/ActivityCard";
 import TurnoSide from "@/components/apr/TurnoSide";
 import NotPublished from "@/components/apr/NotPublished";
+import FaenasPanel from "@/components/apr/FaenasPanel";
 import { now } from "@/lib/apr";
 import { saveExec, addLog, bumpMin } from "@/lib/aprActions";
 import { attempt } from "@/lib/safe";
@@ -46,6 +47,7 @@ export default function MiTurno() {
       )}
       <div className="flex flex-wrap gap-5 items-start">
         <div className="flex-[1_1_560px] min-w-0 flex flex-col gap-[22px]">
+          <FaenasPanel plan={plan} catalog={day.catalog} />
           {GROUPS.map(([tp, title, sub]) => {
             const it = items.filter((a) => a.tipo === tp);
             if (!it.length) return null;

@@ -29,6 +29,13 @@
     "base": {
       "type": "boolean",
       "description": "Sugerida en todos los turnos"
+    },
+    "faenas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Palabras de la faena de la nombrada que activan esta actividad (ej. PETCOKE). Si el sitio es 'Sitio N', adem\u00e1s debe coincidir el sitio."
     }
   },
   "required": [

@@ -41,6 +41,50 @@
     "entrega": {
       "type": "string"
     },
+    "faenas": {
+      "type": "array",
+      "description": "Faenas del turno seg\u00fan la nombrada de Operaciones (solo cargos clave y conteos)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "faena": {
+            "type": "string"
+          },
+          "nave": {
+            "type": "string"
+          },
+          "sitio": {
+            "type": "string"
+          },
+          "jefe_nave": {
+            "type": "string"
+          },
+          "supervisor": {
+            "type": "string"
+          },
+          "capataces": {
+            "type": "string"
+          },
+          "dotacion": {
+            "type": "number"
+          },
+          "cargos": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "actividad_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "dotacion": {
+      "type": "number",
+      "description": "Personas en el turno seg\u00fan la nombrada"
+    },
     "correo": {
       "type": "object",
       "properties": {
