@@ -12,6 +12,7 @@ import OpsMailPanel from "@/components/apr/OpsMailPanel";
 import OpsMailInbox from "@/components/apr/OpsMailInbox";
 import FaenasPanel from "@/components/apr/FaenasPanel";
 import SubirNombrada from "@/components/apr/SubirNombrada";
+import RevisarCorreo from "@/components/apr/RevisarCorreo";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function Programacion() {
@@ -98,6 +99,7 @@ export default function Programacion() {
             {sent && <span className="text-xs text-[#16386a] bg-[#e2f4f4] rounded-md px-3 py-2">{sent}</span>}
           </div>
         )}
+        {!readOnly && <RevisarCorreo onDone={() => { qc.invalidateQueries({ queryKey: ["day"] }); qc.invalidateQueries({ queryKey: ["ops-mail"] }); }} />}
         {!readOnly && <SubirNombrada onDone={() => qc.invalidateQueries({ queryKey: ["day"] })} />}
         <OpsMailInbox locked={locked} onApply={(c) => onParsed({ asunto: c.asunto, asesor: c.asesor, lineas: c.lineas, texto: c.texto, remitente: c.remitente, hora: c.recibido ? new Date(c.recibido).toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" }) : null })} />
         <OpsMailPanel plan={plan} catalog={day.catalog} ids={ids} locked={locked} onApply={(m) => setIds((s) => [...s, ...m])} onParsed={onParsed} />

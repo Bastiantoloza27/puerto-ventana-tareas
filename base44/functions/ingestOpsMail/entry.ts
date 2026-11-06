@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
-import { parseNombrada, detectarTurno, agregarEnvio, DOMINIO_OPERACIONES } from '../../shared/opsMail.ts';
+import { parseNombrada, detectarTurno, agregarEnvio } from '../../shared/opsMail.ts';
 import { leerNombradaPdf, aplicarNombrada } from '../../shared/nombrada.ts';
 
 async function graphRequest(accessToken, path) {
@@ -34,12 +34,19 @@ export default async function (req) {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (user.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
 
-    const { data } = await req.json().catch(() => ({}));
-    const notas = data?.value;
-    if (!Array.isArray(notas) || !notas.length) return Response.json({ error: 'Sin notificaciones' }, { status: 400 });
-
+    const { data, revisar } = await req.json().catch(() => ({}));
     const sr = base44.asServiceRole;
     const { accessToken } = await sr.connectors.getConnection('outlook');
+
+    // Revisión manual: toma los últimos correos del buzón (últimas 36 h) como si hubieran llegado por notificación.
+    let notas = data?.value;
+    if (revisar) {
+      const desde = new Date(Date.now() - 36 * 3600 * 1000).toISOString();
+      const lista = await graphRequest(accessToken, `/me/mailFolders/inbox/messages?$select=id&$top=10&$orderby=receivedDateTime desc&$filter=${encodeURIComponent(`receivedDateTime ge ${desde}`)}`);
+      notas = (lista?.value || []).map((m) => ({ changeType: 'created', resourceData: { id: m.id } }));
+      if (!notas.length) return Response.json({ procesados: [] });
+    }
+    if (!Array.isArray(notas) || !notas.length) return Response.json({ error: 'Sin notificaciones' }, { status: 400 });
     const fecha = hoySantiago();
     const hora = horaSantiago();
 
@@ -52,7 +59,7 @@ export default async function (req) {
     ])];
 
     const resultados = [];
-    for (const nota of notas.slice(0, 5)) {
+    for (const nota of notas.slice(0, 10)) {
       if (nota?.changeType && nota.changeType !== 'created') continue;
       const messageId = nota?.resourceData?.id;
       if (!messageId) continue;
@@ -62,7 +69,6 @@ export default async function (req) {
 
       const msg = await graphRequest(accessToken, `/me/messages/${encodeURIComponent(messageId)}?$select=subject,from,receivedDateTime,body,hasAttachments`);
       const remitente = String(msg?.from?.emailAddress?.address || '').toLowerCase();
-      if (!remitente.endsWith('@' + DOMINIO_OPERACIONES)) { resultados.push({ messageId, estado: 'ignorado_remitente', remitente }); continue; }
 
       // Nombrada en PDF adjunto: trae los 3 turnos del día.
       if (msg?.hasAttachments) {

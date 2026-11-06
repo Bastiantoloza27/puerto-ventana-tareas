@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Loader2, FileSpreadsheet, FileText } from "lucide-react";
+import { Loader2, FileSpreadsheet, FileText, LogOut } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 import { card, SH, nextShift } from "@/lib/apr";
 
 export default function CierrePanel({ plan, k, readOnly, nextAsesor, onEntrega, onClose, onCsv, onPdf }) {
@@ -34,7 +35,13 @@ export default function CierrePanel({ plan, k, readOnly, nextAsesor, onEntrega, 
         <textarea rows={4} value={entrega} disabled={closed || readOnly} onChange={(e) => setEntrega(e.target.value)} onBlur={() => entrega !== (plan.entrega || "") && onEntrega(entrega)} placeholder="Pendientes y avisos para el asesor entrante…" className="w-full text-base md:text-[13px] px-3 py-2.5 md:py-2 rounded-md border border-[#cdd4d4] bg-white focus:outline-none focus:border-[#2a64b8]" />
         <div className="text-xs text-[#6b7778]">El reporte se envía a prevencion.riesgos@pvsa.cl y {nextAsesor}.</div>
         {closed ? (
-          <div className="text-sm text-[#16386a] bg-[#e2f4f4] rounded-md px-3 py-2">✓ Turno cerrado a las {plan.cerrada_hora} · reporte enviado</div>
+          <>
+            <div className="text-sm text-[#16386a] bg-[#e2f4f4] rounded-md px-3 py-2">✓ Turno cerrado a las {plan.cerrada_hora} · reporte enviado</div>
+            <button onClick={() => base44.auth.logout(window.location.origin + "/login")} className="min-h-[44px] px-4 py-2.5 rounded-md bg-[#2a64b8] hover:bg-[#16386a] text-white text-sm flex items-center justify-center gap-2">
+              <LogOut className="w-4 h-4" />Cerrar sesión y entregar el teléfono
+            </button>
+          </>
+
         ) : readOnly ? null : (
           <button onClick={close} disabled={!k.ready || busy} className="px-4 py-2.5 rounded-md bg-[#0f2340] hover:bg-[#1c3d68] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:hover:bg-[#0f2340] transition-colors">
             {busy && <Loader2 className="w-4 h-4 animate-spin" />}Cerrar turno y enviar reporte
