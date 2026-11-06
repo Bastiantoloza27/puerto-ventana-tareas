@@ -41,6 +41,27 @@
     "entrega": {
       "type": "string"
     },
+    "envio_hora": {
+      "type": "string",
+      "description": "Momento (ISO) en que se enviar\u00e1 el correo de tareas al asesor: inicio del turno"
+    },
+    "envio_estado": {
+      "type": "string",
+      "enum": [
+        "pendiente",
+        "enviado",
+        "error"
+      ],
+      "enumColors": [
+        "yellow",
+        "green",
+        "red"
+      ]
+    },
+    "envio_cc": {
+      "type": "string",
+      "description": "Correo de quien public\u00f3, recibe copia"
+    },
     "faenas": {
       "type": "array",
       "description": "Faenas del turno seg\u00fan la nombrada de Operaciones (solo cargos clave y conteos)",

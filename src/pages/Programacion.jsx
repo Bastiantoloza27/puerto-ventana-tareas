@@ -41,15 +41,6 @@ export default function Programacion() {
 
   const programPlan = () => ({ ...(plan || {}), fecha: day.fecha, turno: shift, asesor, actividad_ids: ids });
 
-  const sendMail = async () => {
-    setBusy(true); setErr(""); setSent("");
-    await attempt(async () => {
-      const p = await upsertPlan(plan, day.fecha, shift, { asesor, actividad_ids: ids });
-      setSent(await sendProgram(p.id));
-    }, null, "No se pudo enviar el correo");
-    day.refresh(); setBusy(false);
-  };
-
   const onParsed = (r) => attempt(async () => {
     const hora = r.hora || now();
     const prev = plan?.correo;
@@ -75,7 +66,7 @@ export default function Programacion() {
       await addLog(saved, publish ? `${pub ? "Programación republicada" : "Programación publicada"} · ${ids.length} actividades · ${asesor}` : "Borrador guardado");
       return saved;
     }, publish ? (pub ? "Programación republicada" : "Programación publicada") : "Borrador guardado");
-    if (p && publish) await attempt(async () => setSent(await sendProgram(p.id)), null, "Quedó publicada, pero no se pudo enviar el correo al asesor");
+    if (p && publish) await attempt(async () => setSent(await sendProgram(p.id, true)), null, "Quedó publicada, pero no se pudo enviar el correo al asesor");
     day.refresh(); setBusy(false);
   };
 
@@ -103,7 +94,7 @@ export default function Programacion() {
               <button onClick={() => printProgramaPdf(programPlan(), day.catalog)} className="flex-1 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md text-sm md:text-[13px] border border-[#cdd4d4] hover:border-[#2a64b8]">Descargar PDF</button>
               <button onClick={() => downloadProgramaCsv(programPlan(), day.catalog)} className="flex-1 px-3 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md text-sm md:text-[13px] border border-[#cdd4d4] hover:border-[#2a64b8]">Descargar Excel</button>
             </div>
-            {!readOnly && <button onClick={sendMail} disabled={busy} className="px-4 py-2.5 rounded-md bg-[#0f2340] hover:bg-[#1b3d3e] text-white text-sm flex items-center justify-center gap-2 disabled:opacity-50">{busy && <Loader2 className="w-4 h-4 animate-spin" />}Enviar por correo</button>}
+            {plan?.envio_estado === "pendiente" && !sent && <span className="text-xs text-[#7a5d0e] bg-[#fbf3dc] rounded-md px-3 py-2">Correo al asesor agendado para el inicio del turno ({SH[shift].hours.slice(0, 5)}).</span>}
             {sent && <span className="text-xs text-[#16386a] bg-[#e2f4f4] rounded-md px-3 py-2">{sent}</span>}
           </div>
         )}

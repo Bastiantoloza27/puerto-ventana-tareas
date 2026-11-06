@@ -16,8 +16,9 @@ export async function upsertPlan(plan, fecha, turno, data) {
   return base44.entities.Programacion.create({ fecha, turno, estado: "borrador", bitacora: [], ...data });
 }
 
-export async function sendProgram(programacion_id) {
-  const { data } = await base44.functions.invoke("sendShiftProgram", { programacion_id });
+export async function sendProgram(programacion_id, programar = false) {
+  const { data } = await base44.functions.invoke("sendShiftProgram", { programacion_id, programar });
+  if (data.programado) return `El correo con las tareas le llegará al asesor a las ${data.hora}, al inicio del turno.`;
   return `Enviado a ${data.sent.join(", ")}${data.asesor_ok ? "" : " · no se encontró el correo del asesor en el equipo registrado"}`;
 }
 

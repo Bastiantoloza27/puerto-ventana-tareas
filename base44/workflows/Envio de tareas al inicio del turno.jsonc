@@ -1,0 +1,44 @@
+{
+  "name": "Envio de tareas al inicio del turno",
+  "description": "Cada 5 minutos env\u00eda al asesor los correos de tareas agendados cuyo turno ya comenz\u00f3",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/5 * * * *",
+      "one_time_date": null,
+      "timezone": "America/Santiago",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "envio_tareas_inicio_turno",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "enviar_programados": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "enviarProgramados"
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Enviar correos agendados",
+            "description": "Turnos que ya comenzaron"
+          }
+        }
+      }
+    ]
+  }
+}
