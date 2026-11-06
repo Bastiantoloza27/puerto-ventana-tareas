@@ -7,7 +7,7 @@ export const SH = {
   T3: { name: "3° turno", hours: "23:00–08:00", short: "3er" },
 };
 export const ORDER = ["T1", "T2", "T3"];
-export const ASES = ["Arenas Binett Joel", "Bernal Mena Miguel", "Campos Torres Rodrigo", "González Romero Mario", "Maulen Vicencio Benjamín", "Velazquez Acuña Cesar"];
+export const ASES = ["Arenas Binett Joel", "Bernal Mena Miguel", "Campos Torres Rodrigo", "González Romero Mario", "Maulen Vicencio Benjamín", "Velásquez Acuña Cesar"];
 export const MOT = ["Sin operación en el turno", "Atención de emergencia", "Prioricé otra actividad", "Condición climática", "Sin acceso o permiso", "Otro"];
 export const TIPOS = ["Condición insegura", "Acto inseguro", "Incidente / cuasi accidente", "Operacional", "Medioambiente", "Aviso al siguiente turno"];
 export const LUG = ["Sitio 2", "Sitio 3", "Sitio 5", "Terminal Costa", "Terminal de Granos", "Terminal Multicarga", "Centro de Acopio Terquim", "Control Tránsito", "Muelle", "Mantención", "Servicios Generales"];
