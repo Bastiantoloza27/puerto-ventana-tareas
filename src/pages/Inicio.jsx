@@ -9,6 +9,7 @@ import TurnosHoy from "@/components/inicio/TurnosHoy";
 import HacerAhora from "@/components/inicio/HacerAhora";
 import MinimosResumen from "@/components/inicio/MinimosResumen";
 import IndiceUv from "@/components/inicio/IndiceUv";
+import EstadoPuerto from "@/components/inicio/EstadoPuerto";
 
 export default function Inicio() {
   const { day, canPlan } = useOutletContext();
@@ -42,7 +43,7 @@ export default function Inicio() {
       </div>
       <div className="grid lg:grid-cols-[1.4fr_1fr] gap-4 items-start">
         <TurnosHoy day={day} />
-        <div className="flex flex-col gap-4"><IndiceUv /><HacerAhora items={todo} /><MinimosResumen mes={mes} asesor={mine} /></div>
+        <div className="flex flex-col gap-4"><EstadoPuerto /><IndiceUv /><HacerAhora items={todo} /><MinimosResumen mes={mes} asesor={mine} /></div>
       </div>
     </div>
   );
