@@ -4,6 +4,7 @@ import { Inbox, Loader2, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { card } from "@/lib/apr";
 import { attempt } from "@/lib/safe";
+import { TURNO_LABEL } from "@/lib/opsMail";
 
 const hhmm = (iso) => (iso ? new Date(iso).toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" }) : "");
 
@@ -39,7 +40,8 @@ export default function OpsMailInbox({ onApply, locked }) {
         <div key={c.id} className="bg-white/70 rounded-md px-3 py-2 flex flex-wrap items-center gap-2">
           <span className="flex-1 min-w-[180px]">
             <span className="text-[13px] text-[#1c2526] block truncate">{c.asunto}</span>
-            <span className="text-xs text-[#6b7778]">{hhmm(c.recibido)} · {c.lineas?.length || 0} labores{c.asesor ? ` · ${c.asesor}` : ""}</span>
+            <span className="text-xs text-[#6b7778]">{hhmm(c.recibido)} · {c.remitente || "remitente desconocido"} · {c.lineas?.length || 0} labores{c.asesor ? ` · ${c.asesor}` : ""}</span>
+            <span className={"mt-1 inline-block text-[11px] px-1.5 py-0.5 rounded " + (c.turno ? "bg-[#eef4fb] text-[#16386a]" : "bg-[#f6e4e0] text-[#9b3b2e]")}>{c.turno ? `Indica ${TURNO_LABEL[c.turno]}` : "No indica turno · elige el turno arriba antes de cargar"}</span>
           </span>
           {!locked && (
             <button onClick={() => aplicar(c)} disabled={!!busy} className="min-h-[36px] px-3 py-1.5 rounded-md bg-[#2a64b8] hover:bg-[#16386a] text-white text-xs flex items-center gap-1.5 disabled:opacity-50">

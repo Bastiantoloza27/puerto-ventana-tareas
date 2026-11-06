@@ -1,3 +1,22 @@
+// Dominio desde el que se aceptan correos de Operaciones.
+export const DOMINIO_OPERACIONES = 'pvsa.cl';
+
+// Detecta el turno indicado en un texto ("2° turno", "T3", "primer turno").
+export function detectarTurno(texto) {
+  const t = String(texto || '').toLowerCase();
+  const m = t.match(/\b([123])\s*(?:°|º|er|ero|do|ro|o)?\s*turno\b/) || t.match(/\bturno\s*([123])\b/) || t.match(/\bt\s?([123])\b/);
+  if (m) return 'T' + m[1];
+  const w = t.match(/\b(primer|segundo|tercer)\w*\s+turno\b/);
+  return w ? { primer: 'T1', segundo: 'T2', tercer: 'T3' }[w[1]] : null;
+}
+
+// Agrega un correo nuevo al turno, manteniendo cada envío separado.
+export function agregarEnvio(prev, { asunto, hora, remitente, lineas }) {
+  const envios = prev?.envios || (prev ? [{ n: 1, asunto: prev.asunto, hora: prev.hora, remitente: '', lineas: prev.lineas || [] }] : []);
+  const nuevo = { n: envios.length + 1, asunto: asunto || 'Correo de Operaciones', hora, remitente: remitente || '', lineas };
+  return { asunto: prev?.asunto || nuevo.asunto, hora: prev?.hora || hora, lineas: [...(prev?.lineas || []), ...lineas], envios: [...envios, nuevo] };
+}
+
 // Interpreta el correo de Operaciones ("nombrada") y lo cruza con el catálogo de actividades.
 export async function parseNombrada(base44, { texto, nombres }) {
   const catalog = await base44.asServiceRole.entities.Actividad.list('orden', 500);

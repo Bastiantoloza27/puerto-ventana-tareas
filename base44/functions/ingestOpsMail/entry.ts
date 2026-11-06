@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
-import { parseNombrada } from '../../shared/opsMail.ts';
+import { parseNombrada, detectarTurno, agregarEnvio, DOMINIO_OPERACIONES } from '../../shared/opsMail.ts';
 
 async function graphRequest(accessToken, path) {
   const res = await fetch(`https://graph.microsoft.com/v1.0${path}`, {
@@ -23,7 +23,7 @@ function stripHtml(html) {
 }
 
 const hoySantiago = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Santiago' }).format(new Date());
-const horaSantiago = () => new Intl.DateTimeFormat('es-CL', { timeZone: 'America/Santiago', hour: '2-digit', minute: '2-digit' }).format(new Date());
+const horaSantiago = (d = new Date()) => new Intl.DateTimeFormat('es-CL', { timeZone: 'America/Santiago', hour: '2-digit', minute: '2-digit' }).format(d);
 
 // Recibe la notificación de Outlook, lee el correo y lo carga en la programación del turno.
 export default async function (req) {
@@ -64,16 +64,24 @@ export default async function (req) {
       const texto = cuerpo.slice(0, 8000);
       if (texto.length < 20) { resultados.push({ messageId, estado: 'ignorado' }); continue; }
 
+      const remitente = String(msg?.from?.emailAddress?.address || '').toLowerCase();
+      if (!remitente.endsWith('@' + DOMINIO_OPERACIONES)) { resultados.push({ messageId, estado: 'ignorado_remitente', remitente }); continue; }
+
       const parsed = await parseNombrada(base44, { texto, nombres });
-      const candidatos = parsed.asesor ? planes.filter((p) => p.asesor === parsed.asesor) : planes;
+      const asunto = msg?.subject || parsed.asunto;
+      const turno = detectarTurno(asunto) || detectarTurno(texto.slice(0, 400));
+      const candidatos = turno ? planes.filter((p) => p.turno === turno) : parsed.asesor ? planes.filter((p) => p.asesor === parsed.asesor) : planes;
       const plan = candidatos.length === 1 ? candidatos[0] : null;
+      const recibido = msg?.receivedDateTime || new Date().toISOString();
+      const horaCorreo = horaSantiago(new Date(recibido));
 
       const registro = await sr.entities.CorreoOperacion.create({
         message_id: messageId,
-        asunto: msg?.subject || parsed.asunto,
-        remitente: msg?.from?.emailAddress?.address || '',
-        recibido: msg?.receivedDateTime || new Date().toISOString(),
+        asunto,
+        remitente,
+        recibido,
         fecha,
+        turno: turno || '',
         asesor: parsed.asesor || '',
         lineas: parsed.lineas,
         texto: texto.slice(0, 4000),
@@ -83,17 +91,16 @@ export default async function (req) {
 
       if (!plan) { resultados.push({ messageId, estado: 'pendiente' }); continue; }
 
-      const prev = plan.correo;
-      const correo = prev
-        ? { ...prev, lineas: [...(prev.lineas || []), ...parsed.lineas], actualizacion: { hora, texto: texto.slice(0, 1000), actividad_id: parsed.lineas.find((l) => l.actividad_id)?.actividad_id || '' } }
-        : { asunto: registro.asunto, hora, lineas: parsed.lineas };
+      const correo = agregarEnvio(plan.correo, { asunto: registro.asunto, hora: horaCorreo, remitente, lineas: parsed.lineas });
+      const n = correo.envios.length;
+      const etiqueta = n === 1 ? 'Nombrada' : `Actualización ${n - 1}`;
       const nuevas = parsed.lineas.map((l) => l.actividad_id).filter(Boolean);
       const ids = [...new Set([...(plan.actividad_ids || []), ...nuevas])];
       await sr.entities.Programacion.update(plan.id, {
         correo,
         actividad_ids: ids,
         asesor: plan.asesor || parsed.asesor || '',
-        bitacora: [...(plan.bitacora || []), { hora, texto: `Correo de Operaciones recibido automáticamente · ${nuevas.length} sugeridas` }],
+        bitacora: [...(plan.bitacora || []), { hora, texto: `${etiqueta} de Operaciones (${horaCorreo}) recibida automáticamente · ${nuevas.length} sugeridas` }],
       });
       resultados.push({ messageId, estado: 'aplicado', programacion_id: plan.id });
     }

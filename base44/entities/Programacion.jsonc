@@ -64,6 +64,41 @@
             }
           }
         },
+        "envios": {
+          "type": "array",
+          "description": "Cada correo de Operaciones recibido para este turno, en orden",
+          "items": {
+            "type": "object",
+            "properties": {
+              "n": {
+                "type": "number"
+              },
+              "asunto": {
+                "type": "string"
+              },
+              "hora": {
+                "type": "string"
+              },
+              "remitente": {
+                "type": "string"
+              },
+              "lineas": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "texto": {
+                      "type": "string"
+                    },
+                    "actividad_id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "actualizacion": {
           "type": "object",
           "properties": {

@@ -1,9 +1,11 @@
 import { Mail } from "lucide-react";
 import { card } from "@/lib/apr";
 import PasteMailBox from "@/components/apr/PasteMailBox";
+import OpsMailEnvio from "@/components/apr/OpsMailEnvio";
 
 export default function OpsMailPanel({ plan, catalog, ids, onApply, locked, onParsed }) {
   const m = plan?.correo;
+  const envios = m?.envios || (m ? [{ n: 1, asunto: m.asunto, hora: m.hora, lineas: m.lineas || [] }] : []);
   const name = (id) => { const a = catalog.find((c) => c.id === id); return a ? `${a.proceso} · ${a.sitio}` : ""; };
   const sug = new Set(catalog.filter((c) => c.base).map((c) => c.id));
   (m?.lineas || []).forEach((l) => l.actividad_id && sug.add(l.actividad_id));
@@ -15,14 +17,9 @@ export default function OpsMailPanel({ plan, catalog, ids, onApply, locked, onPa
       <div className="flex items-start gap-2.5">
         <span className="w-8 h-8 rounded-lg bg-[#e2f4f4] text-[#2a64b8] grid place-items-center flex-none"><Mail className="w-4 h-4" /></span>
         <div className="min-w-0"><div className="font-heading text-xl leading-tight">Correo de Operaciones</div>
-          <div className="text-xs text-[#6b7778]">{m ? <>Recibido a las <span className="font-mono">{m.hora}</span> · {m.asunto}</> : "Aún no llega el correo de este turno"}</div></div>
+          <div className="text-xs text-[#6b7778]">{m ? <>{envios.length === 1 ? "1 correo" : `${envios.length} correos`} · último a las <span className="font-mono">{envios[envios.length - 1].hora}</span></> : "Aún no llega el correo de este turno"}</div></div>
       </div>
-      {(m?.lineas || []).map((l, i) => (
-        <div key={i} className="text-[13px] border-b border-[#eef1f1] pb-2 last:border-0">
-          <div className="text-[#1c2526]">{l.texto}</div>
-          <div className={"text-xs mt-0.5 " + (l.actividad_id ? "text-[#16386a]" : "text-[#7a5d0e] bg-[#fbf3dc] rounded px-1.5 py-0.5 inline-block")}>{l.actividad_id ? "→ " + name(l.actividad_id) + (ids.includes(l.actividad_id) ? " ✓" : "") : "⚠ Sin actividad del catálogo · agrégala a mano si corresponde"}</div>
-        </div>
-      ))}
+      {[...envios].reverse().map((e, i) => <OpsMailEnvio key={e.n} envio={e} ultimo={envios.length > 1 && i === 0} name={name} ids={ids} />)}
       {m?.actualizacion && (
         <div className="rounded-lg bg-[#fbf3dc] border border-[#c9b98a] px-3 py-2.5 text-[13px] text-[#7a5d0e]">
           <div className="font-mono text-[11px] tracking-[.08em] mb-0.5">ACTUALIZACIÓN · {m.actualizacion.hora}</div>

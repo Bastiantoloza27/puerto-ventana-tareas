@@ -18,6 +18,10 @@
       "type": "string",
       "format": "date"
     },
+    "turno": {
+      "type": "string",
+      "description": "Turno indicado en el correo (T1, T2, T3), si se detect\u00f3"
+    },
     "asesor": {
       "type": "string"
     },
