@@ -1,4 +1,6 @@
 import { SH, shortDate, TIPO_LABEL } from "@/lib/apr";
+import { toast } from "@/components/ui/use-toast";
+import { evidenciasHtml, htmlToPdf } from "@/lib/reportPdf";
 
 const LOGO = "https://raw.githubusercontent.com/Bastiantoloza27/Puerto-Ventana-Tareas-Diarias-Muestra./main/handoff_programa_apr/assets/pvsa-logo.png";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -69,19 +71,22 @@ export function downloadConsolidado(plans) {
   dl("Consolidado mensual APR.csv", "\ufeff" + L.map((r) => r.map(q).join(";")).join("\n"), "text/csv");
 }
 
-export function printPdf(plan, catalog, execs, novs, k) {
+export async function printPdf(plan, catalog, execs, novs, k) {
+  const t = toast({ title: "Generando PDF…", description: "Incluyendo las fotos adjuntas" });
   const s = summary(plan, k);
   const R = rowsFor(plan, catalog, execs);
   const body = `<img src="${LOGO}" style="height:38px"><h1>Reporte de turno · ${esc(SH[plan.turno].name)}</h1><p>${esc(plan.fecha)} · ${esc(SH[plan.turno].hours)} · Asesor de turno: <b>${esc(plan.asesor || "—")}</b></p>
 <div class="k"><div><small>Programadas</small><b>${esc(s.prog)}</b></div><div><small>Ejecutadas</small><b>${esc(s.ok)}</b></div><div><small>No ejecutadas</small><b>${esc(s.no)}</b></div><div><small>Cumplimiento</small><b>${esc(s.pct)}%</b></div></div>
 <h2>Control de cumplimiento</h2><table><tr><th>N°</th><th>Área</th><th>Sitio</th><th>Proceso</th><th>Estado</th><th>Motivo / observación</th><th>Evid.</th></tr>${R.map((r) => `<tr><td>${r.n}</td><td>${esc(r.area)}</td><td>${esc(r.sitio)}</td><td>${esc(r.proceso)}</td><td>${stLabel(r.st)}</td><td>${esc([r.mot, r.obs].filter(Boolean).join(" · "))}</td><td>${r.ev || ""}</td></tr>`).join("") || '<tr><td colspan="7">Detalle no disponible</td></tr>'}</table>
 <h2>Novedades</h2><table><tr><th>Hora</th><th>Lugar</th><th>Tipo</th><th>Crit.</th><th>Novedad</th><th>Quién estuvo</th><th>Acción</th></tr>${novs.map((n) => `<tr><td>${esc(n.hora)}</td><td>${esc(n.lugar)}</td><td>${esc(n.tipo)}</td><td>${esc(n.criticidad)}</td><td>${esc(n.descripcion)}</td><td>${esc(n.quien)}</td><td>${esc(n.accion)}</td></tr>`).join("") || '<tr><td colspan="7">Sin novedades</td></tr>'}</table>
-<h2>Entrega al siguiente turno</h2><p>${esc(plan.entrega || "—")}</p><div class="sig"><div>${esc(plan.asesor)}<br><small>Asesor de turno</small></div><div>Jefatura de Prevención</div></div>`;
-  const css = "body{font:10.5pt/1.45 Arial,sans-serif;color:#1f2a2a;margin:1.5cm}h1{font:400 21pt Georgia,serif;margin:.4em 0 .1em}h2{font:600 12pt Arial;margin:1.3em 0 .4em}table{width:100%;border-collapse:collapse;font-size:9pt}td,th{border-bottom:1px solid #ccc;padding:5px 4px;text-align:left;vertical-align:top}th{color:#555}.k{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.k div{border:1px solid #ccc;padding:8px;display:flex;flex-direction:column}.k b{font-size:16pt}.sig{display:flex;gap:3cm;margin-top:2cm}.sig div{border-top:1px solid #000;padding-top:4px;min-width:6cm}";
-  const w = window.open("", "_blank");
-  if (!w) return dl("Reporte de turno.html", '<!doctype html><meta charset="utf-8"><style>' + css + "</style>" + body, "text/html");
-  w.document.title = "Reporte " + SH[plan.turno].name;
-  const st = w.document.createElement("style"); st.textContent = css; w.document.head.appendChild(st);
-  w.document.body.innerHTML = body;
-  setTimeout(() => w.print(), 500);
+<h2>Entrega al siguiente turno</h2><p>${esc(plan.entrega || "—")}</p>`;
+  const E = Object.fromEntries(execs.map((e) => [e.actividad_id, e]));
+  const fotos = await evidenciasHtml([
+    ...R.map((r) => ({ titulo: `${r.n}. ${r.proceso} · ${r.sitio}`, evidencias: E[r.id]?.evidencias })),
+    ...novs.map((n) => ({ titulo: `Novedad ${n.hora || ""} · ${n.lugar || ""}`, evidencias: n.evidencias })),
+  ], esc);
+  const sig = `<div class="sig"><div>${esc(plan.asesor)}<br><small>Asesor de turno</small></div><div>Jefatura de Prevención</div></div>`;
+  const css = ".pdf{font:10.5pt/1.45 Arial,sans-serif;color:#1f2a2a;padding:0 40px}h1{font:400 21pt Georgia,serif;margin:.4em 0 .1em}h2{font:600 12pt Arial;margin:1.3em 0 .4em}table{width:100%;border-collapse:collapse;font-size:9pt}td,th{border-bottom:1px solid #ccc;padding:5px 4px;text-align:left;vertical-align:top}th{color:#555}.k{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.k div{border:1px solid #ccc;padding:8px;display:flex;flex-direction:column}.k b{font-size:16pt}.sig{display:flex;gap:3cm;margin-top:2cm}.sig div{border-top:1px solid #000;padding-top:4px;min-width:6cm}.phs{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ph{border:1px solid #ccc;padding:6px}.ph img{width:100%;height:260px;object-fit:contain;display:block;background:#f3f3f3}.ph small{display:block;margin-top:4px;color:#555}";
+  await htmlToPdf(body + sig + fotos, css, `Reporte ${SH[plan.turno].short} Turno ${shortDate(plan.fecha)}.pdf`);
+  t.dismiss();
 }
