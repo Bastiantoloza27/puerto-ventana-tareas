@@ -38,6 +38,10 @@
     "cerrada_hora": {
       "type": "string"
     },
+    "reabierta": {
+      "type": "boolean",
+      "description": "Jefatura reabri\u00f3 el turno cerrado para que el asesor corrija"
+    },
     "entrega": {
       "type": "string"
     },

@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { card } from "@/lib/apr";
+import { card, SH, shortDate } from "@/lib/apr";
+import { reabrirTurno } from "@/lib/aprActions";
+import { attempt } from "@/lib/safe";
 import { downloadCsv, printPdf, downloadConsolidado } from "@/lib/exportReport";
 import BarList from "@/components/apr/BarList";
 import ClosedTable from "@/components/apr/ClosedTable";
 
 export default function Reportes() {
-  const { day } = useOutletContext();
+  const { day, canPlan } = useOutletContext();
+  const qc = useQueryClient();
   const mes = day.fecha.slice(0, 7);
   const [asesor, setAsesor] = useState("");
   const base = { estado: "cerrada", fecha: { $gte: mes + "-01", $lte: mes + "-31" } };
@@ -37,6 +40,12 @@ export default function Reportes() {
   const by = {}; plans.forEach((p) => { const b = (by[p.asesor] ||= { ok: 0, base: 0 }); b.ok += p.r_ok || 0; b.base += (p.r_prog || 0) - (p.r_na || 0); });
   const kpis = [["Turnos cerrados", plans.length, "este mes"], ["Cumplimiento", pct + "%", "ejecutadas / (programadas − no ocurrió)"], ["Actividades ejecutadas", sum("r_ok"), `de ${sum("r_prog")} programadas`], ["Novedades", sum("r_novs"), "registradas en el mes"]];
 
+  const reabrir = async (p) => {
+    if (!window.confirm(`¿Reabrir el ${SH[p.turno].name} del ${shortDate(p.fecha)} para que ${p.asesor || "el asesor"} corrija? Al cerrarlo de nuevo se enviará el reporte corregido.`)) return;
+    await attempt(() => reabrirTurno(p), "Turno reabierto · el asesor verá el aviso para corregir");
+    qc.invalidateQueries({ queryKey: ["day"] }); qc.invalidateQueries({ queryKey: ["reabiertas"] });
+  };
+
   const detail = async (p, fn) => {
     const [e, n] = await Promise.all([base44.entities.Ejecucion.filter({ programacion_id: p.id }, { limit: 200 }), base44.entities.Novedad.filter({ programacion_id: p.id }, { limit: 100 })]);
     fn(p, day.catalog, e.items, n.items);
@@ -56,7 +65,7 @@ export default function Reportes() {
         <BarList title="Motivos de no ejecución" rows={Object.entries(mot).sort((a, b) => b[1] - a[1])} />
         <BarList title="Cumplimiento por asesor" suffix="%" max={100} rows={Object.entries(by).map(([a, b]) => [a, b.base ? Math.round((b.ok / b.base) * 100) : 0]).sort((a, b) => b[1] - a[1])} />
       </div>
-      <ClosedTable plans={plans} onCsv={(p) => detail(p, downloadCsv)} onPdf={(p) => detail(p, printPdf)} onConsolidado={() => downloadConsolidado(plans)} />
+      <ClosedTable plans={plans} onCsv={(p) => detail(p, downloadCsv)} onPdf={(p) => detail(p, printPdf)} onConsolidado={() => downloadConsolidado(plans)} onReabrir={canPlan ? reabrir : null} />
     </>
   );
 }

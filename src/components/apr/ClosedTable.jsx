@@ -1,9 +1,9 @@
-import { FileSpreadsheet, FileText } from "lucide-react";
+import { FileSpreadsheet, FileText, RotateCcw } from "lucide-react";
 import { card, SH, shortDate } from "@/lib/apr";
 
 const pctColor = (p) => (p >= 85 ? "#16386a" : "#7a5d0e");
 
-export default function ClosedTable({ plans, onCsv, onPdf, onConsolidado }) {
+export default function ClosedTable({ plans, onCsv, onPdf, onConsolidado, onReabrir }) {
   return (
     <div className={card + " overflow-hidden"}>
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 px-4 py-3 border-b border-[#eef1f1]">
@@ -35,6 +35,7 @@ export default function ClosedTable({ plans, onCsv, onPdf, onConsolidado }) {
             <div className="flex gap-2">
               <button onClick={() => onCsv(p)} className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-md border border-[#cdd4d4] text-sm hover:border-[#2a64b8]"><FileSpreadsheet className="w-4 h-4 text-[#2a64b8]" />Excel</button>
               <button onClick={() => onPdf(p)} className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-md border border-[#cdd4d4] text-sm hover:border-[#2a64b8]"><FileText className="w-4 h-4 text-[#2a64b8]" />PDF</button>
+              {onReabrir && <button onClick={() => onReabrir(p)} className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-md border border-[#c9b98a] text-sm text-[#7a5d0e] hover:bg-[#fbf3dc]"><RotateCcw className="w-4 h-4" />Reabrir</button>}
             </div>
           </div>
         ))}
@@ -59,6 +60,7 @@ export default function ClosedTable({ plans, onCsv, onPdf, onConsolidado }) {
                 <td className="px-4 py-2 whitespace-nowrap">
                   <button onClick={() => onCsv(p)} title="Excel" className="p-1.5 rounded hover:bg-[#e2f4f4]"><FileSpreadsheet className="w-4 h-4 text-[#2a64b8]" /></button>
                   <button onClick={() => onPdf(p)} title="PDF" className="p-1.5 rounded hover:bg-[#e2f4f4]"><FileText className="w-4 h-4 text-[#2a64b8]" /></button>
+                  {onReabrir && <button onClick={() => onReabrir(p)} title="Reabrir para corrección" className="p-1.5 rounded hover:bg-[#fbf3dc]"><RotateCcw className="w-4 h-4 text-[#7a5d0e]" /></button>}
                 </td>
               </tr>
             ))}

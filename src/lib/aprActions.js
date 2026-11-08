@@ -9,6 +9,13 @@ export async function addLog(plan, texto) {
   await base44.entities.Programacion.update(plan.id, { bitacora });
 }
 
+// Jefatura reabre un turno cerrado para que el asesor corrija; queda en la bitácora.
+export async function reabrirTurno(plan) {
+  const me = await base44.auth.me();
+  await base44.entities.Programacion.update(plan.id, { estado: "publicada", reabierta: true });
+  await addLog(plan, `Turno reabierto para corrección por ${me.full_name || me.email}`);
+}
+
 // Guarda la programación del turno; si no existe aún, revisa el servidor antes de crearla (evita duplicados).
 export async function upsertPlan(plan, fecha, turno, data) {
   const p = plan || (await base44.entities.Programacion.filter({ fecha, turno }, { limit: 1 })).items[0];

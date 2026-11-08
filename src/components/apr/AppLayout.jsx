@@ -11,6 +11,7 @@ import ViewAsSwitch from "@/components/apr/ViewAsSwitch";
 import { kpi, ORDER, today, turnoActual } from "@/lib/apr";
 import ProgDatePicker from "@/components/apr/ProgDatePicker";
 import PerfilGate from "@/components/apr/PerfilGate";
+import TurnosReabiertos from "@/components/apr/TurnosReabiertos";
 
 const TITLES = { "/": "Inicio", "/turno": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles", "/configuracion": "Configuración inicial" };
 
@@ -22,7 +23,7 @@ function AppShell() {
   const { pathname } = useLocation();
   const [progDate, setProgDate] = useState(today());
   // Se fija al abrir la app, así el 3° turno no salta de día al pasar la medianoche ni a las 08:00 mientras se cierra.
-  const [enCurso] = useState(() => turnoActual());
+  const [enCurso, setEnCurso] = useState(() => turnoActual());
   const day = useDay(pathname === "/programacion" ? progDate : enCurso.fecha);
   const { readOnly, canPlan, perfil } = usePerfil();
   const [shift, setShift] = useState(enCurso.turno);
@@ -49,6 +50,7 @@ function AppShell() {
           {!["/", "/reportes", "/catalogo", "/usuarios", "/configuracion"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
         </div>
         <ViewAsSwitch />
+        <TurnosReabiertos actual={{ fecha: enCurso.fecha, turno: shift }} onOpen={(t) => { setEnCurso(t); setShift(t.turno); }} />
         {pathname === "/programacion" && canPlan && <ProgDatePicker value={progDate} onChange={setProgDate} />}
         {(perfil === "asesor" && ["/programacion", "/catalogo"].includes(pathname)) || (perfil !== "jefatura" && pathname === "/configuracion") ? (
           <Navigate to="/" replace />
