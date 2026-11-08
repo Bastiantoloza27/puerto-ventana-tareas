@@ -25,7 +25,7 @@ export async function evidenciasHtml(items, esc) {
 }
 
 // Dibuja el reporte en una imagen y la reparte en hojas A4, cortando solo entre filas o fotos.
-export async function htmlToPdf(html, css, filename) {
+export async function htmlToPdf(html, css, filename, pie = "") {
   const W = 794;
   const el = document.createElement("div");
   el.style.cssText = `position:absolute;left:0;top:0;width:${W}px;background:#fff;z-index:-9999`;
@@ -33,7 +33,7 @@ export async function htmlToPdf(html, css, filename) {
   document.body.appendChild(el);
   await Promise.all([...el.querySelectorAll("img")].map((i) => i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; })));
   const top = el.getBoundingClientRect().top;
-  const cuts = [...el.querySelectorAll("tr,.ph,h1,h2,p,.k,.sig")].map((n) => n.getBoundingClientRect().bottom - top).sort((a, b) => a - b);
+  const cuts = [...el.querySelectorAll("tr,.ph,.hd,.info,p,.k,.sig")].map((n) => n.getBoundingClientRect().bottom - top).sort((a, b) => a - b);
   const scale = 2;
   const canvas = await html2canvas(el, { useCORS: true, scale, backgroundColor: "#fff", windowWidth: W, scrollX: 0, scrollY: -window.scrollY });
   el.remove();
@@ -51,6 +51,14 @@ export async function htmlToPdf(html, css, filename) {
     if (!first) doc.addPage();
     doc.addImage(part.toDataURL("image/jpeg", 0.85), "JPEG", 0, margin, 595, (end - y) * ptPerPx);
     first = false; y = end;
+  }
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) {
+    doc.setPage(i);
+    doc.setDrawColor(201, 213, 230); doc.line(36, 820, 559, 820);
+    doc.setFontSize(7.5); doc.setTextColor(91, 107, 128);
+    doc.text(`Puerto Ventana S.A. · Prevención de Riesgos${pie ? " · " + pie : ""}`, 36, 832);
+    doc.text(`Página ${i} de ${n}`, 559, 832, { align: "right" });
   }
   doc.save(filename);
 }
