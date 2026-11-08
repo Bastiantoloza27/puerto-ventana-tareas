@@ -32,6 +32,12 @@ export const TIPO_LABEL = { t: "Transversal", o: "Según operación", c: "Según
 
 export const now = () => format(new Date(), "HH:mm");
 export const today = () => format(new Date(), "yyyy-MM-dd");
+// Turno en curso: entre 00:00 y 08:00 sigue siendo el 3° turno del día anterior.
+export function turnoActual(d = new Date()) {
+  const m = d.getHours() * 60 + d.getMinutes();
+  if (m < 480) return { fecha: format(new Date(d.getTime() - 86400000), "yyyy-MM-dd"), turno: "T3" };
+  return { fecha: format(d, "yyyy-MM-dd"), turno: m < 930 ? "T1" : m < 1380 ? "T2" : "T3" };
+}
 export const shortDate = (f) => (f ? f.slice(8, 10) + "-" + f.slice(5, 7) : "");
 export const nextShift = (sh) => ORDER[(ORDER.indexOf(sh) + 1) % 3];
 

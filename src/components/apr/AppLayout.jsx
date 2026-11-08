@@ -8,7 +8,7 @@ import MobileNav from "@/components/apr/MobileNav";
 import useDay from "@/hooks/useDay";
 import usePerfil from "@/hooks/usePerfil";
 import ViewAsSwitch from "@/components/apr/ViewAsSwitch";
-import { kpi, ORDER, today } from "@/lib/apr";
+import { kpi, ORDER, today, turnoActual } from "@/lib/apr";
 import ProgDatePicker from "@/components/apr/ProgDatePicker";
 import PerfilGate from "@/components/apr/PerfilGate";
 
@@ -21,9 +21,11 @@ export default function AppLayout() {
 function AppShell() {
   const { pathname } = useLocation();
   const [progDate, setProgDate] = useState(today());
-  const day = useDay(pathname === "/programacion" ? progDate : undefined);
+  // Se fija al abrir la app, así el 3° turno no salta de día al pasar la medianoche ni a las 08:00 mientras se cierra.
+  const [enCurso] = useState(() => turnoActual());
+  const day = useDay(pathname === "/programacion" ? progDate : enCurso.fecha);
   const { readOnly, canPlan, perfil } = usePerfil();
-  const [shift, setShift] = useState("T1");
+  const [shift, setShift] = useState(enCurso.turno);
   const [clock, setClock] = useState(new Date());
   useEffect(() => { const t = setInterval(() => setClock(new Date()), 30000); return () => clearInterval(t); }, []);
 
