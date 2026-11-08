@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { card, SH, shortDate } from "@/lib/apr";
+import { card, SH, shortDate, today } from "@/lib/apr";
+import TurnosSinCerrar from "@/components/apr/TurnosSinCerrar";
 import { reabrirTurno } from "@/lib/aprActions";
 import { attempt } from "@/lib/safe";
 import { downloadCsv, printPdf, downloadConsolidado } from "@/lib/exportReport";
@@ -10,9 +11,10 @@ import BarList from "@/components/apr/BarList";
 import ClosedTable from "@/components/apr/ClosedTable";
 
 export default function Reportes() {
-  const { day, canPlan } = useOutletContext();
+  const { day, canPlan, irATurno } = useOutletContext();
   const qc = useQueryClient();
-  const mes = day.fecha.slice(0, 7);
+  const mesActual = today().slice(0, 7);
+  const [mes, setMes] = useState(mesActual);
   const [asesor, setAsesor] = useState("");
   const base = { estado: "cerrada", fecha: { $gte: mes + "-01", $lte: mes + "-31" } };
   const { data: asesores = [] } = useQuery({
@@ -24,13 +26,18 @@ export default function Reportes() {
     queryFn: async () => (await base44.entities.Programacion.filter(asesor ? { ...base, asesor } : base, { sort: "-fecha", limit: 100 })).items,
   });
   const filtro = (
-    <div className="flex items-center gap-2 text-sm">
+    <>
+    <TurnosSinCerrar onOpen={irATurno} />
+    <div className="flex items-center gap-2 text-sm flex-wrap">
+      <span className="text-[#6b7778]">Mes</span>
+      <input type="month" max={mesActual} value={mes} onChange={(e) => setMes(e.target.value || mesActual)} className="min-h-[44px] md:min-h-0 px-3 py-2 rounded-md border border-[#cdd4d4] bg-white" />
       <span className="text-[#6b7778]">Asesor</span>
       <select value={asesor} onChange={(e) => setAsesor(e.target.value)} className="min-h-[44px] md:min-h-0 px-3 py-2 rounded-md border border-[#cdd4d4] bg-white">
         <option value="">Todos los asesores</option>
         {asesores.map((a) => <option key={a} value={a}>{a}</option>)}
       </select>
     </div>
+    </>
   );
   if (isLoading) return <>{filtro}<div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#2a64b8] rounded-full animate-spin" /></div></>;
 

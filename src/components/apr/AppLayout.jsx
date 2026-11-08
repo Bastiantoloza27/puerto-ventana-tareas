@@ -12,6 +12,7 @@ import { kpi, ORDER, today, turnoActual } from "@/lib/apr";
 import ProgDatePicker from "@/components/apr/ProgDatePicker";
 import PerfilGate from "@/components/apr/PerfilGate";
 import TurnosReabiertos from "@/components/apr/TurnosReabiertos";
+import FechaTurnoPicker from "@/components/apr/FechaTurnoPicker";
 
 const TITLES = { "/": "Inicio", "/turno": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles", "/configuracion": "Configuración inicial" };
 
@@ -27,6 +28,7 @@ function AppShell() {
   const day = useDay(pathname === "/programacion" ? progDate : enCurso.fecha);
   const { readOnly, canPlan, perfil } = usePerfil();
   const [shift, setShift] = useState(enCurso.turno);
+  const irATurno = (t) => { setEnCurso(t); setShift(t.turno); };
   const [clock, setClock] = useState(new Date());
   useEffect(() => { const t = setInterval(() => setClock(new Date()), 30000); return () => clearInterval(t); }, []);
 
@@ -50,14 +52,15 @@ function AppShell() {
           {!["/", "/reportes", "/catalogo", "/usuarios", "/configuracion"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
         </div>
         <ViewAsSwitch />
-        <TurnosReabiertos actual={{ fecha: enCurso.fecha, turno: shift }} onOpen={(t) => { setEnCurso(t); setShift(t.turno); }} />
+        <TurnosReabiertos actual={{ fecha: enCurso.fecha, turno: shift }} onOpen={irATurno} />
         {pathname === "/programacion" && canPlan && <ProgDatePicker value={progDate} onChange={setProgDate} />}
+        {["/turno", "/cierre"].includes(pathname) && canPlan && <FechaTurnoPicker value={enCurso.fecha} onChange={(fecha) => setEnCurso({ fecha, turno: shift })} onReset={() => irATurno(turnoActual())} />}
         {(perfil === "asesor" && ["/programacion", "/catalogo"].includes(pathname)) || (perfil !== "jefatura" && pathname === "/configuracion") ? (
           <Navigate to="/" replace />
         ) : day.loading ? (
           <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#2a64b8] rounded-full animate-spin" /></div>
         ) : (
-          <Outlet context={{ day, shift, plan, k, readOnly, canPlan }} />
+          <Outlet context={{ day, shift, plan, k, readOnly, canPlan, irATurno }} />
         )}
       </main>
       <MobileNav turnoBadge={turnoBadge} novBadge={novCount || ""} progBadge={unpub} />
