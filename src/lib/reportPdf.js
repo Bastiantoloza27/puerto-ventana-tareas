@@ -2,7 +2,6 @@ import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { base44 } from "@/api/base44Client";
 
-window.html2canvas = html2canvas;
 
 // Descarga la foto y la achica para que el PDF no quede pesado.
 async function toDataUrl(uri) {
@@ -25,16 +24,33 @@ export async function evidenciasHtml(items, esc) {
   return cells ? `<h2>Evidencias fotográficas</h2><div class="phs">${cells}</div>` : "";
 }
 
+// Dibuja el reporte en una imagen y la reparte en hojas A4, cortando solo entre filas o fotos.
 export async function htmlToPdf(html, css, filename) {
+  const W = 794;
   const el = document.createElement("div");
-  el.style.cssText = "position:fixed;left:-10000px;top:0;width:794px;background:#fff";
+  el.style.cssText = `position:absolute;left:0;top:0;width:${W}px;background:#fff;z-index:-9999`;
   el.innerHTML = `<style>${css}</style><div class="pdf">${html}</div>`;
   document.body.appendChild(el);
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-  await new Promise((resolve) => doc.html(el, {
-    x: 0, y: 0, width: 595, windowWidth: 794, autoPaging: "text", margin: [24, 0, 24, 0],
-    html2canvas: { useCORS: true }, callback: resolve,
-  }));
+  await Promise.all([...el.querySelectorAll("img")].map((i) => i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; })));
+  const top = el.getBoundingClientRect().top;
+  const cuts = [...el.querySelectorAll("tr,.ph,h1,h2,p,.k,.sig")].map((n) => n.getBoundingClientRect().bottom - top).sort((a, b) => a - b);
+  const scale = 2;
+  const canvas = await html2canvas(el, { useCORS: true, scale, backgroundColor: "#fff", windowWidth: W, scrollX: 0, scrollY: -window.scrollY });
   el.remove();
+
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const ptPerPx = 595 / W, margin = 28, pageH = (842 - margin * 2) / ptPerPx;
+  const total = canvas.height / scale;
+  let y = 0, first = true;
+  while (y < total - 1) {
+    let end = Math.min(y + pageH, total);
+    if (end < total) { const c = cuts.filter((b) => b > y + 40 && b <= end).pop(); if (c) end = c + 2; }
+    const part = document.createElement("canvas");
+    part.width = canvas.width; part.height = Math.ceil((end - y) * scale);
+    part.getContext("2d").drawImage(canvas, 0, -y * scale);
+    if (!first) doc.addPage();
+    doc.addImage(part.toDataURL("image/jpeg", 0.85), "JPEG", 0, margin, 595, (end - y) * ptPerPx);
+    first = false; y = end;
+  }
   doc.save(filename);
 }
