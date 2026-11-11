@@ -1,11 +1,12 @@
 import { Ship, MapPin, Users } from "lucide-react";
+import { actividadesDeFaena } from "@/lib/faenaMatch";
 
 const Persona = ({ rol, nombre }) => nombre ? (
   <div className="text-[13px] leading-snug"><span className="text-[#6b7778]">{rol}: </span><span className="text-[#1c2526]">{nombre}</span></div>
 ) : null;
 
 export default function FaenaCard({ f, catalog }) {
-  const acts = (f.actividad_ids || []).map((id) => catalog.find((c) => c.id === id)).filter(Boolean);
+  const acts = actividadesDeFaena(catalog, f);
   const cargos = Object.entries(f.cargos || {}).sort((a, b) => b[1] - a[1]);
   return (
     <div className={"rounded-lg border p-3 flex flex-col gap-2 " + (f.nave ? "border-[#9cc0f0] bg-[#f5f8fc]" : "border-[#dde5e4] bg-white")}>
@@ -26,7 +27,7 @@ export default function FaenaCard({ f, catalog }) {
       <div className="text-xs">
         {acts.length
           ? <span className="text-[#16386a]">→ {acts.map((a) => `${a.sitio} · ${a.proceso}`).join(" / ")}</span>
-          : <span className="text-[#7a5d0e]">Sin regla en el catálogo: asigna la actividad a mano.</span>}
+          : <span className="text-[#7a5d0e]">Sin regla en el catálogo: en Catálogo, agrega «{f.faena}» en «Faenas que activan esta actividad».</span>}
       </div>
     </div>
   );
