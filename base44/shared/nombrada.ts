@@ -127,6 +127,7 @@ export function actividadesDeFaena(catalog, f) {
 export async function aplicarNombrada(sr, { fecha, turnos, asunto, remitente, origen }) {
   const catalog = await sr.entities.Actividad.list('orden', 500);
   const { items: existentes } = await sr.entities.Programacion.filter({ fecha }, { limit: 10 });
+  const { items: rotativa } = await sr.entities.Rotativa.filter({ fecha }, { limit: 10 });
   const h = hora();
   const resumen = [];
   for (const t of turnos) {
@@ -141,10 +142,13 @@ export async function aplicarNombrada(sr, { fecha, turnos, asunto, remitente, or
     const correo = agregarEnvio(plan.correo, { asunto: asunto || 'Nombrada de Operaciones', hora: h, remitente: remitente || '', lineas });
     const etiqueta = correo.envios.length === 1 ? 'Nombrada' : `Actualización ${correo.envios.length - 1}`;
     const nuevas = sugeridas.filter((id) => !(plan.actividad_ids || []).includes(id));
+    // Asesor según la rotativa, solo si el turno aún no tiene uno (lo manual manda).
+    const rot = !plan.asesor ? rotativa.find((r) => r.turno === t.turno)?.asesor : null;
     await sr.entities.Programacion.update(plan.id, {
       faenas, dotacion, correo,
+      ...(rot ? { asesor: rot } : {}),
       actividad_ids: [...new Set([...(plan.actividad_ids || []), ...sugeridas])],
-      bitacora: [...(plan.bitacora || []), { hora: h, texto: `${etiqueta} (PDF, ${origen}) · ${faenas.length} faenas · ${dotacion} personas · ${nuevas.length} actividades sugeridas` }],
+      bitacora: [...(plan.bitacora || []), { hora: h, texto: `${etiqueta} (PDF, ${origen}) · ${faenas.length} faenas · ${dotacion} personas · ${nuevas.length} actividades sugeridas${rot ? ` · asesor según rotativa: ${rot}` : ''}` }],
     });
     resumen.push({ turno: t.turno, estado: 'aplicado', faenas: faenas.length, dotacion, sugeridas: sugeridas.length, nuevas: nuevas.length, sinRegla: faenas.filter((f) => !f.actividad_ids.length).map((f) => f.faena) });
   }

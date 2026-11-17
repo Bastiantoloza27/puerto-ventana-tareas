@@ -1,0 +1,58 @@
+{
+  "name": "Rotativa",
+  "type": "object",
+  "properties": {
+    "fecha": {
+      "type": "string",
+      "format": "date"
+    },
+    "turno": {
+      "type": "string",
+      "enum": [
+        "T1",
+        "T2",
+        "T3"
+      ]
+    },
+    "asesor": {
+      "type": "string",
+      "description": "Asesor de Prevenci\u00f3n seg\u00fan la rotativa anual"
+    }
+  },
+  "required": [
+    "fecha",
+    "turno",
+    "asesor"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "data.perfil": "asesor"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

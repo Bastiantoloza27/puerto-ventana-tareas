@@ -16,6 +16,7 @@ import FaenasPanel from "@/components/apr/FaenasPanel";
 import SubirNombrada from "@/components/apr/SubirNombrada";
 import RevisarCorreo from "@/components/apr/RevisarCorreo";
 import { useQueryClient } from "@tanstack/react-query";
+import useRotativa from "@/hooks/useRotativa";
 
 export default function Programacion() {
   const { day, shift, plan, canPlan } = useOutletContext();
@@ -26,7 +27,10 @@ export default function Programacion() {
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState("");
+  const sugerido = useRotativa(day.fecha, shift);
   useEffect(() => { setIds(plan?.actividad_ids || []); setAsesor(plan?.asesor || null); setErr(""); }, [plan?.id, shift, plan?.dotacion, plan?.correo?.envios?.length]);
+  // Propone al asesor de la rotativa solo si el turno aún no tiene uno asignado.
+  useEffect(() => { if (!plan?.asesor && sugerido) setAsesor(sugerido); }, [plan?.id, shift, day.fecha, sugerido]);
 
   const locked = plan?.estado === "cerrada" || readOnly;
   const pub = plan?.estado === "publicada";
@@ -90,6 +94,7 @@ export default function Programacion() {
               {plan?.estado === "cerrada" ? "Turno cerrado" : pub ? `Publicada ${plan.publicada_hora}` : "Borrador"}
             </span>
           </div>
+          {sugerido && <span className="text-xs text-[#5b6667]">Según la rotativa: <b className="text-[#16386a]">{sugerido}</b>{asesor && asesor !== sugerido ? " · cambiado manualmente" : ""}</span>}
           <AsesorPicker value={asesor} onChange={setAsesor} locked={locked} />
         </div>
         <FaenasPanel plan={plan} catalog={day.catalog} />
