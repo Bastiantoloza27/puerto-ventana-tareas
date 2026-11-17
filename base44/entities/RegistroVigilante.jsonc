@@ -1,0 +1,118 @@
+{
+  "name": "RegistroVigilante",
+  "type": "object",
+  "properties": {
+    "fecha": {
+      "type": "string",
+      "format": "date"
+    },
+    "turno": {
+      "type": "string",
+      "enum": [
+        "T1",
+        "T2",
+        "T3"
+      ]
+    },
+    "puesto": {
+      "type": "string"
+    },
+    "tarea_id": {
+      "type": "string"
+    },
+    "mensual": {
+      "type": "boolean",
+      "description": "Tarea peri\u00f3dica: basta una vez en el mes"
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "no"
+      ],
+      "enumColors": [
+        "green",
+        "red"
+      ]
+    },
+    "observaciones": {
+      "type": "string"
+    },
+    "evidencias": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "is_img": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "vigilante": {
+      "type": "string"
+    },
+    "hora": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "fecha",
+    "turno",
+    "puesto",
+    "tarea_id"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "data.perfil": "vigilante"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "data.perfil": "vigilante"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

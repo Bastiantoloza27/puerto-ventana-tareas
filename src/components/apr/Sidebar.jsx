@@ -38,6 +38,8 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
         <Label>PLANIFICACIÓN</Label>
         <Item to="/programacion" label="Programación" badge={progBadge || null} amber />
         <Item to="/catalogo" label="Catálogo de actividades" />
+        <Label>VIGILANCIA</Label>
+        <Item to="/vigilantes" label="Vigilantes" />
       </>}
       <Label>TRAZABILIDAD</Label>
       <Item to="/reportes" label="Reportes" />

@@ -14,7 +14,7 @@ import PerfilGate from "@/components/apr/PerfilGate";
 import TurnosReabiertos from "@/components/apr/TurnosReabiertos";
 import FechaTurnoPicker from "@/components/apr/FechaTurnoPicker";
 
-const TITLES = { "/": "Inicio", "/turno": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles", "/configuracion": "Configuración inicial" };
+const TITLES = { "/": "Inicio", "/turno": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles", "/configuracion": "Configuración inicial", "/vigilantes": "Vigilantes" };
 
 export default function AppLayout() {
   return <PerfilGate><AppShell /></PerfilGate>;
@@ -49,13 +49,13 @@ function AppShell() {
             <div className="font-mono text-[11px] md:text-xs font-medium text-[#2a64b8] tracking-[.08em]">{eyebrow}</div>
             <h1 className="font-heading text-[26px] md:text-[34px] leading-[1.1] mt-1 md:mt-1.5">{TITLES[pathname] || "Programa APR"}</h1>
           </div>
-          {!["/", "/reportes", "/catalogo", "/usuarios", "/configuracion"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
+          {!["/", "/reportes", "/catalogo", "/usuarios", "/configuracion", "/vigilantes"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
         </div>
         <ViewAsSwitch />
         <TurnosReabiertos actual={{ fecha: enCurso.fecha, turno: shift }} onOpen={irATurno} />
         {pathname === "/programacion" && canPlan && <ProgDatePicker value={progDate} onChange={setProgDate} />}
         {["/turno", "/cierre"].includes(pathname) && canPlan && <FechaTurnoPicker value={enCurso.fecha} onChange={(fecha) => setEnCurso({ fecha, turno: shift })} onReset={() => irATurno(turnoActual())} />}
-        {(perfil === "asesor" && ["/programacion", "/catalogo"].includes(pathname)) || (perfil !== "jefatura" && pathname === "/configuracion") ? (
+        {(perfil === "asesor" && ["/programacion", "/catalogo", "/vigilantes"].includes(pathname)) || (perfil !== "jefatura" && pathname === "/configuracion") ? (
           <Navigate to="/" replace />
         ) : day.loading ? (
           <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#2a64b8] rounded-full animate-spin" /></div>

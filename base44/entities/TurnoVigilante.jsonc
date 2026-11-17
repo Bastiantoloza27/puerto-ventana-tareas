@@ -1,0 +1,64 @@
+{
+  "name": "TurnoVigilante",
+  "type": "object",
+  "properties": {
+    "fecha": {
+      "type": "string",
+      "format": "date"
+    },
+    "turno": {
+      "type": "string",
+      "enum": [
+        "T1",
+        "T2",
+        "T3"
+      ]
+    },
+    "puesto": {
+      "type": "string"
+    },
+    "tarea_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tareas ajustadas por Jefatura para este turno y puesto (reemplaza la matriz)"
+    }
+  },
+  "required": [
+    "fecha",
+    "turno",
+    "puesto"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "data.perfil": "vigilante"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

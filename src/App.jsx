@@ -21,6 +21,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Usuarios from '@/pages/Usuarios';
 import Configuracion from '@/pages/Configuracion';
 import Inicio from '@/pages/Inicio';
+import Vigilantes from '@/pages/Vigilantes';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -63,6 +64,7 @@ const AuthenticatedApp = () => {
           <Route path="/catalogo" element={<Catalogo />} />
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/configuracion" element={<Configuracion />} />
+          <Route path="/vigilantes" element={<Vigilantes />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

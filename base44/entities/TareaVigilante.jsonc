@@ -1,0 +1,98 @@
+{
+  "name": "TareaVigilante",
+  "type": "object",
+  "properties": {
+    "codigo": {
+      "type": "number",
+      "description": "ID de la tarea en la matriz"
+    },
+    "hoja": {
+      "type": "string",
+      "description": "Hoja de la matriz de origen"
+    },
+    "orden": {
+      "type": "number"
+    },
+    "puesto": {
+      "type": "string"
+    },
+    "tarea": {
+      "type": "string"
+    },
+    "frecuencia": {
+      "type": "string"
+    },
+    "momento": {
+      "type": "string"
+    },
+    "periodicidad": {
+      "type": "string"
+    },
+    "evidencia": {
+      "type": "string"
+    },
+    "grupo": {
+      "type": "string",
+      "enum": [
+        "inicio",
+        "durante",
+        "final",
+        "mes"
+      ],
+      "enumColors": [
+        "blue",
+        "green",
+        "purple",
+        "yellow"
+      ],
+      "description": "inicio/durante/final = fija de cada turno; mes = peri\u00f3dica mensual"
+    },
+    "turnos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Turnos en que aplica (T1, T2, T3)"
+    },
+    "activa": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "puesto",
+    "tarea",
+    "grupo"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "data.perfil": "vigilante"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

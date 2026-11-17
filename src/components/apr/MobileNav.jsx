@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import usePerfil from "@/hooks/usePerfil";
-import { Home, ClipboardCheck, AlertTriangle, CalendarDays, ListChecks, BarChart3 } from "lucide-react";
+import { Home, ClipboardCheck, AlertTriangle, CalendarDays, ListChecks, BarChart3, Shield } from "lucide-react";
 
 const ITEMS = [
   { to: "/", label: "Inicio", Icon: Home },
@@ -8,16 +8,17 @@ const ITEMS = [
   { to: "/cierre", label: "Cierre", Icon: AlertTriangle, badge: "nov" },
   { to: "/programacion", label: "Programar", Icon: CalendarDays, badge: "prog" },
   { to: "/catalogo", label: "Catálogo", Icon: ListChecks },
+  { to: "/vigilantes", label: "Vigilantes", Icon: Shield },
   { to: "/reportes", label: "Reportes", Icon: BarChart3 },
 ];
 
 export default function MobileNav({ turnoBadge, novBadge, progBadge }) {
   const badges = { turno: turnoBadge, nov: novBadge, prog: progBadge };
   const { perfil } = usePerfil();
-  const items = perfil === "asesor" ? ITEMS.filter((i) => !["/programacion", "/catalogo"].includes(i.to)) : ITEMS;
+  const items = perfil === "asesor" ? ITEMS.filter((i) => !["/programacion", "/catalogo", "/vigilantes"].includes(i.to)) : ITEMS;
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-[#0f2340] border-t border-[#1e3557] pb-[env(safe-area-inset-bottom)]">
-      <div className={"grid " + (items.length === 4 ? "grid-cols-4" : "grid-cols-6")}>
+      <div className={"grid " + (items.length === 4 ? "grid-cols-4" : "grid-cols-7")}>
         {items.map(({ to, label, Icon, badge }) => (
           <NavLink key={to} to={to} end className="relative">
             {({ isActive }) => (
