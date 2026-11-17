@@ -5,11 +5,13 @@ const Persona = ({ rol, nombre }) => nombre ? (
   <div className="text-[13px] leading-snug"><span className="text-[#6b7778]">{rol}: </span><span className="text-[#1c2526]">{nombre}</span></div>
 ) : null;
 
-export default function FaenaCard({ f, catalog }) {
+export default function FaenaCard({ f, catalog, onGo }) {
   const acts = actividadesDeFaena(catalog, f);
   const cargos = Object.entries(f.cargos || {}).sort((a, b) => b[1] - a[1]);
+  const go = onGo && acts.length ? () => onGo(acts) : null;
   return (
-    <div className={"rounded-lg border p-3 flex flex-col gap-2 " + (f.nave ? "border-[#9cc0f0] bg-[#f5f8fc]" : "border-[#dde5e4] bg-white")}>
+    <div onClick={go || undefined} role={go ? "button" : undefined}
+      className={"rounded-lg border p-3 flex flex-col gap-2 transition-colors " + (f.nave ? "border-[#9cc0f0] bg-[#f5f8fc]" : "border-[#dde5e4] bg-white") + (go ? " cursor-pointer hover:border-[#2a64b8]" : "")}>
       <div className="flex justify-between items-start gap-2">
         <div className="min-w-0">
           <div className="font-medium text-sm text-[#16386a]">{f.faena}</div>
@@ -26,7 +28,7 @@ export default function FaenaCard({ f, catalog }) {
       {cargos.length > 1 && <div className="flex flex-wrap gap-1">{cargos.map(([c, n]) => <span key={c} className="text-[11px] bg-[#eef1f1] text-[#3c4849] rounded px-1.5 py-0.5">{n} {c.toLowerCase()}</span>)}</div>}
       <div className="text-xs">
         {acts.length
-          ? <span className="text-[#16386a]">→ {acts.map((a) => `${a.sitio} · ${a.proceso}`).join(" / ")}</span>
+          ? <span className="text-[#16386a]">→ {acts.map((a) => `${a.sitio} · ${a.proceso}`).join(" / ")}{go && <b className="ml-1 text-[#2a64b8]">· Ir a registrar</b>}</span>
           : <span className="text-[#7a5d0e]">Sin regla en el catálogo: en Catálogo, agrega «{f.faena}» en «Faenas que activan esta actividad».</span>}
       </div>
     </div>

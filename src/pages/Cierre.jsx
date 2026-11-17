@@ -2,7 +2,9 @@ import { useOutletContext } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "@/components/ui/use-toast";
-import { now, nextShift, SH } from "@/lib/apr";
+import { now, nextShift, SH, actsDelPlan } from "@/lib/apr";
+import { personasDe, dotacionDe } from "@/lib/faenaMatch";
+import DotacionResumen from "@/components/apr/DotacionResumen";
 import { addLog } from "@/lib/aprActions";
 import { attempt } from "@/lib/safe";
 import { downloadCsv, printPdf } from "@/lib/exportReport";
@@ -19,6 +21,8 @@ export default function Cierre() {
   const execs = day.execs.filter((e) => e.programacion_id === plan.id);
   const nextAsesor = day.plans[nextShift(shift)]?.asesor || "asesor por asignar";
   const closed = plan.estado === "cerrada";
+  const EX = Object.fromEntries(execs.map((e) => [e.actividad_id, e]));
+  const dotRows = actsDelPlan(plan, day.catalog, day.execs).map((a) => ({ id: a.id, label: `${a.proceso} · ${a.sitio}`, personas: personasDe(plan, day.catalog, a, EX[a.id]), nombrada: !a.extra && dotacionDe(plan, day.catalog, a.id) != null }));
 
   const saveNov = (data) => attempt(async () => {
     await base44.entities.Novedad.create({ programacion_id: plan.id, hora: now(), ...data });
@@ -45,6 +49,7 @@ export default function Cierre() {
   return (
     <div className="flex flex-wrap gap-5 items-start">
       <div className="flex-[1_1_560px] min-w-0 flex flex-col gap-5">
+        <DotacionResumen rows={dotRows} />
         {!closed && !readOnly && <NovedadForm shift={shift} asesor={plan.asesor} onSave={saveNov} />}
         <NovedadList novs={novs} editable={!closed && !readOnly}
           onUpdate={updateNov} onDelete={deleteNov} />

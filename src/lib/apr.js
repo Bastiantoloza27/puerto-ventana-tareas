@@ -41,23 +41,33 @@ export function turnoActual(d = new Date()) {
 export const shortDate = (f) => (f ? f.slice(8, 10) + "-" + f.slice(5, 7) : "");
 export const nextShift = (sh) => ORDER[(ORDER.indexOf(sh) + 1) % 3];
 
+// Actividades extraordinarias: se guardan como registros del turno con sus propios datos.
+export const extraActs = (execs, planId) => (execs || []).filter((e) => e.programacion_id === planId && e.extra)
+  .map((e) => ({ id: e.actividad_id, area: "Extraordinaria", sitio: e.sitio || "—", proceso: e.proceso || "Actividad extraordinaria", descripcion: e.descripcion || "", tipo: "x", extra: true }));
+export const actsDelPlan = (plan, catalog, execs) => !plan ? [] : [
+  ...(plan.actividad_ids || []).map((id) => catalog.find((a) => a.id === id)).filter(Boolean),
+  ...extraActs(execs, plan.id),
+];
+// Respaldo mínimo para cerrar: una foto/evidencia o una observación escrita.
+export const respaldoOk = (e) => (e?.evidencias || []).length > 0 || !!(e?.observaciones || "").trim();
+
 export function kpi(plan, execs, catalog) {
   const c = { prog: 0, ok: 0, no: 0, na: 0, pend: 0, pendList: [], pct: 0, ready: false, motivos: {} };
   if (!plan) return c;
   const E = Object.fromEntries((execs || []).filter((e) => e.programacion_id === plan.id).map((e) => [e.actividad_id, e]));
-  const ids = (plan.actividad_ids || []).filter((id) => catalog.some((a) => a.id === id));
-  c.prog = ids.length;
-  ids.forEach((id) => {
-    const e = E[id];
+  const acts = actsDelPlan(plan, catalog, execs);
+  c.prog = acts.length;
+  acts.forEach((a) => {
+    const e = E[a.id];
     const st = e?.estado;
-    const bad = !st || (st === "no" && !e.motivo) || (st === "ok" && EXIGIR_EVIDENCIA && !(e.evidencias || []).length);
+    const sinMotivo = st === "no" && !e.motivo;
+    const sinRespaldo = (st === "ok" || st === "no") && !respaldoOk(e);
     if (st === "ok") c.ok++;
     else if (st === "no") { c.no++; if (e.motivo) c.motivos[e.motivo] = (c.motivos[e.motivo] || 0) + 1; }
     else if (st === "na") c.na++;
-    if (bad) {
+    if (!st || sinMotivo || sinRespaldo) {
       if (!st) c.pend++;
-      const a = catalog.find((x) => x.id === id);
-      c.pendList.push(a.proceso + " · " + a.sitio + (st === "no" ? " (falta motivo)" : st === "ok" ? " (falta evidencia)" : ""));
+      c.pendList.push(a.proceso + " · " + a.sitio + (sinMotivo ? " (falta motivo)" : sinRespaldo ? " (falta foto u observación)" : ""));
     }
   });
   c.pct = c.prog - c.na > 0 ? Math.round((c.ok / (c.prog - c.na)) * 100) : 0;

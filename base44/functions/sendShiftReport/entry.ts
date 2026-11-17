@@ -25,7 +25,12 @@ export default async function (req) {
     ]);
     const E = Object.fromEntries(ex.items.map((e) => [e.actividad_id, e]));
     const td = 'style="border-bottom:1px solid #e3e7e7;padding:6px 4px;font-size:12px;vertical-align:top"';
-    const rows = cat.items.map((a) => { const e = E[a.id] || {}; return `<tr><td ${td}>${esc(a.proceso)} · ${esc(a.sitio)}</td><td ${td}>${ST[e.estado] || '—'}</td><td ${td}>${esc([e.motivo, e.observaciones].filter(Boolean).join(' · '))}</td></tr>`; }).join('');
+    const extras = ex.items.filter((e) => e.extra).map((e) => ({ id: e.actividad_id, proceso: `${e.proceso || 'Actividad'} (extraordinaria)`, sitio: e.sitio }));
+    const acts = [...cat.items, ...extras];
+    const th = 'style="text-align:left;font-size:11px;color:#6b7778;padding:4px;border-bottom:1px solid #c9d5e6"';
+    const head = `<tr><th ${th}>Actividad</th><th ${th}>Estado</th><th ${th}>Personas</th><th ${th}>Detalle</th></tr>`;
+    const total = acts.reduce((s, a) => s + num(E[a.id]?.personas), 0);
+    const rows = head + acts.map((a) => { const e = E[a.id] || {}; return `<tr><td ${td}>${esc(a.proceso)} · ${esc(a.sitio)}</td><td ${td}>${ST[e.estado] || '—'}</td><td ${td}>${e.personas ?? '—'}</td><td ${td}>${esc([e.motivo, e.observaciones].filter(Boolean).join(' · '))}${(e.evidencias || []).length ? ` · ${e.evidencias.length} evidencia(s)` : ''}</td></tr>`; }).join('');
     const novs = nv.items.map((n) => `<tr><td ${td}>${esc(n.hora)}</td><td ${td}>${esc(n.lugar)} · ${esc(n.tipo)} · ${esc(n.criticidad)}</td><td ${td}>${esc(n.descripcion)}</td></tr>`).join('') || `<tr><td ${td} colspan="3">Sin novedades</td></tr>`;
 
     const html = `<div style="font-family:Arial,sans-serif;color:#1c2526;max-width:640px;margin:auto">
@@ -33,7 +38,7 @@ export default async function (req) {
 <div style="background:#fff;border:1px solid #dde5e4;padding:22px">
 <h2 style="font-family:Georgia,serif;font-weight:400;margin:0 0 4px">Reporte de cierre · ${SH[plan.turno]}</h2>
 <p style="color:#6b7778;margin:0 0 16px">${esc(plan.fecha)} · Asesor ${esc(plan.asesor)} · cerrado ${esc(plan.cerrada_hora)}</p>
-<p><b>${num(plan.r_prog)}</b> programadas · <b>${num(plan.r_ok)}</b> ejecutadas · <b>${num(plan.r_no)}</b> no ejecutadas · <b>${num(plan.r_na)}</b> no ocurrió · Cumplimiento <b>${num(plan.r_pct)}%</b></p>
+<p><b>${num(plan.r_prog)}</b> programadas · <b>${num(plan.r_ok)}</b> ejecutadas · <b>${num(plan.r_no)}</b> no ejecutadas · <b>${num(plan.r_na)}</b> no ocurrió · Cumplimiento <b>${num(plan.r_pct)}%</b> · Personal registrado <b>${total}</b></p>
 <h3 style="font-size:14px;margin:18px 0 6px">Control de cumplimiento</h3><table style="width:100%;border-collapse:collapse">${rows}</table>
 <h3 style="font-size:14px;margin:18px 0 6px">Novedades</h3><table style="width:100%;border-collapse:collapse">${novs}</table>
 <h3 style="font-size:14px;margin:18px 0 6px">Entrega al siguiente turno</h3><p style="font-size:13px">${esc(plan.entrega || '—')}</p>

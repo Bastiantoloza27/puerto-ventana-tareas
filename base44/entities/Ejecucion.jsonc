@@ -22,6 +22,26 @@
     "observaciones": {
       "type": "string"
     },
+    "personas": {
+      "type": "number",
+      "description": "Personas presentes en el lugar durante la actividad"
+    },
+    "extra": {
+      "type": "boolean",
+      "description": "Actividad extraordinaria agregada desde Mi turno"
+    },
+    "proceso": {
+      "type": "string",
+      "description": "Nombre de la actividad extraordinaria"
+    },
+    "sitio": {
+      "type": "string",
+      "description": "Lugar de la actividad extraordinaria"
+    },
+    "descripcion": {
+      "type": "string",
+      "description": "Detalle de la actividad extraordinaria"
+    },
     "controles": {
       "type": "array",
       "items": {

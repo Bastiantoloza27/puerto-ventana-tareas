@@ -1,4 +1,5 @@
-import { SH, shortDate, TIPO_LABEL } from "@/lib/apr";
+import { SH, shortDate, TIPO_LABEL, actsDelPlan } from "@/lib/apr";
+import { personasDe } from "@/lib/faenaMatch";
 import { toast } from "@/components/ui/use-toast";
 import { evidenciasHtml, htmlToPdf } from "@/lib/reportPdf";
 
@@ -13,8 +14,8 @@ const stLabel = (st) => (st === "ok" ? "Ejecutado" : st === "no" ? "No ejecutado
 
 function rowsFor(plan, catalog, execs) {
   const E = Object.fromEntries(execs.map((e) => [e.actividad_id, e]));
-  return (plan.actividad_ids || []).map((id) => catalog.find((a) => a.id === id)).filter(Boolean)
-    .map((a, i) => { const e = E[a.id] || {}; return { n: i + 1, ...a, st: e.estado, mot: e.motivo || "", obs: e.observaciones || "", ev: (e.evidencias || []).length }; });
+  return actsDelPlan(plan, catalog, execs)
+    .map((a, i) => { const e = E[a.id] || {}; return { n: i + 1, ...a, st: e.estado, mot: e.motivo || "", obs: e.observaciones || "", ev: (e.evidencias || []).length, per: personasDe(plan, catalog, a, e) }; });
 }
 
 function dl(name, content, type) {
@@ -30,8 +31,8 @@ export function downloadCsv(plan, catalog, execs, novs, k) {
   const s = summary(plan, k);
   const L = [["PROGRAMACIÓN DE ACTIVIDADES PREVENCIONISTA DE RIESGOS EN TURNO"], ["PROGRAMADO", plan.fecha, SH[plan.turno].name, "ASESOR DE TURNO", plan.asesor],
     ["ACTIVIDADES PROGRAMADAS", "ACTIVIDADES EJECUTADAS", "ACTIVIDADES NO EJECUTADAS", "NO OCURRIÓ", "PORCENTAJE DE CUMPLIMIENTO"], [s.prog, s.ok, s.no, s.na, s.pct + "%"], [],
-    ["N°", "ÁREA", "SITIO/SECTOR/FUNCIÓN", "PROCESO", "ACTIVIDAD A DESARROLLAR", "EJECUTADO", "NO EJECUTADO", "MOTIVO", "EVIDENCIA", "OBSERVACIONES"]];
-  rowsFor(plan, catalog, execs).forEach((r) => L.push([r.n, r.area, r.sitio, r.proceso, r.descripcion, r.st === "ok" ? 1 : 0, r.st === "no" ? 1 : 0, r.st === "na" ? "No ocurrió" : r.mot, r.ev ? r.ev + " archivo(s)" : "", r.obs]));
+    ["N°", "ÁREA", "SITIO/SECTOR/FUNCIÓN", "PROCESO", "ACTIVIDAD A DESARROLLAR", "EJECUTADO", "NO EJECUTADO", "MOTIVO", "PERSONAS", "EVIDENCIA", "OBSERVACIONES"]];
+  rowsFor(plan, catalog, execs).forEach((r) => L.push([r.n, r.area, r.sitio, r.proceso, r.descripcion, r.st === "ok" ? 1 : 0, r.st === "no" ? 1 : 0, r.st === "na" ? "No ocurrió" : r.mot, r.per ?? "", r.ev ? r.ev + " archivo(s)" : "", r.obs]));
   L.push([], ["NOVEDADES DEL TURNO"], ["HORA", "LUGAR", "TIPO", "CRITICIDAD", "NOVEDAD", "QUIÉN ESTUVO", "ACCIÓN INMEDIATA"]);
   novs.forEach((n) => L.push([n.hora, n.lugar, n.tipo, n.criticidad, n.descripcion, n.quien, n.accion]));
   L.push([], ["ENTREGA AL SIGUIENTE TURNO", plan.entrega || "—"]);
@@ -80,7 +81,7 @@ export async function printPdf(plan, catalog, execs, novs, k) {
   const body = `<div class="hd"><div class="lg"><img src="${LOGO}"></div><div class="ht"><small>PUERTO VENTANA S.A. · PREVENCIÓN DE RIESGOS</small><h1>Reporte de turno</h1><span>Programa de actividades del Asesor en Prevención de Riesgos</span></div><div class="cd"><small>N° REPORTE</small><b>${esc(SH[plan.turno].short)}-${esc(plan.fecha.replaceAll("-", ""))}</b></div></div>
 <div class="info"><div><small>Fecha</small><b>${esc(shortDate(plan.fecha))}</b></div><div><small>Turno</small><b>${esc(SH[plan.turno].name)}</b></div><div><small>Horario</small><b>${esc(SH[plan.turno].hours)}</b></div><div><small>Asesor de turno</small><b>${esc(plan.asesor || "—")}</b></div></div>
 <div class="k"><div><small>Programadas</small><b>${esc(s.prog)}</b></div><div class="g"><small>Ejecutadas</small><b>${esc(s.ok)}</b></div><div class="r"><small>No ejecutadas</small><b>${esc(s.no)}</b></div><div class="t"><small>Cumplimiento</small><b>${esc(s.pct)}%</b></div></div>
-<h2>1. Control de cumplimiento</h2><table><tr><th>N°</th><th>Área</th><th>Sitio</th><th>Proceso</th><th>Estado</th><th>Motivo / observación</th><th>Evid.</th></tr>${R.map((r) => `<tr><td>${r.n}</td><td>${esc(r.area)}</td><td>${esc(r.sitio)}</td><td>${esc(r.proceso)}</td><td>${pill(r.st)}</td><td>${esc([r.mot, r.obs].filter(Boolean).join(" · "))}</td><td>${r.ev || ""}</td></tr>`).join("") || '<tr><td colspan="7">Detalle no disponible</td></tr>'}</table>
+<h2>1. Control de cumplimiento</h2><table><tr><th>N°</th><th>Área</th><th>Sitio</th><th>Proceso</th><th>Estado</th><th>Personas</th><th>Motivo / observación</th><th>Evid.</th></tr>${R.map((r) => `<tr><td>${r.n}</td><td>${esc(r.area)}</td><td>${esc(r.sitio)}</td><td>${esc(r.proceso)}</td><td>${pill(r.st)}</td><td>${r.per ?? "—"}</td><td>${esc([r.mot, r.obs].filter(Boolean).join(" · "))}</td><td>${r.ev || ""}</td></tr>`).join("") || '<tr><td colspan="8">Detalle no disponible</td></tr>'}</table>
 <h2>2. Novedades del turno</h2><table><tr><th>Hora</th><th>Lugar</th><th>Tipo</th><th>Criticidad</th><th>Novedad</th><th>Quién estuvo</th><th>Acción</th></tr>${novs.map((n) => `<tr><td>${esc(n.hora)}</td><td>${esc(n.lugar)}</td><td>${esc(n.tipo)}</td><td>${crit(n.criticidad)}</td><td>${esc(n.descripcion)}</td><td>${esc(n.quien)}</td><td>${esc(n.accion)}</td></tr>`).join("") || '<tr><td colspan="7">Sin novedades registradas</td></tr>'}</table>
 <h2>3. Entrega al siguiente turno</h2><p class="ent">${esc(plan.entrega || "Sin observaciones de entrega.")}</p>`;
   const E = Object.fromEntries(execs.map((e) => [e.actividad_id, e]));

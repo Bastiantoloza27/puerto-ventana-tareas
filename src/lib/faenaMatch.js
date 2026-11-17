@@ -13,3 +13,11 @@ export function actividadesDeFaena(catalog, f) {
     return !s || Number(s[1]) === n;
   });
 }
+
+// Dotación de la nombrada para una actividad (suma de sus faenas); null si no está asociada a ninguna.
+export function dotacionDe(plan, catalog, actId) {
+  const fs = (plan?.faenas || []).filter((f) => actividadesDeFaena(catalog, f).some((a) => a.id === actId));
+  return fs.length ? fs.reduce((s, f) => s + (Number(f.dotacion) || 0), 0) : null;
+}
+
+export const personasDe = (plan, catalog, a, e) => (a.extra ? null : dotacionDe(plan, catalog, a.id)) ?? e?.personas ?? null;
