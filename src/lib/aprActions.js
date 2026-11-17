@@ -16,6 +16,12 @@ export async function reabrirTurno(plan) {
   await addLog(plan, `Turno reabierto para corrección por ${me.full_name || me.email}`);
 }
 
+// Anula un turno publicado por error: vuelve a borrador sin asesor y cancela el correo agendado.
+export async function anularTurno(plan, motivo) {
+  await base44.entities.Programacion.update(plan.id, { estado: "borrador", asesor: null, publicada_hora: null, envio_estado: null, envio_hora: null, reabierta: false });
+  await addLog(plan, `Turno anulado (estaba asignado a ${plan.asesor || "—"}) · ${motivo}`);
+}
+
 // Guarda la programación del turno; si no existe aún, revisa el servidor antes de crearla (evita duplicados).
 export async function upsertPlan(plan, fecha, turno, data) {
   const p = plan || (await base44.entities.Programacion.filter({ fecha, turno }, { limit: 1 })).items[0];

@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { card, chipCls, ASES, SH, now } from "@/lib/apr";
-import { addLog, upsertPlan, sendProgram } from "@/lib/aprActions";
+import { card, SH, now } from "@/lib/apr";
+import { addLog, upsertPlan, sendProgram, anularTurno } from "@/lib/aprActions";
+import AsesorPicker from "@/components/apr/AsesorPicker";
+import AnularTurno from "@/components/apr/AnularTurno";
 import { attempt } from "@/lib/safe";
 import { agregarEnvio, envioLabel } from "@/lib/opsMail";
 import { downloadProgramaCsv, printProgramaPdf } from "@/lib/exportReport";
@@ -71,6 +73,13 @@ export default function Programacion() {
     day.refresh(); setBusy(false);
   };
 
+  const anular = (motivo) => attempt(async () => {
+    await anularTurno(plan, motivo);
+    setAsesor(null); setSent("");
+    day.refresh();
+  }, "Turno anulado · asígnalo de nuevo y publícalo", "No se pudo anular el turno");
+  const registros = plan ? day.execs.filter((e) => e.programacion_id === plan.id && e.estado).length : 0;
+
   return (
     <div className="flex flex-wrap gap-5 items-start">
       <div className="flex-[1_1_560px] min-w-0 flex flex-col gap-4">
@@ -81,7 +90,7 @@ export default function Programacion() {
               {plan?.estado === "cerrada" ? "Turno cerrado" : pub ? `Publicada ${plan.publicada_hora}` : "Borrador"}
             </span>
           </div>
-          <div className="flex gap-1.5 flex-wrap">{ASES.map((a) => <button key={a} disabled={locked} onClick={() => setAsesor(a)} className={chipCls(asesor === a)}>{a}</button>)}</div>
+          <AsesorPicker value={asesor} onChange={setAsesor} locked={locked} />
         </div>
         <FaenasPanel plan={plan} catalog={day.catalog} />
         <CatalogPicker catalog={day.catalog} ids={ids} toggle={toggle} locked={locked} />
@@ -113,6 +122,7 @@ export default function Programacion() {
             </button>
             <button onClick={() => save(false)} disabled={busy} className="px-4 py-2.5 md:py-2 min-h-[44px] md:min-h-0 rounded-md text-sm text-[#3c4849] hover:bg-[#eef1f1]">Guardar borrador</button>
             {pub && <span className="text-[11px] text-[#6b7778]">Republicar queda registrado en la bitácora del turno.</span>}
+            {pub && <AnularTurno plan={plan} registros={registros} onAnular={anular} />}
           </div>
         )}
       </div>
