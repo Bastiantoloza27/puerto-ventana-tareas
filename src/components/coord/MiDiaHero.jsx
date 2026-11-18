@@ -39,7 +39,7 @@ export default function MiDiaHero({ user, eventos, hechos, abiertas, vencidas })
             <Stat n={vencidas} l="Vencidas" warn={vencidas > 0} />
           </div>
         </div>
-        <Prevencionista className="hidden sm:block w-[150px] md:w-[190px] flex-none -mb-3" />
+        <Prevencionista className="hidden sm:block w-[180px] h-[180px] md:w-[230px] md:h-[230px] flex-none -my-6 -mr-2" />
       </div>
     </div>
   );

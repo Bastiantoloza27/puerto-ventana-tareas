@@ -1,16 +1,8 @@
-/* Animación del prevencionista en la cabecera de "Mi día". */
-@keyframes prev-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-@keyframes prev-wave { 0%, 60%, 100% { transform: rotate(0deg); } 10%, 30% { transform: rotate(-28deg); } 20%, 40% { transform: rotate(-8deg); } }
-@keyframes prev-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
-@keyframes prev-check { 0%, 8% { stroke-dashoffset: 20; } 22%, 85% { stroke-dashoffset: 0; } 95%, 100% { stroke-dashoffset: 20; } }
-@keyframes prev-shine { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
-@keyframes prev-shadow { 0%, 100% { transform: scaleX(1); opacity: .35; } 50% { transform: scaleX(.88); opacity: .22; } }
-.prev-body { animation: prev-bob 3.2s ease-in-out infinite; }
-.prev-arm { transform-box: fill-box; transform-origin: 85% 10%; animation: prev-wave 4s ease-in-out infinite; }
-.prev-eye { transform-box: fill-box; transform-origin: center; animation: prev-blink 4.5s infinite; }
-.prev-check { stroke-dasharray: 20; animation: prev-check 4s ease-in-out infinite; }
-.prev-check-2 { animation-delay: .5s; }
-.prev-check-3 { animation-delay: 1s; }
-.prev-stripe { animation: prev-shine 2.4s ease-in-out infinite; }
-.prev-shadow { transform-box: fill-box; transform-origin: center; animation: prev-shadow 3.2s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .prev-body, .prev-arm, .prev-eye, .prev-check, .prev-stripe, .prev-shadow { animation: none; } }
+/* Prevencionista 3D de la cabecera de "Mi día": bordes fundidos y flotación suave. */
+@keyframes prev3d-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.prev3d {
+  -webkit-mask-image: radial-gradient(ellipse 62% 70% at 50% 42%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(ellipse 62% 70% at 50% 42%, #000 55%, transparent 100%);
+  animation: prev3d-float 5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) { .prev3d { animation: none; } }

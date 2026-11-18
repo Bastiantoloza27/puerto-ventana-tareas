@@ -6,7 +6,7 @@
   --fgc3-reunion-hover: #95bcef; --fgc3-actividad-hover: #8fd5ce; --fgc3-capacitacion-hover: #edc964; --fgc3-gestion-hover: #c0aeee; --fgc3-recordatorio-hover: #b3c3d8;
   --fgc3-blank-hover: var(--fgc3-page);
   color-scheme: light; box-sizing: border-box; background: var(--fgc3-page);
-  container: fgc3-root / inline-size; width: 100%; max-width: 750px; margin-inline: auto;
+  container: fgc3-root / inline-size; width: 100%;
   font-family: var(--font-body); border-radius: 12px; overflow: hidden;
 }
 .fgc3-section *, .fgc3-section *::before, .fgc3-section *::after { box-sizing: border-box; }
@@ -108,5 +108,24 @@
 .fgc3-section[data-fgc3-enter] .fgc3-day:nth-child(n+22):nth-child(-n+28) { animation: fgc3-rise-6 .95s; }
 .fgc3-section[data-fgc3-enter] .fgc3-day:nth-child(n+29) { animation: fgc3-rise-7 1.03s; }
 
+/* Vista semanal: columnas altas con las actividades de cada día a la vista. */
+.fgc3-section[data-fgc3-modo="semana"] .fgc3-grid { column-gap: 8px; }
+.fgc3-section[data-fgc3-modo="semana"] .fgc3-weekdays { column-gap: 8px; }
+.fgc3-section[data-fgc3-modo="semana"] .fgc3-day { justify-content: flex-start; gap: 6px; min-height: 230px; padding: 10px 6px; border-radius: 10px; background: var(--fgc3-page); transition: background-color .18s ease; }
+.fgc3-section[data-fgc3-modo="semana"] .fgc3-day:hover { background: #e3ebf6; }
+.fgc3-section[data-fgc3-modo="semana"] .fgc3-day[aria-current="date"] { background: #dde8f7; }
+.fgc3-section[data-fgc3-modo="semana"] .fgc3-bubble { width: 44px; max-width: 100%; }
+.fgc3-wk-list { display: flex; flex-direction: column; gap: 5px; width: 100%; margin-top: 4px; }
+.fgc3-wk-chip { display: block; width: 100%; text-align: left; font-size: 12px; line-height: 1.3; color: var(--fgc3-ink); background: var(--fgc3-card); border-left: 3px solid var(--fgc3-swatch); border-radius: 5px; padding: 5px 6px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.fgc3-wk-chip[data-done] { text-decoration: line-through; color: var(--fgc3-muted); }
+.fgc3-wk-time { display: block; font-family: var(--font-mono); font-size: 10.5px; color: var(--fgc3-muted); }
+.fgc3-wk-more, .fgc3-wk-empty { font-size: 11.5px; color: var(--fgc3-muted); text-align: center; }
+.fgc3-wk-empty { margin-top: 6px; opacity: .7; }
+@container fgc3-root (width < 560px) {
+  .fgc3-section[data-fgc3-modo="semana"] .fgc3-day { min-height: 150px; padding: 8px 2px; }
+  .fgc3-section[data-fgc3-modo="semana"] .fgc3-grid, .fgc3-section[data-fgc3-modo="semana"] .fgc3-weekdays { column-gap: 3px; }
+  .fgc3-wk-chip { font-size: 10.5px; padding: 3px 4px; -webkit-line-clamp: 2; }
+  .fgc3-wk-time { display: none; }
+}
 @container fgc3-root (width < 520px) { .fgc3-legend { row-gap: 0; } .fgc3-legend-btn { padding-block: 0; } }
 @container fgc3-root (width < 390px) { .fgc3-weekday, .fgc3-detail-row, .fgc3-detail-empty { font-size: 12px; } }

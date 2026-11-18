@@ -46,7 +46,7 @@ export default function MiniCalendario({ user }) {
   const titulo = modo === "mes" ? format(ref, "MMMM yyyy", { locale: es }) : `Semana del ${format(ini, "d MMM", { locale: es })}`;
 
   return (
-    <section ref={secRef} className="fgc3-section" {...(enter ? { "data-fgc3-enter": "" } : {})} onKeyDown={(e) => e.key === "Escape" && sel && cerrar()}>
+    <section ref={secRef} className="fgc3-section" data-fgc3-modo={modo} {...(enter ? { "data-fgc3-enter": "" } : {})} onKeyDown={(e) => e.key === "Escape" && sel && cerrar()}>
       <div className="fgc3-stage">
         <header>
           <div className="fgc3-head">
@@ -86,6 +86,17 @@ export default function MiniCalendario({ user }) {
                     onClick={() => abrir(f)}>
                     <span className="fgc3-bubble"><span className="fgc3-num" style={!isSameMonth(d, ref) && modo === "semana" ? { color: "var(--fgc3-muted)" } : undefined}>{format(d, "d")}</span></span>
                     <span className="fgc3-dots">{dots.map((t, i) => <span key={i} className="fgc3-dot" style={{ "--fgc3-swatch": `var(--fgc3-${t})` }} />)}</span>
+                    {modo === "semana" && (
+                      <span className="fgc3-wk-list">
+                        {lista.slice(0, 4).map((e) => (
+                          <span key={e.id} className="fgc3-wk-chip" style={{ "--fgc3-swatch": `var(--fgc3-${e.tipo || "recordatorio"})` }} {...(e.estado === "completado" ? { "data-done": "" } : {})}>
+                            {e.hora_inicio && <span className="fgc3-wk-time">{e.hora_inicio}</span>}{e.titulo}
+                          </span>
+                        ))}
+                        {lista.length > 4 && <span className="fgc3-wk-more">+{lista.length - 4} más</span>}
+                        {!lista.length && <span className="fgc3-wk-empty">Libre</span>}
+                      </span>
+                    )}
                   </button>
                 );
               })}
