@@ -16,7 +16,7 @@ export default function Coordinacion() {
   const { user } = useAuth();
   const { isAdmin } = usePerfil();
   const { day } = useOutletContext();
-  const tabs = [...(user?.coordinador ? COORD : []), ...(isAdmin ? [["jef", "Tareas a coordinadores"]] : [])];
+  const tabs = [...(user?.coordinador || isAdmin ? COORD : []), ...(isAdmin ? [["jef", "Tareas a coordinadores"]] : [])];
   const [tab, setTab] = useState(tabs[0]?.[0]);
   if (!tabs.length) return <Navigate to="/" replace />;
   const actual = tabs.some(([k]) => k === tab) ? tab : tabs[0][0];
