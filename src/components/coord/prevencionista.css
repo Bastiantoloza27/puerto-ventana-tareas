@@ -1,8 +1,0 @@
-/* Prevencionista 3D de la cabecera de "Mi día": bordes fundidos y flotación suave. */
-@keyframes prev3d-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-.prev3d {
-  -webkit-mask-image: radial-gradient(ellipse 62% 70% at 50% 42%, #000 55%, transparent 100%);
-  mask-image: radial-gradient(ellipse 62% 70% at 50% 42%, #000 55%, transparent 100%);
-  animation: prev3d-float 5s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) { .prev3d { animation: none; } }
