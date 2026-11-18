@@ -7,9 +7,7 @@ import CorreoRecordatorio from "@/components/coord/CorreoRecordatorio";
 import BitacoraDia from "@/components/coord/BitacoraDia";
 import TurnosAsesores from "@/components/coord/TurnosAsesores";
 
-const Stat = ({ n, l, warn }) => (
-  <div className={card + " p-4"}><div className={"font-mono text-3xl " + (warn ? "text-[#9b2c1f]" : "text-[#16386a]")}>{n}</div><div className="text-xs text-[#5b6b80] mt-1">{l}</div></div>
-);
+import MiDiaHero from "@/components/coord/MiDiaHero";
 
 export default function MiDia({ user, day, go }) {
   const hoy = today();
@@ -19,12 +17,7 @@ export default function MiDia({ user, day, go }) {
   const toggle = (e) => attempt(async () => { await base44.entities.EventoCoordinador.update(e.id, { estado: e.estado === "completado" ? "pendiente" : "completado" }); evs.refresh(); }, null, "No se pudo actualizar");
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Stat n={evs.items.length} l="Actividades de hoy" />
-        <Stat n={evs.items.filter((e) => e.estado === "completado").length} l="Realizadas hoy" />
-        <Stat n={tareas.items.length} l="Tareas abiertas" />
-        <Stat n={venc} l="Tareas vencidas" warn={venc > 0} />
-      </div>
+      <MiDiaHero user={user} eventos={evs.items.length} hechos={evs.items.filter((e) => e.estado === "completado").length} abiertas={tareas.items.length} vencidas={venc} />
       <div className="flex flex-wrap gap-4 items-start">
         <div className="flex-[1_1_520px] min-w-0 flex flex-col gap-4">
           <div className={card + " p-4 flex flex-col gap-2.5"}>
