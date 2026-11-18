@@ -10,7 +10,11 @@ export async function attempt(fn, okTitle, failTitle = "No se pudo guardar") {
     if (okTitle) toast({ title: okTitle });
     return r ?? true;
   } catch (e) {
-    toast({ variant: "destructive", title: failTitle, description: `${msg(e)}. Revisa tu conexión e inténtalo de nuevo; lo que escribiste sigue en pantalla.` });
+    const permiso = e?.response?.status === 403 || /permission denied/i.test(msg(e));
+    const detalle = permiso
+      ? `${/permission denied/i.test(msg(e)) ? "No tienes permiso para este cambio" : msg(e)}. Avisa a Jefatura; lo que escribiste sigue en pantalla.`
+      : `${msg(e)}. Revisa tu conexión e inténtalo de nuevo; lo que escribiste sigue en pantalla.`;
+    toast({ variant: "destructive", title: failTitle, description: detalle });
     return false;
   }
 }

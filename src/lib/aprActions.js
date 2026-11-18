@@ -35,10 +35,13 @@ export async function sendProgram(programacion_id, programar = false) {
   return `Enviado a ${data.sent.join(", ")}${data.asesor_ok ? "" : " · no se encontró el correo del asesor en el equipo registrado"}`;
 }
 
-export async function saveExec(plan, actividad_id, existing, patch) {
-  const e = existing || (await base44.entities.Ejecucion.filter({ programacion_id: plan.id, actividad_id }, { limit: 1 })).items[0];
-  if (e) return base44.entities.Ejecucion.update(e.id, patch);
-  return base44.entities.Ejecucion.create({ programacion_id: plan.id, actividad_id, evidencias: [], observaciones: "", ...patch });
+// El servidor valida que quien guarda sea el asesor asignado (o Jefatura) y solo acepta resultado y evidencia.
+export async function saveExec(plan, actividad_id, _existing, patch) {
+  return base44.functions.invoke("guardarEjecucion", { programacion_id: plan.id, actividad_id, patch });
+}
+
+export async function addExtraExec(plan, extra) {
+  return base44.functions.invoke("guardarEjecucion", { programacion_id: plan.id, extra });
 }
 
 export async function bumpMin(plan, fields, d) {

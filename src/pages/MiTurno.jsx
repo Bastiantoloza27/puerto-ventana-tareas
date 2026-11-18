@@ -9,7 +9,7 @@ import FaenasPanel from "@/components/apr/FaenasPanel";
 import ExtraForm from "@/components/apr/ExtraForm";
 import { now, actsDelPlan } from "@/lib/apr";
 import { dotacionDe } from "@/lib/faenaMatch";
-import { saveExec, addLog, bumpMin } from "@/lib/aprActions";
+import { saveExec, addExtraExec, addLog, bumpMin } from "@/lib/aprActions";
 import { attempt } from "@/lib/safe";
 
 const GROUPS = [["t", "Transversales", "Se esperan en todos los turnos"], ["o", "Según la operación del día", "Programadas desde el correo de Operaciones"], ["c", "Según ocurrencia", "«No ocurrió» no afecta el cumplimiento"], ["x", "Extraordinarias", "Solicitadas por Jefatura durante el turno"]];
@@ -49,7 +49,7 @@ export default function MiTurno() {
   });
 
   const addExtra = (f) => attempt(async () => {
-    await base44.entities.Ejecucion.create({ programacion_id: plan.id, actividad_id: "extra-" + Date.now(), extra: true, ...f, evidencias: [], observaciones: "" });
+    await addExtraExec(plan, f);
     await addLog(plan, `Actividad extraordinaria agregada: ${f.proceso} · ${f.sitio}`);
     day.refresh();
   }, "Actividad extraordinaria agregada");
