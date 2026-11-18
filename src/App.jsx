@@ -22,6 +22,7 @@ import Usuarios from '@/pages/Usuarios';
 import Configuracion from '@/pages/Configuracion';
 import Inicio from '@/pages/Inicio';
 import Vigilantes from '@/pages/Vigilantes';
+import Coordinacion from '@/pages/Coordinacion';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -65,6 +66,7 @@ const AuthenticatedApp = () => {
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/configuracion" element={<Configuracion />} />
           <Route path="/vigilantes" element={<Vigilantes />} />
+          <Route path="/coordinacion" element={<Coordinacion />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

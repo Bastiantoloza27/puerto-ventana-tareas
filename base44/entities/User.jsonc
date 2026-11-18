@@ -16,6 +16,17 @@
           }
         }
       }
+    },
+    "coordinador": {
+      "type": "boolean",
+      "description": "Tiene acceso al espacio de Coordinaci\u00f3n (seg\u00fan su cargo en el equipo)",
+      "rls": {
+        "update": {
+          "user_condition": {
+            "collaborator_role": "editor"
+          }
+        }
+      }
     }
   }
 }

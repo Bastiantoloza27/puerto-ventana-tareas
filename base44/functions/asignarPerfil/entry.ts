@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 
 const PERFILES = ['jefatura', 'asesor'];
 
-// Sin user_id: aplica al usuario actual el perfil que le corresponde según el equipo oficial (Integrante).
+// Sin user_id: aplica al usuario actual el perfil (y si es coordinador) según el equipo oficial (Integrante).
 // Con user_id + perfil: solo Jefatura (admin) puede asignar el perfil de otra persona.
 export default async function (req) {
   try {
@@ -22,14 +22,19 @@ export default async function (req) {
       return Response.json({ perfil });
     }
 
-    if (me.perfil) return Response.json({ perfil: me.perfil });
+    if (me.perfil && typeof me.coordinador === 'boolean') return Response.json({ perfil: me.perfil, coordinador: me.coordinador });
     const email = String(me.email || '').toLowerCase();
     const equipo = await sr.entities.Integrante.list('nombre', 200);
     const i = equipo.find((x) => String(x.email || '').toLowerCase() === email);
+    const coordinador = !!i && /coordinador/i.test(i.cargo || '');
+    if (me.perfil) {
+      await sr.entities.User.update(me.id, { coordinador });
+      return Response.json({ perfil: me.perfil, coordinador });
+    }
     if (!i || !PERFILES.includes(i.perfil)) return Response.json({ perfil: null });
     const role = i.perfil === 'jefatura' || me.role === 'admin' ? 'admin' : 'user';
-    await sr.entities.User.update(me.id, { perfil: i.perfil, role });
-    return Response.json({ perfil: i.perfil });
+    await sr.entities.User.update(me.id, { perfil: i.perfil, role, coordinador });
+    return Response.json({ perfil: i.perfil, coordinador });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

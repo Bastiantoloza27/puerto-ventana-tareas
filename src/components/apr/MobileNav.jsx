@@ -1,9 +1,11 @@
 import { NavLink } from "react-router-dom";
 import usePerfil from "@/hooks/usePerfil";
-import { Home, ClipboardCheck, AlertTriangle, CalendarDays, ListChecks, BarChart3, Shield } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
+import { Home, ClipboardCheck, AlertTriangle, CalendarDays, ListChecks, BarChart3, Shield, Briefcase } from "lucide-react";
 
 const ITEMS = [
   { to: "/", label: "Inicio", Icon: Home },
+  { to: "/coordinacion", label: "Coordinar", Icon: Briefcase },
   { to: "/turno", label: "Mi turno", Icon: ClipboardCheck, badge: "turno" },
   { to: "/cierre", label: "Cierre", Icon: AlertTriangle, badge: "nov" },
   { to: "/programacion", label: "Programar", Icon: CalendarDays, badge: "prog" },
@@ -11,14 +13,19 @@ const ITEMS = [
   { to: "/vigilantes", label: "Vigilantes", Icon: Shield },
   { to: "/reportes", label: "Reportes", Icon: BarChart3 },
 ];
+const COLS = { 4: "grid-cols-4", 5: "grid-cols-5", 7: "grid-cols-7", 8: "grid-cols-8" };
 
 export default function MobileNav({ turnoBadge, novBadge, progBadge }) {
   const badges = { turno: turnoBadge, nov: novBadge, prog: progBadge };
   const { perfil } = usePerfil();
-  const items = perfil === "asesor" ? ITEMS.filter((i) => !["/programacion", "/catalogo", "/vigilantes"].includes(i.to)) : ITEMS;
+  const { user } = useAuth();
+  const items = ITEMS.filter((i) => {
+    if (i.to === "/coordinacion") return user?.coordinador || perfil === "jefatura";
+    return perfil !== "asesor" || !["/programacion", "/catalogo", "/vigilantes"].includes(i.to);
+  });
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-[#0f2340] border-t border-[#1e3557] pb-[env(safe-area-inset-bottom)]">
-      <div className={"grid " + (items.length === 4 ? "grid-cols-4" : "grid-cols-7")}>
+      <div className={"grid " + (COLS[items.length] || "grid-cols-7")}>
         {items.map(({ to, label, Icon, badge }) => (
           <NavLink key={to} to={to} end className="relative">
             {({ isActive }) => (

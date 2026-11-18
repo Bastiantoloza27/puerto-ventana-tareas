@@ -14,7 +14,7 @@ import PerfilGate from "@/components/apr/PerfilGate";
 import TurnosReabiertos from "@/components/apr/TurnosReabiertos";
 import FechaTurnoPicker from "@/components/apr/FechaTurnoPicker";
 
-const TITLES = { "/": "Inicio", "/turno": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles", "/configuracion": "Configuración inicial", "/vigilantes": "Vigilantes" };
+const TITLES = { "/": "Inicio", "/turno": "Mi turno", "/cierre": "Novedades y cierre", "/programacion": "Programación del turno", "/reportes": "Reportes", "/catalogo": "Catálogo de actividades", "/usuarios": "Usuarios y perfiles", "/configuracion": "Configuración inicial", "/vigilantes": "Vigilantes", "/coordinacion": "Coordinación" };
 
 export default function AppLayout() {
   return <PerfilGate><AppShell /></PerfilGate>;
@@ -49,7 +49,7 @@ function AppShell() {
             <div className="font-mono text-[11px] md:text-xs font-medium text-[#2a64b8] tracking-[.08em]">{eyebrow}</div>
             <h1 className="font-heading text-[26px] md:text-[34px] leading-[1.1] mt-1 md:mt-1.5">{TITLES[pathname] || "Programa APR"}</h1>
           </div>
-          {!["/", "/reportes", "/catalogo", "/usuarios", "/configuracion", "/vigilantes"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
+          {!["/", "/reportes", "/catalogo", "/usuarios", "/configuracion", "/vigilantes", "/coordinacion"].includes(pathname) && <ShiftPills day={day} shift={shift} setShift={setShift} />}
         </div>
         <ViewAsSwitch />
         <TurnosReabiertos actual={{ fecha: enCurso.fecha, turno: shift }} onOpen={irATurno} />

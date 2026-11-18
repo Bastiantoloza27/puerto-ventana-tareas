@@ -1,0 +1,139 @@
+{
+  "name": "TareaCoordinador",
+  "type": "object",
+  "properties": {
+    "titulo": {
+      "type": "string"
+    },
+    "descripcion": {
+      "type": "string"
+    },
+    "fecha_limite": {
+      "type": "string",
+      "format": "date"
+    },
+    "prioridad": {
+      "type": "string",
+      "enum": [
+        "baja",
+        "media",
+        "alta"
+      ],
+      "enumColors": [
+        "green",
+        "yellow",
+        "red"
+      ],
+      "default": "media"
+    },
+    "asignado_email": {
+      "type": "string",
+      "description": "Correo del coordinador responsable"
+    },
+    "asignado_nombre": {
+      "type": "string"
+    },
+    "asignado_por": {
+      "type": "string"
+    },
+    "origen": {
+      "type": "string",
+      "enum": [
+        "jefatura",
+        "propia"
+      ],
+      "enumColors": [
+        "purple",
+        "blue"
+      ]
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "pendiente",
+        "en_curso",
+        "completada"
+      ],
+      "enumColors": [
+        "yellow",
+        "blue",
+        "green"
+      ],
+      "default": "pendiente"
+    },
+    "avances": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fecha": {
+            "type": "string"
+          },
+          "hora": {
+            "type": "string"
+          },
+          "texto": {
+            "type": "string"
+          },
+          "autor": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "titulo",
+    "asignado_email"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.asignado_email": "{{user.email}}"
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.asignado_email": "{{user.email}}"
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.asignado_email": "{{user.email}}"
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        }
+      ]
+    }
+  }
+}

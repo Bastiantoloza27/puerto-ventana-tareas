@@ -31,6 +31,7 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
       </div>
       <Label>GENERAL</Label>
       <Item to="/" label="Inicio" />
+      {(user?.coordinador || perfil === "jefatura") && <Item to="/coordinacion" label="Coordinación" />}
       <Label>TURNO</Label>
       <Item to="/turno" label="Mi turno" badge={turnoBadge} />
       <Item to="/cierre" label="Novedades y cierre" badge={novBadge} />
@@ -52,7 +53,7 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
       <div className="mt-auto px-2.5 pb-3"><SecurityBadges compact /></div>
       <div className="pt-3.5 px-2.5 border-t border-[#1e3557] text-xs text-[#8fa3c0] leading-snug flex gap-2.5 items-center">
         <span className="w-8 h-8 rounded-full bg-[#1c3d68] text-[#9cc0f0] grid place-items-center font-mono text-xs font-medium flex-none">{ini}</span>
-        <span><span className="text-[#e6efee] block">{user?.full_name || "Jefatura de Prevención"}</span>{perfil === "jefatura" ? "Jefatura" : "Asesor"}</span>
+        <span><span className="text-[#e6efee] block">{user?.full_name || "Jefatura de Prevención"}</span>{perfil === "jefatura" ? "Jefatura" : user?.coordinador ? "Coordinador" : "Asesor"}</span>
       </div>
     </aside>
   );

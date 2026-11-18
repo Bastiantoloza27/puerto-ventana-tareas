@@ -9,12 +9,12 @@ export default function PerfilGate({ children }) {
   const [checking, setChecking] = useState(!user?.perfil);
 
   useEffect(() => {
-    if (user?.perfil) return setChecking(false);
+    if (user?.perfil && typeof user?.coordinador === "boolean") return setChecking(false);
     base44.functions.invoke("asignarPerfil", {}).then(async (r) => {
       if (r.data?.perfil) await checkUserAuth();
       setChecking(false);
     });
-  }, [user?.id, user?.perfil]);
+  }, [user?.id, user?.perfil, user?.coordinador]);
 
   if (checking) return <div className="min-h-screen grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#2a64b8] rounded-full animate-spin" /></div>;
   if (!user?.perfil && user?.role !== "admin") return <SinAcceso email={user?.email} />;
