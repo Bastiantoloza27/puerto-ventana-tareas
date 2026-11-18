@@ -6,8 +6,8 @@ import { tipoCls, rango, EST_T } from "@/lib/coord";
 import CorreoRecordatorio from "@/components/coord/CorreoRecordatorio";
 import BitacoraDia from "@/components/coord/BitacoraDia";
 import TurnosAsesores from "@/components/coord/TurnosAsesores";
-
 import MiDiaHero from "@/components/coord/MiDiaHero";
+import MiniCalendario from "@/components/coord/MiniCalendario";
 
 export default function MiDia({ user, day, go }) {
   const hoy = today();
@@ -16,10 +16,11 @@ export default function MiDia({ user, day, go }) {
   const venc = tareas.items.filter((t) => t.fecha_limite && t.fecha_limite < hoy).length;
   const toggle = (e) => attempt(async () => { await base44.entities.EventoCoordinador.update(e.id, { estado: e.estado === "completado" ? "pendiente" : "completado" }); evs.refresh(); }, null, "No se pudo actualizar");
   return (
-    <div className="flex flex-col gap-4">
+    <div className="relative overflow-hidden flex flex-col gap-4 rounded-2xl bg-[#0f2340] p-3 md:p-5 -mx-1 md:mx-0 bg-[radial-gradient(circle_at_85%_0%,rgba(42,100,184,.35),transparent_45%),radial-gradient(circle_at_0%_100%,rgba(156,192,240,.12),transparent_40%)]">
       <MiDiaHero user={user} eventos={evs.items.length} hechos={evs.items.filter((e) => e.estado === "completado").length} abiertas={tareas.items.length} vencidas={venc} />
       <div className="flex flex-wrap gap-4 items-start">
         <div className="flex-[1_1_520px] min-w-0 flex flex-col gap-4">
+          <MiniCalendario user={user} />
           <div className={card + " p-4 flex flex-col gap-2.5"}>
             <div className="flex justify-between items-center"><span className="font-heading text-lg">Agenda de hoy</span><button onClick={() => go("cal")} className="text-sm text-[#2a64b8] hover:underline">Ver calendario</button></div>
             {!evs.items.length && <span className="text-sm text-[#6b7778]">No tienes actividades agendadas hoy.</span>}
