@@ -35,9 +35,9 @@ export default async function (req) {
     const admin = user.role === 'admin';
     if (!admin) {
       if (user.perfil !== 'asesor') return Response.json({ error: 'Tu perfil no puede registrar actividades' }, { status: 403 });
+      // El teléfono del turno es compartido: cualquier asesor puede registrar; solo se deja constancia si la cuenta no coincide.
       if (!(await esAsesorDelTurno(base44, plan, user))) {
-        console.warn('guardarEjecucion: asesor no coincide', { turno: plan.id, asesor: plan.asesor, asesor_email: plan.asesor_email || null, usuario: user.email });
-        return Response.json({ error: 'Este turno está asignado a otro asesor' }, { status: 403 });
+        console.warn('guardarEjecucion: registra otra cuenta', { turno: plan.id, asesor: plan.asesor, usuario: user.email });
       }
       if (plan.estado !== 'publicada') return Response.json({ error: 'El turno no está abierto para registrar' }, { status: 403 });
     }
