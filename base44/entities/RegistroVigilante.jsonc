@@ -22,7 +22,7 @@
     },
     "mensual": {
       "type": "boolean",
-      "description": "Tarea peri\u00f3dica: basta una vez en el mes"
+      "description": "Tarea peri\u00f3dica: basta una vez en el mes por turno"
     },
     "estado": {
       "type": "string",
@@ -34,6 +34,10 @@
         "green",
         "red"
       ]
+    },
+    "motivo": {
+      "type": "string",
+      "description": "Motivo si no se ejecut\u00f3"
     },
     "observaciones": {
       "type": "string"
@@ -100,11 +104,13 @@
     "update": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "user_condition": {
+            "role": "admin"
+          }
         },
         {
           "user_condition": {
-            "role": "admin"
+            "data.perfil": "vigilante"
           }
         }
       ]

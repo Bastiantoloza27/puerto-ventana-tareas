@@ -22,7 +22,25 @@
       "items": {
         "type": "string"
       },
-      "description": "Tareas ajustadas por Jefatura para este turno y puesto (reemplaza la matriz)"
+      "description": "Uso anterior: ajuste de tareas de la matriz (ya no se usa)"
+    },
+    "manuales": {
+      "type": "array",
+      "description": "Tareas manuales agregadas por Jefatura para este turno y puesto, adem\u00e1s de las fijas",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tarea": {
+            "type": "string"
+          },
+          "descripcion": {
+            "type": "string"
+          }
+        }
+      }
     }
   },
   "required": [
