@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
-import { emailDeAsesor } from '../../shared/team.ts';
+import { esAsesorDelTurno } from '../../shared/team.ts';
 
 // Campos que el asesor puede registrar: resultado, respaldo y datos de ejecución. La planificación queda para Jefatura.
 const CAMPOS = ['estado', 'motivo', 'observaciones', 'personas', 'controles', 'evidencias', 'hora'];
@@ -35,8 +35,10 @@ export default async function (req) {
     const admin = user.role === 'admin';
     if (!admin) {
       if (user.perfil !== 'asesor') return Response.json({ error: 'Tu perfil no puede registrar actividades' }, { status: 403 });
-      const email = await emailDeAsesor(base44, plan.asesor);
-      if (!email || email.toLowerCase() !== String(user.email).toLowerCase()) return Response.json({ error: 'Este turno está asignado a otro asesor' }, { status: 403 });
+      if (!(await esAsesorDelTurno(base44, plan, user))) {
+        console.warn('guardarEjecucion: asesor no coincide', { turno: plan.id, asesor: plan.asesor, asesor_email: plan.asesor_email || null, usuario: user.email });
+        return Response.json({ error: 'Este turno está asignado a otro asesor' }, { status: 403 });
+      }
       if (plan.estado !== 'publicada') return Response.json({ error: 'El turno no está abierto para registrar' }, { status: 403 });
     }
 

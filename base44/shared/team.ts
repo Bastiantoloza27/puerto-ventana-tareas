@@ -13,3 +13,15 @@ export async function emailDeAsesor(base44, nombre) {
   }
   return best?.email || null;
 }
+
+// ¿El usuario es el asesor que Jefatura dejó en el turno? Se acepta por correo guardado, por el equipo registrado
+// o porque su nombre/correo coincide con el nombre asignado (ej. mario.gonzalez ↔ González Romero Mario).
+export async function esAsesorDelTurno(base44, plan, user) {
+  const mail = String(user?.email || '').toLowerCase();
+  if (!mail || !plan?.asesor) return false;
+  if (String(plan.asesor_email || '').toLowerCase() === mail) return true;
+  if ((await emailDeAsesor(base44, plan.asesor))?.toLowerCase() === mail) return true;
+  const tk = norm(plan.asesor);
+  const propios = [...norm(mail.split('@')[0].replace(/[._-]+/g, ' ')), ...norm(user.full_name)];
+  return new Set(propios.filter((t) => t.length > 2 && tk.includes(t))).size >= 2;
+}

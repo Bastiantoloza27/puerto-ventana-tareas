@@ -17,6 +17,10 @@
     "asesor": {
       "type": "string"
     },
+    "asesor_email": {
+      "type": "string",
+      "description": "Correo de la cuenta del asesor asignado por Jefatura"
+    },
     "actividad_ids": {
       "type": "array",
       "items": {

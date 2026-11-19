@@ -18,6 +18,16 @@ import RevisarCorreo from "@/components/apr/RevisarCorreo";
 import { useQueryClient } from "@tanstack/react-query";
 import useRotativa from "@/hooks/useRotativa";
 
+const tk = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().split(/\s+/).filter(Boolean);
+// Correo de la cuenta del asesor elegido (integrante con más palabras del nombre en común).
+async function correoDeAsesor(nombre) {
+  if (!nombre) return null;
+  const team = (await base44.entities.Integrante.filter({}, { limit: 100 })).items;
+  let best = null, max = 1;
+  for (const i of team) { const n = tk(i.nombre).filter((t) => tk(nombre).includes(t)).length; if (n > max) { max = n; best = i; } }
+  return best?.email || null;
+}
+
 export default function Programacion() {
   const { day, shift, plan, canPlan } = useOutletContext();
   const readOnly = !canPlan;
@@ -67,7 +77,7 @@ export default function Programacion() {
   const save = async (publish) => {
     if (publish && (!asesor || !ids.length)) return setErr(!asesor ? "Asigna un asesor de turno antes de publicar." : "Selecciona al menos una actividad.");
     setBusy(true); setErr(""); setSent("");
-    const data = { asesor, actividad_ids: ids, ...(publish ? { estado: "publicada", publicada_hora: now() } : {}) };
+    const data = { asesor, asesor_email: await correoDeAsesor(asesor), actividad_ids: ids, ...(publish ? { estado: "publicada", publicada_hora: now() } : {}) };
     const p = await attempt(async () => {
       const saved = await upsertPlan(plan, day.fecha, shift, data);
       await addLog(saved, publish ? `${pub ? "Programación republicada" : "Programación publicada"} · ${ids.length} actividades · ${asesor}` : "Borrador guardado");
