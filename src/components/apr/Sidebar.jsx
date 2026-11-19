@@ -29,6 +29,7 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
         <img src={LOGO} alt="PVSA Puerto Ventanas S.A." className="h-[42px] w-auto self-start" />
         <div className="text-[13px] leading-tight"><div className="font-semibold text-white">Programa APR</div><div className="text-[#8fa3c0] text-xs">Actividades prevencionistas por turno</div></div>
       </div>
+      {perfil === "vigilante" ? <><Label>VIGILANCIA</Label><Item to="/vigilantes" label="Mis tareas" /></> : <>
       <Label>GENERAL</Label>
       <Item to="/" label="Inicio" />
       {(user?.coordinador || perfil === "jefatura") && <Item to="/coordinacion" label="Coordinación" />}
@@ -45,6 +46,7 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
       <Label>TRAZABILIDAD</Label>
       <Item to="/reportes" label="Reportes" />
       {isAdmin && <><Label>ADMINISTRACIÓN</Label><Item to="/configuracion" label="Configuración inicial" /><Item to="/usuarios" label="Usuarios y perfiles" /></>}
+      </>}
       {realAdmin && perfil === "jefatura" && (
         <button onClick={() => setViewAs("asesor")} className="mt-3 mx-2.5 inline-flex items-center gap-1.5 text-xs text-[#9cc0f0] hover:text-white">
           <Eye className="w-3.5 h-3.5" /> Vista de asesor
@@ -53,7 +55,7 @@ export default function Sidebar({ turnoBadge, novBadge, progBadge }) {
       <div className="mt-auto px-2.5 pb-3"><SecurityBadges compact /></div>
       <div className="pt-3.5 px-2.5 border-t border-[#1e3557] text-xs text-[#8fa3c0] leading-snug flex gap-2.5 items-center">
         <span className="w-8 h-8 rounded-full bg-[#1c3d68] text-[#9cc0f0] grid place-items-center font-mono text-xs font-medium flex-none">{ini}</span>
-        <span><span className="text-[#e6efee] block">{user?.full_name || "Jefatura de Prevención"}</span>{perfil === "jefatura" ? "Jefatura" : user?.coordinador ? "Coordinador" : "Asesor"}</span>
+        <span><span className="text-[#e6efee] block">{user?.full_name || "Jefatura de Prevención"}</span>{perfil === "jefatura" ? "Jefatura" : perfil === "vigilante" ? "Vigilante" : user?.coordinador ? "Coordinador" : "Asesor"}</span>
       </div>
     </aside>
   );

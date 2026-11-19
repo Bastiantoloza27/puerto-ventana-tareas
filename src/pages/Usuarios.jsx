@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/AuthContext";
 import EquipoRegistrado from "@/components/apr/EquipoRegistrado";
 import { attempt } from "@/lib/safe";
 
-const PERFILES = [["jefatura", "Jefatura"], ["asesor", "Asesor"]];
+const PERFILES = [["jefatura", "Jefatura"], ["asesor", "Asesor"], ["vigilante", "Vigilante"]];
 
 export default function Usuarios() {
   const { isAdmin } = usePerfil();

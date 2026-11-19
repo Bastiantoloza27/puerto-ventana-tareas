@@ -15,11 +15,13 @@
       "type": "string",
       "enum": [
         "jefatura",
-        "asesor"
+        "asesor",
+        "vigilante"
       ],
       "enumColors": [
         "purple",
-        "blue"
+        "blue",
+        "green"
       ]
     }
   },

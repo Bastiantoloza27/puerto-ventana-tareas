@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
+import { base44 } from "@/api/base44Client";
 import { card, SH } from "@/lib/apr";
 import { PUESTOS, GRUPOS, corto, tareasPuesto, avance } from "@/lib/vigilantes";
 import KpiRow from "@/components/apr/KpiRow";
@@ -55,6 +56,7 @@ export default function VigMiTurno({ v, fecha, turno }) {
           <div className="text-sm"><b className="font-mono">{a.ok + a.no}</b> de <b className="font-mono">{a.total}</b> tareas registradas</div>
           <Progreso a={a} />
           <button onClick={() => setPuesto("")} className="px-4 py-2.5 rounded-md text-sm border border-[#cdd4d4] hover:border-[#2a64b8] text-[#1c2526]">Cambiar puesto</button>
+          <button onClick={() => base44.auth.logout(window.location.origin + "/login")} className="px-4 py-2.5 rounded-md text-sm bg-[#2a64b8] hover:bg-[#16386a] text-white">Cerrar sesión al terminar</button>
         </div>
       </div>
     </div>

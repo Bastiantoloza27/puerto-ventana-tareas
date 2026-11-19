@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 
-const PERFILES = ['jefatura', 'asesor'];
+const PERFILES = ['jefatura', 'asesor', 'vigilante'];
 
 // Sin user_id: aplica al usuario actual el perfil (y si es coordinador) según el equipo oficial (Integrante).
 // Con user_id + perfil: solo Jefatura (admin) puede asignar el perfil de otra persona.

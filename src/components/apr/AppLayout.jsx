@@ -55,7 +55,9 @@ function AppShell() {
         <TurnosReabiertos actual={{ fecha: enCurso.fecha, turno: shift }} onOpen={irATurno} />
         {pathname === "/programacion" && canPlan && <ProgDatePicker value={progDate} onChange={setProgDate} />}
         {["/turno", "/cierre"].includes(pathname) && canPlan && <FechaTurnoPicker value={enCurso.fecha} onChange={(fecha) => setEnCurso({ fecha, turno: shift })} onReset={() => irATurno(turnoActual())} />}
-        {(perfil === "asesor" && ["/programacion", "/catalogo", "/vigilantes"].includes(pathname)) || (perfil !== "jefatura" && pathname === "/configuracion") ? (
+        {perfil === "vigilante" && pathname !== "/vigilantes" ? (
+          <Navigate to="/vigilantes" replace />
+        ) : (perfil === "asesor" && ["/programacion", "/catalogo", "/vigilantes"].includes(pathname)) || (perfil !== "jefatura" && pathname === "/configuracion") ? (
           <Navigate to="/" replace />
         ) : day.loading ? (
           <div className="py-24 grid place-items-center"><div className="w-7 h-7 border-[3px] border-[#cdd4d4] border-t-[#2a64b8] rounded-full animate-spin" /></div>

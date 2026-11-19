@@ -21,6 +21,7 @@ export default function EquipoForm({ onSave, onCancel }) {
         <select aria-label="Perfil" value={f.perfil} onChange={(e) => set({ perfil: e.target.value })} className={inputCls}>
           <option value="asesor">Asesor</option>
           <option value="jefatura">Jefatura</option>
+          <option value="vigilante">Vigilante</option>
         </select>
       </div>
       <p className="text-xs text-[#6b7778]">Al ingresar por primera vez con este correo, la persona recibe automáticamente su perfil.</p>

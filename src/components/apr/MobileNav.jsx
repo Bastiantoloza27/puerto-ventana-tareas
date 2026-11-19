@@ -19,6 +19,7 @@ export default function MobileNav({ turnoBadge, novBadge, progBadge }) {
   const badges = { turno: turnoBadge, nov: novBadge, prog: progBadge };
   const { perfil } = usePerfil();
   const { user } = useAuth();
+  if (perfil === "vigilante") return null;
   const items = ITEMS.filter((i) => {
     if (i.to === "/coordinacion") return user?.coordinador || perfil === "jefatura";
     return perfil !== "asesor" || !["/programacion", "/catalogo", "/vigilantes"].includes(i.to);
